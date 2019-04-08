@@ -1,0 +1,38 @@
+{
+  "name": "moosik",
+  "version": "1.0.0",
+  "description": "Server",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "webpack && node ./build/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ferisef/moosik.git"
+  },
+  "author": "Ferisef",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ferisef/moosik/issues"
+  },
+  "homepage": "https://github.com/Ferisef/moosik#readme",
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "babel-loader": "^8.0.5",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {
+    "busboy": "^0.3.1",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.22",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  }
+}
