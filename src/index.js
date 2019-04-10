@@ -1,46 +1,93 @@
 import Path from 'path';
 import Express from 'express';
-import Busboy from 'busboy';
-import YandexDiskAPI from './api/yandex-disk';
-import Auth from './middleware/auth';
-import DB from './api/mongodb';
+import BodyParser from 'body-parser';
+
+// import YandexDiskAPI from './apis/yandex-disk';
+// import DB from './api/mongodb';
+
+import AuthMiddleware from './middlewares/auth';
+import { validateAccept, validateContentType } from './middlewares/validate-headers';
+
+import LoginEndpoint from './endpoints/login';
+import RegisterEndpoint from './endpoints/register';
+import {
+  getUser, getPlaylist, updatePlaylist, removePlaylist,
+} from './endpoints/users';
+import SongsEndpoint from './endpoints/songs';
 
 const app = Express();
-const yandexDiskApi = new YandexDiskAPI('AQAAAAAkeVfEAAWUdhFEJeYmG0KpgXAZoZ4tHXg');
+// const yandexDiskApi = new YandexDiskAPI('AQAAAAAkeVfEAAWUdhFEJeYmG0KpgXAZoZ4tHXg');
+
+app.use(Express.static(Path.resolve('./static')));
+app.use(BodyParser.json());
 
 app.get('/', (req, res) => {
-  res.send('<form action="/upload" method="post" enctype="multipart/form-data"><input type="file" name="file"><input type="submit"></form>');
+  res.sendFile(Path.resolve('./html/index.html'));
 });
 
-app.post('/upload', [
-  Auth(),
-  (req, res) => {
-    const busboy = new Busboy({ headers: req.headers });
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-      if (!['audio/mp3', 'audio/mpeg'].includes(mimetype)) {
-        file.resume();
-        res.status(406).send({ error: 'UnsupportedFile' });
-        return;
-      }
-
-      yandexDiskApi.uploadFileFromStream(Path.basename(filename), file)
-        .then((data) => {
-          const song = new DB.Song({
-            author: 'author',
-            title: 'title',
-            uploadedBy: 'admin',
-            hash: 'hash',
-            url: data.url,
-          });
-          res.status(201).send(data);
-        })
-        .catch(() => {
-          file.resume();
-          res.status(406).send({ error: 'UploadError' });
-        });
-    });
-    req.pipe(busboy);
-  },
+app.post('/login', [
+  validateAccept(),
+  validateContentType(),
+  LoginEndpoint(),
 ]);
+
+app.post('/register', [
+  validateAccept(),
+  validateContentType(),
+  RegisterEndpoint(),
+]);
+
+app.get('/users/:username', [
+  validateAccept(),
+  AuthMiddleware(),
+  getUser(),
+]);
+
+app.get('/users/:username/playlist', [
+  validateAccept(),
+  AuthMiddleware(),
+  getPlaylist(),
+]);
+
+app.post('/users/:username/playlist', [
+  validateAccept(),
+  AuthMiddleware(),
+  updatePlaylist(),
+]);
+
+app.delete('/users/:username/playlist', [
+  validateAccept(),
+  AuthMiddleware(),
+  removePlaylist(),
+]);
+
+app.delete('/users/:username/playlist/:songId', [
+  validateAccept(),
+  AuthMiddleware(),
+  (req, res) => res.status(500).send({ error: 'DeleteSongFromPlaylistError' }),
+]);
+
+app.get('/songs', [
+  validateAccept(),
+  AuthMiddleware(),
+  (req, res) => res.status(500).send({ error: 'GetSongsError' }),
+]);
+
+app.put('/songs', [
+  validateAccept(),
+  AuthMiddleware(),
+  (req, res) => res.status(500).send({ error: 'UploadSongError' }),
+]);
+
+app.get('/songs/find', [
+  validateAccept(),
+  AuthMiddleware(),
+  (req, res) => res.status(500).send({ error: 'FindSongError' }),
+]);
+
+app.all('*', (req, res) => {
+  res.status(404).send({ message: 'The resource you are trying to request does not exist.' });
+});
+
 
 app.listen(process.env.PORT || 8080);

@@ -8,6 +8,7 @@ const { version } = require('./package.json');
 const prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
+  target: 'node',
   entry: './src/index.js',
   mode: prod ? 'production' : 'development',
   output: {
@@ -15,7 +16,6 @@ module.exports = {
     filename: `server${process.env.VERSIONED ? version : ''}${prod ? '.min' : ''}.js`,
   },
   node: {
-    fs: 'empty',
     __dirname: true,
   },
   module: {

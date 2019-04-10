@@ -1,8 +1,6 @@
 import FS from 'fs';
 import RequestPromise from 'request-promise';
 
-// Привести генерируемые ошибки к единому виду
-
 export default class YandexDriveAPI {
   constructor(oauthToken) {
     this.BASE_URL = 'https://cloud-api.yandex.net/v1/disk';
