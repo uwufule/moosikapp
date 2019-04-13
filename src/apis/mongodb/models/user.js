@@ -1,5 +1,6 @@
 import Mongoose from 'mongoose';
 
+
 const User = Mongoose.model('User', new Mongoose.Schema({
   uuid: {
     type: String,
@@ -18,9 +19,9 @@ const User = Mongoose.model('User', new Mongoose.Schema({
     type: Number,
     default: 1,
   },
-  playlist: {
-    type: String,
-    default: '',
+  playlists: {
+    type: Array,
+    default: [],
   },
 }, { versionKey: false, timestamps: true }));
 

@@ -2,7 +2,6 @@ import Path from 'path';
 import Express from 'express';
 import BodyParser from 'body-parser';
 
-// import YandexDiskAPI from './apis/yandex-disk';
 import MongoDB from './apis/mongodb';
 
 import AuthMiddleware from './middlewares/auth';
@@ -11,16 +10,13 @@ import { validateAccept, validateContentType } from './middlewares/validate-head
 import LoginEndpoint from './endpoints/login';
 import RegisterEndpoint from './endpoints/register';
 import {
-  getUser, getPlaylist, updatePlaylist, removePlaylist,
-} from './endpoints/users';
-// import SongsEndpoint from './endpoints/songs';
+  getSongsListener, getSongByUuidListener, uploadSongListener, findSongListener,
+} from './endpoints/songs';
+import GetUserEndpoint from './endpoints/users';
 
 MongoDB();
 
-const API_ENDPOINT = '/api';
-
 const app = Express();
-// const yandexDiskApi = new YandexDiskAPI('AQAAAAAkeVfEAAWUdhFEJeYmG0KpgXAZoZ4tHXg');
 
 app.use(Express.static(Path.resolve('./static')));
 app.use(BodyParser.json());
@@ -29,67 +25,87 @@ app.get('/', (req, res) => {
   res.sendFile(Path.resolve('./html/index.html'));
 });
 
-app.post(`${API_ENDPOINT}/login`, [
+// login
+app.post('/api/login', [
   validateAccept(),
-  validateContentType(),
+  validateContentType('application/json'),
   LoginEndpoint(),
 ]);
 
-app.post(`${API_ENDPOINT}/register`, [
+// register
+app.post('/api/register', [
   validateAccept(),
-  validateContentType(),
+  validateContentType('application/json'),
   RegisterEndpoint(),
 ]);
 
-app.get(`${API_ENDPOINT}/users/:username`, [
+// get user with provided username
+app.get('/api/users/:username', [
   validateAccept(),
   AuthMiddleware(),
-  getUser(),
+  GetUserEndpoint(),
 ]);
 
-app.get(`${API_ENDPOINT}/users/:username/playlist`, [
+// create new playlist *
+app.post('/api/users/:username/playlists', [
+  validateAccept(),
+  validateContentType('application/json'),
+  AuthMiddleware(),
+]);
+
+// get songs in playlist *
+app.get('/api/users/:username/playlists/:playlistId', [
   validateAccept(),
   AuthMiddleware(),
-  getPlaylist(),
 ]);
 
-app.post(`${API_ENDPOINT}/users/:username/playlist`, [
+// update playlist *
+app.patch('/api/users/:username/playlists/:playlistId', [
   validateAccept(),
   AuthMiddleware(),
-  updatePlaylist(),
+  (req, res) => res.status(500).send({ error: 'PatchPlaylistError' }),
 ]);
 
-app.delete(`${API_ENDPOINT}/users/:username/playlist`, [
+// delete playlist *
+app.delete('/api/users/:username/playlists/:playlistId', [
   validateAccept(),
   AuthMiddleware(),
-  removePlaylist(),
+  (req, res) => res.status(500).send({ error: 'DeletePlaylistError' }),
 ]);
 
-app.delete(`${API_ENDPOINT}/users/:username/playlist/:songId`, [
+// get song list
+app.get('/api/songs', [
   validateAccept(),
+  validateContentType('application/json'),
   AuthMiddleware(),
-  (req, res) => res.status(500).send({ error: 'DeleteSongFromPlaylistError' }),
+  getSongsListener(),
 ]);
 
-app.get(`${API_ENDPOINT}/songs`, [
+// find song
+app.get('/api/songs/find', [
   validateAccept(),
+  validateContentType('application/json'),
   AuthMiddleware(),
-  (req, res) => res.status(500).send({ error: 'GetSongsError' }),
+  findSongListener(),
 ]);
 
-app.put(`${API_ENDPOINT}/songs`, [
+// get song by id
+app.get('/api/songs/:songId', [
   validateAccept(),
+  validateContentType('application/json'),
   AuthMiddleware(),
-  (req, res) => res.status(500).send({ error: 'UploadSongError' }),
+  getSongByUuidListener(),
 ]);
 
-app.get(`${API_ENDPOINT}/songs/find`, [
+// upload song
+app.put('/api/songs', [
   validateAccept(),
+  // validateContentType('multipart/form-data'),
   AuthMiddleware(),
-  (req, res) => res.status(500).send({ error: 'FindSongError' }),
+  uploadSongListener(),
 ]);
 
-app.all(`${API_ENDPOINT}*`, (req, res) => {
+app.all('/api*', (req, res) => {
   res.status(404).send({ message: 'The resource you are trying to request does not exist.' });
 });
 

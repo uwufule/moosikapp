@@ -10,9 +10,9 @@ export function validateAccept() {
   };
 }
 
-export function validateContentType() {
+export function validateContentType(contentType) {
   return (req, res, next) => {
-    if (!req.headers || req.headers['content-type'] !== 'application/json') {
+    if (!req.headers || req.headers['content-type'] !== contentType) {
       res.status(400).send({ message: 'Invalid body provided.' });
       return;
     }

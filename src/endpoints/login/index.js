@@ -2,6 +2,7 @@ import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 import { findByUsername, findByEmail } from '../../apis/mongodb';
 
+
 const JWT_SECRET = 'bca16e36812f55eb2894c082652cae7b.799ef9efbd00ae81a34172bfdd6471f7e79f7f2a5574819f77598daa0c5b6a1e6f2c2f8de8f3124a9ba6c9ab738d00a36bb4a0e575d4c9ac7cd75d2145b006f0';
 
 
@@ -36,7 +37,7 @@ function login(res, user, password) {
 export default function () {
   return (req, res) => {
     if (!req.body) {
-      req.status(400).send({ message: 'No body provided.' });
+      res.status(400).send({ message: 'No body provided.' });
     }
 
     const { username, password } = req.body;

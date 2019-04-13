@@ -1,44 +1,31 @@
+import Uuid from 'uuid';
+import PlaylistModel from '../../apis/mongodb/models/playlist';
 
-export function getPlaylist() {
+export function createPlaylist() {
   return (req, res) => {
-    // database actions
-    if (false) {
-      res.status(404).send({ message: 'Playlist not found.' });
-      return;
-    }
-
-    res.status(200).send({
-      message: 'Successfully retrieved playlist.',
-      owner: req.params.username,
-      playlist: [],
+    const playlist = new PlaylistModel({
+      uuid: Uuid(),
+      name: req.body.name,
+      private: req.body.isPrivate,
     });
+    playlist.save()
+      .then((p) => {
+
+      })
+      .catch(() => {
+        res.status(500).send();
+      });
   };
 }
 
 export function updatePlaylist() {
-  return (req, res) => {
-    // database actions
-    if (false) {
-      res.status(404).send({ message: 'Playlist not found.' });
-      return;
-    }
 
-    res.status(200).send({
-      message: 'Successfully retrieved playlist.',
-      playlistId: req.params.playlistId,
-      playlist: [],
-    });
-  };
 }
 
-export function removePlaylist() {
-  return (req, res) => {
-    // database actions
-    if (false) {
-      res.status(404).send({ message: 'Song not found.' });
-      return;
-    }
+export function deletePlaylist() {
 
-    res.status(204).send();
-  };
+}
+
+export function getListOfSongs() {
+
 }

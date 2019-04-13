@@ -1,30 +1,35 @@
-// import Mongoose from 'mongoose';
+import Mongoose from 'mongoose';
 
-// const Song = Mongoose.model('Song', new Mongoose.Schema({
-//   author: {
-//     type: String,
-//     required: true,
-//   },
-//   title: {
-//     type: String,
-//     required: true,
-//   },
-//   uploadedBy: {
-//     type: String,
-//     required: true,
-//   },
-//   hash: {
-//     type: String,
-//     required: true,
-//   },
-//   url: {
-//     type: String,
-//     required: true,
-//   },
-//   coverUrl: {
-//     type: String,
-//     default: '',
-//   },
-// }));
 
-// export default Song;
+const Song = Mongoose.model('Song', new Mongoose.Schema({
+  uuid: {
+    type: String,
+    unique: true,
+  },
+  author: {
+    type: String,
+    default: '',
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+  uploadedBy: {
+    type: String,
+    required: true,
+  },
+  hash: {
+    type: String,
+    required: true,
+  },
+  url: {
+    type: String,
+    required: true,
+  },
+  coverUrl: {
+    type: String,
+    default: '',
+  },
+}, { versionKey: false, timestamps: true }));
+
+export default Song;
