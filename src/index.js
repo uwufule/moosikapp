@@ -13,6 +13,14 @@ import {
   getSongsListener, getSongByUuidListener, uploadSongListener, findSongListener,
 } from './endpoints/songs';
 import GetUserEndpoint from './endpoints/users';
+import {
+  getPlaylistListener,
+  createPlaylistListener,
+  updatePlaylistListener,
+  deletePlaylistListener,
+  addSongListener,
+  deleteSongListener,
+} from './endpoints/users/playlist';
 
 MongoDB();
 
@@ -46,31 +54,49 @@ app.get('/api/users/:username', [
   GetUserEndpoint(),
 ]);
 
-// create new playlist *
-app.post('/api/users/:username/playlists', [
+// create new playlist
+app.post('/api/playlists', [
   validateAccept(),
   validateContentType('application/json'),
   AuthMiddleware(),
+  createPlaylistListener(),
 ]);
 
-// get songs in playlist *
-app.get('/api/users/:username/playlists/:playlistId', [
+// get playlist
+app.get('/api/playlists/:playlistId', [
   validateAccept(),
   AuthMiddleware(),
+  getPlaylistListener(),
 ]);
 
-// update playlist *
-app.patch('/api/users/:username/playlists/:playlistId', [
+// update playlist
+app.patch('/api/playlists/:playlistId', [
   validateAccept(),
+  validateContentType('application/json'),
   AuthMiddleware(),
-  (req, res) => res.status(500).send({ error: 'PatchPlaylistError' }),
+  updatePlaylistListener(),
 ]);
 
-// delete playlist *
-app.delete('/api/users/:username/playlists/:playlistId', [
+// delete playlist
+app.delete('/api/playlists/:playlistId', [
   validateAccept(),
   AuthMiddleware(),
-  (req, res) => res.status(500).send({ error: 'DeletePlaylistError' }),
+  deletePlaylistListener(),
+]);
+
+// add song in playlist *
+app.put('/api/playlists/:playlistId', [
+  validateAccept(),
+  validateContentType('application/json'),
+  AuthMiddleware(),
+  addSongListener(),
+]);
+
+// delete song from playlist *
+app.delete('/api/playlists/:playlistId/:songId', [
+  validateAccept(),
+  AuthMiddleware(),
+  deleteSongListener(),
 ]);
 
 // get song list

@@ -4,8 +4,8 @@ import PlaylistModel from './models/playlist';
 export async function getPlaylist(playlistId) {
   const projection = {
     uuid: 1,
-    songs: 1,
-    isPrivate: 1,
+    songlist: 1,
+    private: 1,
     _id: 0,
   };
 
