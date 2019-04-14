@@ -3,7 +3,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const webpackNodeExternals = require('webpack-node-externals');
-const TerserJSPlugin = require('terser-webpack-plugin');
 const { version } = require('./package.json');
 
 const prod = process.env.NODE_ENV === 'production';
