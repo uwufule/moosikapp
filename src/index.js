@@ -5,21 +5,27 @@ import BodyParser from 'body-parser';
 import MongoDB from './apis/mongodb';
 
 import AuthMiddleware from './middlewares/auth';
-import { validateAccept, validateContentType } from './middlewares/validate-headers';
+import {
+  validateAccept,
+  validateContentType,
+} from './middlewares/validate-headers';
 
 import LoginEndpoint from './endpoints/login';
 import RegisterEndpoint from './endpoints/register';
 import {
-  getSongsListener, getSongByUuidListener, uploadSongListener, findSongListener,
+  getSongsEndpoint,
+  getSongByUuidEndpoint,
+  uploadSongEndpoint,
+  findSongEndpoint,
 } from './endpoints/songs';
 import GetUserEndpoint from './endpoints/users';
 import {
-  getPlaylistListener,
-  createPlaylistListener,
-  updatePlaylistListener,
-  deletePlaylistListener,
-  addSongListener,
-  deleteSongListener,
+  getPlaylistEndpoint,
+  createPlaylistEndpoint,
+  updatePlaylistEndpoint,
+  deletePlaylistEndpoint,
+  addSongEndpoint,
+  deleteSongEndpoint,
 } from './endpoints/users/playlist';
 
 MongoDB();
@@ -59,14 +65,14 @@ app.post('/api/playlists', [
   validateAccept(),
   validateContentType('application/json'),
   AuthMiddleware(),
-  createPlaylistListener(),
+  createPlaylistEndpoint(),
 ]);
 
 // get playlist
 app.get('/api/playlists/:playlistId', [
   validateAccept(),
   AuthMiddleware(),
-  getPlaylistListener(),
+  getPlaylistEndpoint(),
 ]);
 
 // update playlist
@@ -74,29 +80,29 @@ app.patch('/api/playlists/:playlistId', [
   validateAccept(),
   validateContentType('application/json'),
   AuthMiddleware(),
-  updatePlaylistListener(),
+  updatePlaylistEndpoint(),
 ]);
 
 // delete playlist
 app.delete('/api/playlists/:playlistId', [
   validateAccept(),
   AuthMiddleware(),
-  deletePlaylistListener(),
+  deletePlaylistEndpoint(),
 ]);
 
-// add song in playlist *
+// add song in playlist
 app.put('/api/playlists/:playlistId', [
   validateAccept(),
   validateContentType('application/json'),
   AuthMiddleware(),
-  addSongListener(),
+  addSongEndpoint(),
 ]);
 
-// delete song from playlist *
+// delete song from playlist
 app.delete('/api/playlists/:playlistId/:songId', [
   validateAccept(),
   AuthMiddleware(),
-  deleteSongListener(),
+  deleteSongEndpoint(),
 ]);
 
 // get song list
@@ -104,7 +110,7 @@ app.get('/api/songs', [
   validateAccept(),
   validateContentType('application/json'),
   AuthMiddleware(),
-  getSongsListener(),
+  getSongsEndpoint(),
 ]);
 
 // find song
@@ -112,7 +118,7 @@ app.get('/api/songs/find', [
   validateAccept(),
   validateContentType('application/json'),
   AuthMiddleware(),
-  findSongListener(),
+  findSongEndpoint(),
 ]);
 
 // get song by id
@@ -120,7 +126,7 @@ app.get('/api/songs/:songId', [
   validateAccept(),
   validateContentType('application/json'),
   AuthMiddleware(),
-  getSongByUuidListener(),
+  getSongByUuidEndpoint(),
 ]);
 
 // upload song
@@ -128,7 +134,7 @@ app.put('/api/songs', [
   validateAccept(),
   // validateContentType('multipart/form-data'),
   AuthMiddleware(),
-  uploadSongListener(),
+  uploadSongEndpoint(),
 ]);
 
 app.all('/api*', (req, res) => {

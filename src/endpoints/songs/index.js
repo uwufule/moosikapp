@@ -4,7 +4,7 @@ import {
 } from '../../apis/mongodb/songs';
 
 
-export function getSongsListener() {
+export function getSongsEndpoint() {
   return async (req, res) => {
     try {
       const songs = await getSongs(req.body.skip, req.body.limit);
@@ -19,7 +19,7 @@ export function getSongsListener() {
   };
 }
 
-export function getSongByUuidListener() {
+export function getSongByUuidEndpoint() {
   return async (req, res) => {
     try {
       const song = await getSongByUuid(req.params.songId);
@@ -34,7 +34,7 @@ export function getSongByUuidListener() {
   };
 }
 
-export function findSongListener() {
+export function findSongEndpoint() {
   return async (req, res) => {
     try {
       const songs = await findSong(req.body.query);
@@ -49,7 +49,7 @@ export function findSongListener() {
   };
 }
 
-export function uploadSongListener() {
+export function uploadSongEndpoint() {
   return (req, res) => {
     if (!req.body) {
       res.status(400).send({ message: 'No body provided.' });

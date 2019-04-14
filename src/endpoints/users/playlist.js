@@ -5,7 +5,7 @@ import {
 import { updateUser } from '../../apis/mongodb/users';
 
 
-export function getPlaylistListener() {
+export function getPlaylistEndpoint() {
   return async (req, res) => {
     try {
       const playlist = await getPlaylist(req.params.playlistId);
@@ -20,7 +20,7 @@ export function getPlaylistListener() {
   };
 }
 
-export function createPlaylistListener() {
+export function createPlaylistEndpoint() {
   return async (req, res) => {
     try {
       const playlist = await createPlaylist({
@@ -37,7 +37,7 @@ export function createPlaylistListener() {
   };
 }
 
-export function updatePlaylistListener() {
+export function updatePlaylistEndpoint() {
   return async (req, res) => {
     try {
       const result = await updatePlaylist(req.params.playlistId, { private: req.body.private });
@@ -52,7 +52,7 @@ export function updatePlaylistListener() {
   };
 }
 
-export function deletePlaylistListener() {
+export function deletePlaylistEndpoint() {
   return async (req, res) => {
     try {
       const result = await deletePlaylist(req.params.playlistId);
@@ -68,7 +68,7 @@ export function deletePlaylistListener() {
   };
 }
 
-export function addSongListener() {
+export function addSongEndpoint() {
   return async (req, res) => {
     try {
       if (!req.body.song) {
@@ -91,7 +91,7 @@ export function addSongListener() {
   };
 }
 
-export function deleteSongListener() {
+export function deleteSongEndpoint() {
   return async (req, res) => {
     try {
       const result = await updatePlaylist(req.params.playlistId, {
