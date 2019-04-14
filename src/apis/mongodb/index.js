@@ -3,7 +3,7 @@ import UserModel from './models/user';
 
 
 export default function () {
-  Mongoose.connect('mongodb+srv://root:qhRfNgzxOQWGwA0E@cluster-0-apz1k.mongodb.net/db', { useNewUrlParser: true });
+  Mongoose.connect('mongodb+srv://root:qhRfNgzxOQWGwA0E@cluster-0-apz1k.mongodb.net/db', { useNewUrlParser: true, autoIndex: false });
 }
 
 export function findByUsername(username) {
