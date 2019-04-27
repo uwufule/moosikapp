@@ -22,10 +22,6 @@ const Song = Mongoose.model('Song', new Mongoose.Schema({
     type: String,
     required: true,
   },
-  url: {
-    type: String,
-    required: true,
-  },
   coverUrl: {
     type: String,
     default: '',

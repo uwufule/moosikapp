@@ -35,6 +35,12 @@ const app = Express();
 app.use(Express.static(Path.resolve('./static')));
 app.use(BodyParser.json());
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  next();
+});
+
 app.get('/', (req, res) => {
   res.sendFile(Path.resolve('./html/index.html'));
 });

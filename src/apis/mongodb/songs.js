@@ -18,7 +18,6 @@ export async function getSongByUuid(uuid) {
     author: 1,
     title: 1,
     uploadedBy: 1,
-    url: 1,
     coverUrl: 1,
     hash: 1,
     createdAt: 1,
