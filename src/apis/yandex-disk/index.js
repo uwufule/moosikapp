@@ -1,6 +1,7 @@
 import FS from 'fs';
 import RequestPromise from 'request-promise';
 
+
 export default class YandexDriveAPI {
   constructor(oauthToken) {
     this.BASE_URL = 'https://cloud-api.yandex.net/v1/disk';
@@ -61,10 +62,7 @@ export default class YandexDriveAPI {
       RequestPromise(uri, { method: 'GET', headers: { Authorization: `OAuth ${this.OAUTH_TOKEN}` } })
         .then((res) => {
           stream.pipe(RequestPromise.put(JSON.parse(res).href))
-            .on('complete', async () => {
-              const fileLink = await this.getFileLink(remotePath);
-              resolve({ url: fileLink.href });
-            })
+            .on('complete', () => resolve(true))
             .on('error', () => reject(new Error('UploadError')));
         })
         .catch(res => reject(JSON.parse(res.response.body)));
