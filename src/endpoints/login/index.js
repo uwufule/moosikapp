@@ -3,39 +3,36 @@ import JWT from 'jsonwebtoken';
 import { findByUsername, findByEmail } from '../../apis/mongodb';
 
 
-const JWT_SECRET = 'bca16e36812f55eb2894c082652cae7b';
+const { JWT_SECRET } = process.env;
 
 
-function login(res, user, password) {
-  if (!user) {
+function login(res, usr, pwd) {
+  if (!usr) {
     res.status(403).send({ message: 'This account has been deactivated.' });
     return;
   }
 
-  const passwords = user.password.split('.');
-  const hash = Crypto.createHmac('sha512', passwords[0]).update(password).digest('hex');
+  const pwds = usr.password.hash.split('.');
+  const hash = Crypto.createHmac('sha512', pwds[0]).update(pwd).digest('hex');
+
+  const {
+    uuid, username, permissions, password: { time },
+  } = usr;
 
   const token = JWT.sign({
-    uuid: user.uuid,
-    username: user.username,
-    email: user.email,
-    permissionLevel: user.permissionLevel,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    uuid, username, permissions, time,
   }, JWT_SECRET);
 
-  if (passwords[1] === hash) {
-    res.status(200).send({
-      message: 'Successfully logged in.',
-      token,
-    });
+  if (pwds[1] === hash) {
+    res.status(200).send({ message: 'Successfully logged in.', token });
     return;
   }
   res.status(401).send({ message: 'Invalid authorization.' });
 }
 
+
 export default function () {
-  return (req, res) => {
+  return async (req, res) => {
     if (!req.body) {
       res.status(400).send({ message: 'No body provided.' });
     }
@@ -47,22 +44,20 @@ export default function () {
     }
 
     if (/^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(username)) {
-      findByEmail(username)
-        .then((user) => {
-          login(res, user, password);
-        })
-        .catch(() => {
-          res.status(500).send();
-        });
+      try {
+        const user = await findByEmail(username);
+        login(res, user, password);
+      } catch (e) {
+        res.status(500).send();
+      }
       return;
     }
 
-    findByUsername(username)
-      .then((user) => {
-        login(res, user, password);
-      })
-      .catch(() => {
-        res.status(500).send();
-      });
+    try {
+      const user = await findByUsername(username);
+      login(res, user, password);
+    } catch (e) {
+      res.status(500).send();
+    }
   };
 }
