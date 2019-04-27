@@ -4,7 +4,7 @@
   "description": "Server",
   "main": "./src/index.js",
   "scripts": {
-    "start": "webpack&&set YANDEX_DISK_API_TOKEN=AQAAAAAkeVfEAAWUdhFEJeYmG0KpgXAZoZ4tHXg&&set JWT_SECRET=bca16e36812f55eb2894c082652cae7b&&node ./build/server.js",
+    "start": "webpack && node ./build/server.js",
     "build:dev": "webpack",
     "build:prod": "set NODE_ENV=production&&webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "busboy": "^0.3.1",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.22",

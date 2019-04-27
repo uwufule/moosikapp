@@ -8,25 +8,14 @@ const User = Mongoose.model('User', new Mongoose.Schema({
   },
   username: {
     type: String,
-    required: true,
     unique: true,
   },
   email: {
     type: String,
-    required: true,
     unique: true,
   },
-  password: {
-    hash: {
-      type: String,
-      required: true,
-    },
-    time: {
-      type: Date,
-      default: Date.now(),
-    },
-  },
-  permissions: {
+  password: String,
+  permissionLevel: {
     type: Number,
     default: 1,
   },

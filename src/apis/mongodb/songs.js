@@ -20,7 +20,6 @@ export async function getSongByUuid(uuid) {
     uploadedBy: 1,
     coverUrl: 1,
     hash: 1,
-    type: 1,
     createdAt: 1,
     _id: 0,
   };
