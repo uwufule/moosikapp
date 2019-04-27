@@ -2,8 +2,11 @@ import Mongoose from 'mongoose';
 import UserModel from './models/user';
 
 
+const MONGODB_CONNECTION_STRING = 'mongodb+srv://root:qhRfNgzxOQWGwA0E@cluster-0-apz1k.mongodb.net/db';
+
+
 export default function () {
-  Mongoose.connect('mongodb+srv://root:qhRfNgzxOQWGwA0E@cluster-0-apz1k.mongodb.net/db', { useNewUrlParser: true, autoIndex: false });
+  Mongoose.connect(MONGODB_CONNECTION_STRING, { useNewUrlParser: true, autoIndex: false });
 }
 
 export function findByUsername(username) {
