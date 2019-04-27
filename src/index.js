@@ -2,13 +2,15 @@ import Path from 'path';
 import Express from 'express';
 import BodyParser from 'body-parser';
 
+import YandexDiskApi from './apis/yandex-disk';
 import MongoDB from './apis/mongodb';
 
-import AuthMiddleware from './middlewares/auth';
+import AuthMiddleware from './middlewares/authorization';
 import {
   validateAccept,
   validateContentType,
-} from './middlewares/validate-headers';
+} from './middlewares/headers';
+import MinimumPermissionLevelRequired from './middlewares/permissions';
 
 import LoginEndpoint from './endpoints/login';
 import RegisterEndpoint from './endpoints/register';
@@ -28,12 +30,30 @@ import {
   deleteSongEndpoint,
 } from './endpoints/users/playlist';
 
+
+YandexDiskApi(process.env.YANDEX_DISK_API_TOKEN);
 MongoDB();
+
 
 const app = Express();
 
+
 app.use(Express.static(Path.resolve('./static')));
+
 app.use(BodyParser.json());
+app.use(BodyParser.raw({ type: 'audio/mpeg', limit: '10mb' }));
+
+app.use((error, req, res, next) => {
+  if (!error) next();
+
+  switch (error.message) {
+    case 'request entity too large':
+      res.send({ message: 'File too large.' });
+      break;
+    default:
+      res.status(500).send();
+  }
+});
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -138,11 +158,13 @@ app.get('/api/songs/:songId', [
 // upload song
 app.put('/api/songs', [
   validateAccept(),
-  // validateContentType('multipart/form-data'),
+  validateContentType('audio/mpeg'),
   AuthMiddleware(),
+  MinimumPermissionLevelRequired(2),
   uploadSongEndpoint(),
 ]);
 
+// 404 not found
 app.all('/api*', (req, res) => {
   res.status(404).send({ message: 'The resource you are trying to request does not exist.' });
 });

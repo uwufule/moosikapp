@@ -8,11 +8,11 @@ const Song = Mongoose.model('Song', new Mongoose.Schema({
   },
   author: {
     type: String,
-    default: '',
+    default: 'no author',
   },
   title: {
     type: String,
-    default: '',
+    default: 'no title',
   },
   uploadedBy: {
     type: String,
@@ -22,9 +22,17 @@ const Song = Mongoose.model('Song', new Mongoose.Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    default: 'mp3',
+  },
+  url: {
+    type: String,
+    default: null,
+  },
   coverUrl: {
     type: String,
-    default: '',
+    default: null,
   },
 }, { versionKey: false, timestamps: true }));
 
