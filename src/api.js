@@ -22,6 +22,7 @@ import {
   addSongEndpoint,
   deleteSongEndpoint,
 } from './endpoints/users/playlist';
+import Status from './endpoints/status';
 
 
 export default function (app) {
@@ -126,6 +127,11 @@ export default function (app) {
     AuthMiddleware(),
     MinimumPermissionLevelRequired(2),
     uploadSongEndpoint(),
+  ]);
+
+  app.get('/api/status', [
+    validateAccept(),
+    Status(),
   ]);
 
   // 404 not found
