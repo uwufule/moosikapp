@@ -15,7 +15,7 @@ export default function (req, res) {
   }
 
   const filename = req.headers['x-uploaded-filename'] || '';
-  const [title, author] = filename.split('-').map(a => a.trim());
+  const [author, title] = filename.replace('.mp3', '').split('-').map(a => a.trim());
 
   const writeStream = FS.createWriteStream(TEMP_FILE, { flags: 'w+', encoding: 'binary' });
 
