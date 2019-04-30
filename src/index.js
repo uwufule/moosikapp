@@ -1,5 +1,6 @@
 import Path from 'path';
 import Express from 'express';
+import Cors from 'cors';
 import BodyParser from 'body-parser';
 
 import YandexDiskApi from './apis/yandex-disk';
@@ -20,6 +21,8 @@ app.use(Express.static(Path.resolve('./static')));
 app.use(BodyParser.json());
 app.use(BodyParser.raw({ type: 'audio/mpeg', limit: '10mb' }));
 
+app.use(Cors());
+
 app.use((error, req, res, next) => {
   if (!error) next();
 
@@ -32,12 +35,6 @@ app.use((error, req, res, next) => {
   }
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  next();
-});
-
 
 app.get('/', (req, res) => {
   res.sendFile(Path.resolve('./html/index.html'));
@@ -45,6 +42,11 @@ app.get('/', (req, res) => {
 
 
 Api(app);
+
+
+app.get('*', (req, res) => {
+  res.redirect('/');
+});
 
 
 app.listen(process.env.PORT || 8080);
