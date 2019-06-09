@@ -1,5 +1,15 @@
+# Build
 build/
+
+# Modules
 node_modules/
+yarn.lock
+
+# VS Code
 .vscode/
 
+# Temp files
 tmp
+
+# Env variables
+.env
