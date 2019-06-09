@@ -29,8 +29,8 @@ export default function (req, res) {
 
       res.status(201).send({ message: 'You have successfully uploaded a new song.', uuid });
     } catch (e) {
-      switch (e.error) {
-        case 'DiskResourceAlreadyExistsError':
+      switch (e.toString()) {
+        case 'Error: DiskResourceAlreadyExistsError':
           res.status(406).send({ message: 'Already exists.' });
           break;
         default:
