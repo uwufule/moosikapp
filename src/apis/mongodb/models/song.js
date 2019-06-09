@@ -1,6 +1,5 @@
 import Mongoose from 'mongoose';
 
-
 const Song = Mongoose.model('Song', new Mongoose.Schema({
   uuid: {
     type: String,
@@ -8,11 +7,11 @@ const Song = Mongoose.model('Song', new Mongoose.Schema({
   },
   author: {
     type: String,
-    default: 'no author',
+    default: 'No Author',
   },
   title: {
     type: String,
-    default: 'no title',
+    default: 'No Title',
   },
   uploadedBy: {
     type: String,
@@ -26,11 +25,7 @@ const Song = Mongoose.model('Song', new Mongoose.Schema({
     type: String,
     default: 'mp3',
   },
-  url: {
-    type: String,
-    default: null,
-  },
-  coverUrl: {
+  cover: {
     type: String,
     default: null,
   },
