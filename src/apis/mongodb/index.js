@@ -1,9 +1,7 @@
 import Mongoose from 'mongoose';
 import UserModel from './models/user';
 
-
-const MONGODB_CONNECTION_STRING = 'mongodb+srv://root:qhRfNgzxOQWGwA0E@cluster-0-apz1k.mongodb.net/db';
-
+const { MONGODB_CONNECTION_STRING } = process.env;
 
 export default function () {
   Mongoose.connect(MONGODB_CONNECTION_STRING, { useNewUrlParser: true, autoIndex: false });
