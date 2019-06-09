@@ -1,4 +1,4 @@
-const API_VERSION = 1;
+const { API_VERSION } = process.env;
 
 export function validateAccept() {
   return (req, res, next) => {
