@@ -1,29 +1,22 @@
-import AuthMiddleware from './middlewares/authorization';
-import {
-  validateAccept,
-  validateContentType,
-} from './middlewares/headers';
-import MinimumPermissionLevelRequired from './middlewares/permissions';
+import checkAuth from './middlewares/authorization';
+import checkPermissions from './middlewares/permissions';
+import { validateAccept, validateContentType } from './middlewares/headers';
 
-import LoginEndpoint from './endpoints/login';
-import RegisterEndpoint from './endpoints/register';
+import status from './endpoints/status';
+import login from './endpoints/login';
+import register from './endpoints/register';
+import users from './endpoints/users';
 import {
-  getSongsEndpoint,
-  getSongByUuidEndpoint,
-  uploadSongEndpoint,
-  findSongEndpoint,
+  getSongs, getSongByUuid, findSongs, uploadSong,
 } from './endpoints/songs';
-import GetUserEndpoint from './endpoints/users';
-import {
-  getPlaylistEndpoint,
-  createPlaylistEndpoint,
-  updatePlaylistEndpoint,
-  deletePlaylistEndpoint,
-  addSongEndpoint,
-  deleteSongEndpoint,
-} from './endpoints/users/playlist';
-import Status from './endpoints/status';
-
+// import {
+//   getPlaylistEndpoint,
+//   createPlaylistEndpoint,
+//   updatePlaylistEndpoint,
+//   deletePlaylistEndpoint,
+//   addSongEndpoint,
+//   deleteSongEndpoint,
+// } from './endpoints/users/playlist';
 
 export default function (app) {
   app.all('/api', (req, res) => {
@@ -34,104 +27,105 @@ export default function (app) {
   app.post('/api/login', [
     validateAccept(),
     validateContentType('application/json'),
-    LoginEndpoint(),
+    login(),
   ]);
 
   // register
   app.post('/api/register', [
     validateAccept(),
     validateContentType('application/json'),
-    RegisterEndpoint(),
+    register(),
   ]);
 
   // get user with provided username
   app.get('/api/users/:username', [
     validateAccept(),
-    AuthMiddleware(),
-    GetUserEndpoint(),
+    checkAuth(),
+    users(),
   ]);
 
-  // create new playlist
-  app.post('/api/playlists', [
-    validateAccept(),
-    validateContentType('application/json'),
-    AuthMiddleware(),
-    createPlaylistEndpoint(),
-  ]);
+  // // create new playlist
+  // app.post('/api/playlists', [
+  //   validateAccept(),
+  //   validateContentType('application/json'),
+  //   checkAuth(),
+  //   createPlaylistEndpoint(),
+  // ]);
 
-  // get playlist
-  app.get('/api/playlists/:playlistId', [
-    validateAccept(),
-    AuthMiddleware(),
-    getPlaylistEndpoint(),
-  ]);
+  // // get playlist
+  // app.get('/api/playlists/:playlistId', [
+  //   validateAccept(),
+  //   checkAuth(),
+  //   getPlaylistEndpoint(),
+  // ]);
 
-  // update playlist
-  app.patch('/api/playlists/:playlistId', [
-    validateAccept(),
-    validateContentType('application/json'),
-    AuthMiddleware(),
-    updatePlaylistEndpoint(),
-  ]);
+  // // update playlist
+  // app.patch('/api/playlists/:playlistId', [
+  //   validateAccept(),
+  //   validateContentType('application/json'),
+  //   checkAuth(),
+  //   updatePlaylistEndpoint(),
+  // ]);
 
-  // delete playlist
-  app.delete('/api/playlists/:playlistId', [
-    validateAccept(),
-    AuthMiddleware(),
-    deletePlaylistEndpoint(),
-  ]);
+  // // delete playlist
+  // app.delete('/api/playlists/:playlistId', [
+  //   validateAccept(),
+  //   checkAuth(),
+  //   deletePlaylistEndpoint(),
+  // ]);
 
-  // add song in playlist
-  app.put('/api/playlists/:playlistId', [
-    validateAccept(),
-    validateContentType('application/json'),
-    AuthMiddleware(),
-    addSongEndpoint(),
-  ]);
+  // // add song in playlist
+  // app.put('/api/playlists/:playlistId', [
+  //   validateAccept(),
+  //   validateContentType('application/json'),
+  //   checkAuth(),
+  //   addSongEndpoint(),
+  // ]);
 
-  // delete song from playlist
-  app.delete('/api/playlists/:playlistId/:songId', [
-    validateAccept(),
-    AuthMiddleware(),
-    deleteSongEndpoint(),
-  ]);
+  // // delete song from playlist
+  // app.delete('/api/playlists/:playlistId/:songId', [
+  //   validateAccept(),
+  //   checkAuth(),
+  //   deleteSongEndpoint(),
+  // ]);
 
-  // get song list
+  // get songs
   app.get('/api/songs', [
     validateAccept(),
     validateContentType('application/json'),
-    AuthMiddleware(),
-    getSongsEndpoint(),
+    checkAuth(),
+    getSongs(),
   ]);
 
   // find song
   app.get('/api/songs/find', [
     validateAccept(),
     validateContentType('application/json'),
-    AuthMiddleware(),
-    findSongEndpoint(),
+    checkAuth(),
+    findSongs(),
   ]);
 
   // get song by id
   app.get('/api/songs/:songId', [
     validateAccept(),
     validateContentType('application/json'),
-    AuthMiddleware(),
-    getSongByUuidEndpoint(),
+    checkAuth(),
+    getSongByUuid(),
   ]);
 
   // upload song
   app.put('/api/songs', [
     validateAccept(),
     validateContentType('audio/mpeg'),
-    AuthMiddleware(),
-    MinimumPermissionLevelRequired(2),
-    uploadSongEndpoint(),
+    checkAuth(),
+    checkPermissions(2),
+    uploadSong(),
   ]);
 
+  // status
   app.get('/api/status', [
     validateAccept(),
-    Status(),
+    status(),
   ]);
 
   // 404 not found
