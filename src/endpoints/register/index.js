@@ -1,7 +1,8 @@
 import Crypto from 'crypto';
-import Uuid from 'uuid';
+import uuidv4 from 'uuid/v4';
 import { createUser } from '../../apis/mongodb/users';
 
+const EMAIL_REGEX = /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
 
 export default function () {
   return async (req, res) => {
@@ -10,7 +11,7 @@ export default function () {
     }
 
     const { email, username, password } = req.body;
-    if (!email || !/^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(email)) {
+    if (!email || !EMAIL_REGEX.test(email)) {
       res.status(400).send({ message: 'Invalid e-mail address provided.' });
       return;
     }
@@ -18,7 +19,7 @@ export default function () {
     const salt = Crypto.randomBytes(16).toString('hex');
     const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
 
-    const uuid = Uuid();
+    const uuid = uuidv4();
 
     try {
       await createUser({
@@ -31,7 +32,7 @@ export default function () {
         res.status(400).send({ message: 'An account with that email address and/or username already exists.' });
         return;
       }
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }

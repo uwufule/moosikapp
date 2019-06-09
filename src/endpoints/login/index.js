@@ -2,9 +2,9 @@ import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 import { findByUsername, findByEmail } from '../../apis/mongodb';
 
-
 const { JWT_SECRET } = process.env;
 
+const EMAIL_REGEX = /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
 
 function login(res, usr, pwd) {
   if (!usr) {
@@ -30,7 +30,6 @@ function login(res, usr, pwd) {
   res.status(401).send({ message: 'Invalid authorization.' });
 }
 
-
 export default function () {
   return async (req, res) => {
     if (!req.body) {
@@ -43,12 +42,12 @@ export default function () {
       return;
     }
 
-    if (/^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(username)) {
+    if (EMAIL_REGEX.test(username)) {
       try {
         const user = await findByEmail(username);
         login(res, user, password);
       } catch (e) {
-        res.status(500).send();
+        res.status(500).send({ message: 'Internal server error.' });
       }
       return;
     }
@@ -57,7 +56,7 @@ export default function () {
       const user = await findByUsername(username);
       login(res, user, password);
     } catch (e) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
