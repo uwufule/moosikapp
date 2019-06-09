@@ -1,91 +1,145 @@
-import FS from 'fs';
-import RequestPromise from 'request-promise';
+/* eslint-disable camelcase */
 
+import FS from 'fs';
+import request from 'request-promise';
 
 const BASE_URL = 'https://cloud-api.yandex.net/v1/disk';
 
-let OAUTH_TOKEN = '';
-
+let authorization;
 
 export default function (token) {
-  OAUTH_TOKEN = token;
+  authorization = `OAuth ${token}`;
 }
 
-export function getDiskInfo() {
-  return new Promise((resolve, reject) => {
-    RequestPromise(BASE_URL, { method: 'GET', headers: { Authorization: `OAuth ${OAUTH_TOKEN}` } })
-      .then((res) => {
-        /* eslint-disable camelcase */
-        const { total_space, used_space, max_file_size } = JSON.parse(res);
-        resolve({
-          totalSpace: total_space,
-          usedSpace: used_space,
-          maxFileSize: max_file_size,
-        });
-        /* eslint-enable camelcase */
-      })
-      .catch(res => reject(new Error(JSON.parse(res.response.body).error)));
+export async function getDiskStatus() {
+  const res = await request(BASE_URL, {
+    method: 'GET',
+    headers: { authorization },
   });
+
+  const { total_space, used_space, max_file_size } = JSON.parse(res);
+
+  return {
+    totalSpace: total_space, usedSpace: used_space, maxFileSize: max_file_size,
+  };
 }
 
-export function createFolder(path) {
+export function createDirectory(path) {
   return new Promise((resolve, reject) => {
     const uri = `${BASE_URL}/resources?path=${encodeURI(path)}`;
-    RequestPromise(uri, { method: 'PUT', headers: { Authorization: `OAuth ${OAUTH_TOKEN}` } })
-      .then(res => resolve(JSON.parse(res).href))
-      .catch(res => reject(new Error(JSON.parse(res.response.body).error)));
+
+    request(uri, {
+      method: 'PUT',
+      headers: { authorization },
+    })
+      .then((res) => {
+        resolve(JSON.parse(res).href);
+      })
+      .catch((err) => {
+        const { error } = JSON.parse(err.response.body);
+        reject(new Error(error));
+      });
   });
 }
 
 export function getDirList(path) {
   return new Promise((resolve, reject) => {
     const uri = `${BASE_URL}/resources?path=${encodeURI(path)}`;
-    RequestPromise(uri, { method: 'GET', headers: { Authorization: `OAuth ${OAUTH_TOKEN}` } })
-      .then(res => resolve(JSON.parse(res)))
-      .catch(res => reject(new Error(JSON.parse(res.response.body).error)));
+
+    request(uri, {
+      method: 'GET',
+      headers: { authorization },
+    })
+      .then((res) => {
+        resolve(JSON.parse(res));
+      })
+      .catch((err) => {
+        const { error } = JSON.parse(err.response.body);
+        reject(new Error(error));
+      });
   });
 }
 
 export function getFileLink(path) {
   return new Promise((resolve, reject) => {
     const uri = `${BASE_URL}/resources/download?path=${encodeURI(path)}`;
-    RequestPromise(uri, { method: 'GET', headers: { Authorization: `OAuth ${OAUTH_TOKEN}` } })
-      .then(res => resolve(JSON.parse(res).href))
-      .catch(res => reject(new Error(JSON.parse(res.response.body).error)));
+
+    request(uri, {
+      method: 'GET',
+      headers: { authorization },
+    })
+      .then((res) => {
+        resolve(JSON.parse(res).href);
+      })
+      .catch((err) => {
+        const { error } = JSON.parse(err.response.body);
+        reject(new Error(error));
+      });
   });
 }
 
 export function uploadFile(remotePath, localPath) {
   return new Promise((resolve, reject) => {
     const uri = `${BASE_URL}/resources/upload/?path=${encodeURI(remotePath)}`;
-    RequestPromise(uri, { method: 'GET', headers: { Authorization: `OAuth ${OAUTH_TOKEN}` } })
+
+    request(uri, {
+      method: 'GET',
+      headers: { authorization },
+    })
       .then((res) => {
-        FS.createReadStream(localPath).pipe(RequestPromise.put(JSON.parse(res).href))
-          .on('complete', () => resolve(true))
-          .on('error', () => reject(new Error('UploadError')));
+        FS.createReadStream(localPath).pipe(request.put(JSON.parse(res).href))
+          .on('complete', () => {
+            resolve(true);
+          })
+          .on('error', () => {
+            reject(new Error('UploadError'));
+          });
       })
-      .catch(res => reject(new Error(JSON.parse(res.response.body).error)));
+      .catch((err) => {
+        const { error } = JSON.parse(err.response.body);
+        reject(new Error(error));
+      });
   });
 }
 
 export function uploadFileFromStream(remotePath, stream) {
   return new Promise((resolve, reject) => {
     const uri = `${BASE_URL}/resources/upload/?path=${encodeURI(remotePath)}`;
-    RequestPromise(uri, { method: 'GET', headers: { Authorization: `OAuth ${OAUTH_TOKEN}` } })
+
+    request(uri, {
+      method: 'GET',
+      headers: { authorization },
+    })
       .then((res) => {
-        stream.pipe(RequestPromise.put(JSON.parse(res).href))
-          .on('complete', () => resolve(true))
-          .on('error', () => reject(new Error('UploadError')));
+        stream.pipe(request.put(JSON.parse(res).href))
+          .on('complete', () => {
+            resolve(true);
+          })
+          .on('error', () => {
+            reject(new Error('UploadError'));
+          });
       })
-      .catch(res => reject(JSON.parse(res.response.body)));
+      .catch((err) => {
+        const { error } = JSON.parse(err.response.body);
+        reject(new Error(error));
+      });
   });
 }
 
 export function deleteFile(path) {
   return new Promise((resolve, reject) => {
     const uri = `${BASE_URL}/resources?path=${encodeURI(path)}&permanently=true`;
-    RequestPromise(uri, { method: 'DELETE', headers: { Authorization: `OAuth ${OAUTH_TOKEN}` } })
-      .then(() => resolve(true))
-      .catch(res => reject(JSON.parse(res.response.body)));
+
+    request(uri, {
+      method: 'DELETE',
+      headers: { authorization },
+    })
+      .then(() => {
+        resolve(true);
+      })
+      .catch((err) => {
+        const { error } = JSON.parse(err.response.body);
+        reject(new Error(error));
+      });
   });
 }
