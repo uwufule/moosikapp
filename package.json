@@ -4,7 +4,7 @@
   "description": "Server",
   "main": "./src/index.js",
   "scripts": {
-    "start": "webpack&&set YANDEX_DISK_API_TOKEN=AQAAAAAkeVfEAAWUdhFEJeYmG0KpgXAZoZ4tHXg&&set JWT_SECRET=bca16e36812f55eb2894c082652cae7b&&node ./build/server.js",
+    "start": "webpack&&node -r dotenv/config ./build/server.js",
     "build:dev": "webpack",
     "build:prod": "set NODE_ENV=production&&webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,6 +23,7 @@
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "babel-loader": "^8.0.5",
+    "dotenv": "^8.0.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
