@@ -1,29 +1,35 @@
-import Upload from './upload';
-import {
-  getSongs, getSongByUuid, findSong,
-} from '../../apis/mongodb/songs';
+import upload from './upload';
 import { getFileLink } from '../../apis/yandex-disk';
+import {
+  getSongs as getSongsFromDB,
+  getSongByUuid as getSongByUuidFromDB,
+  findSongs as findSongsInDB,
+} from '../../apis/mongodb/songs';
 
-
-export function getSongsEndpoint() {
+export function getSongs() {
   return async (req, res) => {
+    const { skip, limit } = req.body;
+
     try {
-      const songs = await getSongs(req.body.skip, req.body.limit);
+      const songs = await getSongsFromDB(skip, limit);
+
       if (!songs.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
+
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
-export function getSongByUuidEndpoint() {
+export function getSongByUuid() {
   return async (req, res) => {
     try {
-      const song = await getSongByUuid(req.params.songId);
+      const song = await getSongByUuidFromDB(req.params.songId);
+
       if (!song) {
         res.status(404).send({ message: 'No song found.' });
         return;
@@ -33,43 +39,42 @@ export function getSongByUuidEndpoint() {
 
       res.status(200).send({ message: 'Successfully retrieved song.', song });
     } catch (e) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
-export function findSongEndpoint() {
+export function findSongs() {
   return async (req, res) => {
     const { query } = req.body;
+
     if (!query) {
       res.status(400).send({ message: 'No query provided.' });
       return;
     }
 
     try {
-      const songs = await findSong(query);
+      const songs = await findSongsInDB(encodeURI(query));
+
       if (!songs.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
+
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
-export function uploadSongEndpoint() {
+export function uploadSong() {
   return (req, res) => {
-    if (Number(req.headers['content-length']) === 0) {
+    if (!req.body || Number(req.headers['content-length']) === 0) {
       res.status(400).send({ message: 'No body provided.' });
       return;
     }
 
-    try {
-      Upload(req, res);
-    } catch (error) {
-      res.status(400).send({ message: 'No data provided.' });
-    }
+    upload(req, res);
   };
 }
