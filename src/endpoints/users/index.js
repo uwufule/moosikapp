@@ -11,7 +11,7 @@ export default function () {
       }
       res.status(200).send({ message: 'Successfully retrieved user.', user });
     } catch (error) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }

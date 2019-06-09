@@ -4,7 +4,6 @@ import {
 } from '../../apis/mongodb/playlists';
 import { updateUser } from '../../apis/mongodb/users';
 
-
 export function getPlaylistEndpoint() {
   return async (req, res) => {
     try {
@@ -15,7 +14,7 @@ export function getPlaylistEndpoint() {
       }
       res.status(200).send({ message: 'Successfully retrieved playlist.', playlist });
     } catch (error) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
@@ -32,7 +31,7 @@ export function createPlaylistEndpoint() {
       await updateUser(req.jwt.uuid, { $push: { playlists: playlist.uuid } });
       res.status(200).send({ message: 'You have successfully created a new playlist.', id: playlist.uuid });
     } catch (error) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
@@ -47,7 +46,7 @@ export function updatePlaylistEndpoint() {
       }
       res.status(200).send({ message: 'You have successfully updated playlist.' });
     } catch (error) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
@@ -63,7 +62,7 @@ export function deletePlaylistEndpoint() {
       await updateUser(req.jwt.uuid, { $pull: { playlists: req.params.playlistId } });
       res.status(200).send({ message: 'You have successfully deleted playlist.' });
     } catch (error) {
-      res.status(500).send();
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
