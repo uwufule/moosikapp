@@ -1,6 +1,5 @@
 import Mongoose from 'mongoose';
 
-
 const Playlist = Mongoose.model('Playlist', new Mongoose.Schema({
   uuid: {
     type: String,

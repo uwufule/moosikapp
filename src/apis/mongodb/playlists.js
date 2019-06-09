@@ -1,6 +1,5 @@
 import PlaylistModel from './models/playlist';
 
-
 export async function getPlaylist(playlistId) {
   const projection = {
     uuid: 1,
@@ -9,34 +8,22 @@ export async function getPlaylist(playlistId) {
     _id: 0,
   };
 
-  try {
-    return await PlaylistModel.findOne({ uuid: playlistId }, projection);
-  } catch (error) {
-    throw new Error(error);
-  }
+  const playlist = await PlaylistModel.findOne({ uuid: playlistId }, projection);
+  return playlist;
 }
 
 export async function createPlaylist(playlistData) {
-  try {
-    const playlist = new PlaylistModel(playlistData);
-    return await playlist.save();
-  } catch (error) {
-    throw new Error(error);
-  }
+  const playlist = new PlaylistModel(playlistData);
+  await playlist.save();
+  return true;
 }
 
 export async function updatePlaylist(playlistId, data) {
-  try {
-    return await PlaylistModel.updateOne({ uuid: playlistId }, data);
-  } catch (error) {
-    throw new Error(error);
-  }
+  await PlaylistModel.updateOne({ uuid: playlistId }, data);
+  return true;
 }
 
 export async function deletePlaylist(playlistId) {
-  try {
-    return await PlaylistModel.deleteOne({ uuid: playlistId });
-  } catch (error) {
-    throw new Error(error);
-  }
+  await PlaylistModel.deleteOne({ uuid: playlistId });
+  return true;
 }

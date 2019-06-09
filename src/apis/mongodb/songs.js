@@ -1,16 +1,12 @@
 import SongModel from './models/song';
 
-
 export async function getSongs(skip = 0, limit = 100) {
   const projection = {
     uuid: 1, author: 1, title: 1, _id: 0,
   };
 
-  try {
-    return await SongModel.find({ }, projection).skip(skip).limit(limit);
-  } catch (error) {
-    throw new Error(error);
-  }
+  const songs = await SongModel.find({ }, projection).skip(skip).limit(limit);
+  return songs;
 }
 
 export async function getSongByUuid(uuid) {
@@ -25,14 +21,11 @@ export async function getSongByUuid(uuid) {
     _id: 0,
   };
 
-  try {
-    return await SongModel.findOne({ uuid }, projection);
-  } catch (error) {
-    throw new Error(error);
-  }
+  const song = await SongModel.findOne({ uuid }, projection);
+  return song;
 }
 
-export async function findSong(queryString) {
+export async function findSongs(queryString) {
   const query = {
     $or: [
       {
@@ -52,18 +45,12 @@ export async function findSong(queryString) {
     uuid: 1, author: 1, title: 1, _id: 0,
   };
 
-  try {
-    return await SongModel.find(query, projection);
-  } catch (error) {
-    throw new Error(error);
-  }
+  const foundSongs = await SongModel.find(query, projection);
+  return foundSongs;
 }
 
 export async function saveSong(songData) {
-  try {
-    const song = new SongModel(songData);
-    return await song.save();
-  } catch (error) {
-    throw new Error(error);
-  }
+  const song = new SongModel(songData);
+  await song.save();
+  return true;
 }

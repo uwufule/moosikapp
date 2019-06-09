@@ -1,6 +1,5 @@
 import Mongoose from 'mongoose';
 
-
 const User = Mongoose.model('User', new Mongoose.Schema({
   uuid: {
     type: String,
