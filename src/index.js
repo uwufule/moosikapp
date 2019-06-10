@@ -5,7 +5,7 @@ import BodyParser from 'body-parser';
 import errorHandler from './middlewares/errorHandler';
 import mongoDB from './apis/mongodb';
 import yandexDiskApi from './apis/yandex-disk';
-import connectApi from './api';
+import apiEndpoint from './endpoints';
 
 const { PORT, YANDEX_DISK_API_TOKEN } = process.env;
 
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
   res.sendFile(Path.resolve('./html/index.html'));
 });
 
-connectApi(app);
+apiEndpoint(app);
 
 app.get('*', (req, res) => {
   res.redirect('/');
