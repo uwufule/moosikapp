@@ -1,14 +1,14 @@
-import checkAuth from './middlewares/authorization';
-import checkPermissions from './middlewares/permissions';
-import { validateAccept, validateContentType } from './middlewares/headers';
+import checkAuth from '../middlewares/authorization';
+import checkPermissions from '../middlewares/permissions';
+import { validateAccept, validateContentType } from '../middlewares/headers';
 
-import status from './endpoints/status';
-import login from './endpoints/login';
-import register from './endpoints/register';
-import users from './endpoints/users';
+import status from './status';
+import login from './login';
+import register from './register';
+import users from './users';
 import {
   getSongs, getSongByUuid, findSongs, uploadSong,
-} from './endpoints/songs';
+} from './songs';
 // import {
 //   getPlaylistEndpoint,
 //   createPlaylistEndpoint,
