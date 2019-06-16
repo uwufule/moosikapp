@@ -27,7 +27,11 @@ const Song = Mongoose.model('Song', new Mongoose.Schema({
   },
   cover: {
     type: String,
-    default: null,
+    default: '',
+  },
+  url: {
+    type: String,
+    default: '',
   },
 }, { versionKey: false, timestamps: true }));
 
