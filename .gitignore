@@ -13,3 +13,7 @@ tmp
 
 # Env variables
 .env
+
+# Static
+html/
+static/
