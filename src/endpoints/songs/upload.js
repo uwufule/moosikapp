@@ -1,4 +1,5 @@
 import FS from 'fs';
+import Path from 'path';
 import Crypto from 'crypto';
 import uuidv4 from 'uuid/v4';
 import { uploadFileFromStream } from '../../apis/yandex-disk';
@@ -7,8 +8,8 @@ import { saveSong } from '../../apis/mongodb/songs';
 const TEMP_FILE = 'tmp';
 
 export default function (req, res) {
-  const filename = req.headers['x-uploaded-filename'] || '';
-  const [author, title] = filename.split('-').map(s => s.trim());
+  const filename = Path.parse(req.headers['x-uploaded-filename'] || '').name;
+  const [author, title] = filename.split(' - ').map(s => s.trim());
 
   const writeStream = FS.createWriteStream(TEMP_FILE, { flags: 'w+', encoding: 'binary' });
 
