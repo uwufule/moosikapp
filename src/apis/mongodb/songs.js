@@ -2,7 +2,7 @@ import SongModel from './models/song';
 
 export async function getSongs(skip = 0, limit = 100) {
   const projection = {
-    uuid: 1, author: 1, title: 1, _id: 0,
+    uuid: 1, author: 1, title: 1, cover: 1, _id: 0,
   };
 
   const songs = await SongModel.find({ }, projection).skip(skip).limit(limit);
@@ -14,9 +14,10 @@ export async function getSongByUuid(uuid) {
     author: 1,
     title: 1,
     uploadedBy: 1,
-    coverUrl: 1,
+    cover: 1,
     hash: 1,
     type: 1,
+    url: 1,
     createdAt: 1,
     _id: 0,
   };
@@ -42,7 +43,7 @@ export async function findSongs(queryString) {
   };
 
   const projection = {
-    uuid: 1, author: 1, title: 1, _id: 0,
+    uuid: 1, author: 1, title: 1, cover: 1, _id: 0,
   };
 
   const foundSongs = await SongModel.find(query, projection);
