@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="0" height="0" fill="#000">
+  <symbol viewBox="0 0 48 48" id="defaultCover">
+    <path d="M24 6v21.11c-1.18-.69-2.54-1.11-4-1.11-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8V14h8V6H24z" />
+  </symbol>
+
+  <symbol viewBox="0 0 48 48" id="play">
+    <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-4 29V15l12 9-12 9z" />
+  </symbol>
+
+  <symbol viewBox="0 0 48 48" id="pause">
+    <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-2 28h-4V16h4v16zm8 0h-4V16h4v16z" />
+  </symbol>
+
+  <symbol viewBox="0 0 48 48" id="select">
+    <path d="M38 26H26v12h-4V26H10v-4h12V10h4v12h12v4z" />
+  </symbol>
+
+  <symbol viewBox="0 0 48 48" id="deselect">
+    <path d="M18 32.34L9.66 24l-2.83 2.83L18 38l24-24-2.83-2.83z" />
+  </symbol>
+
+  <symbol viewBox="0 0 48 48" id="edit">
+    <path d="M6 26h4v-4H6v4zm0 8h4v-4H6v4zm0-16h4v-4H6v4zm8 8h28v-4H14v4zm0 8h28v-4H14v4zm0-20v4h28v-4H14z" />
+  </symbol>
+</svg>
