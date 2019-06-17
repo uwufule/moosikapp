@@ -2,6 +2,7 @@
   "name": "moosik",
   "version": "1.0.0",
   "description": "Server",
+  "private": true,
   "main": "./src/index.js",
   "scripts": {
     "start": "node ./build/server.min.js",
