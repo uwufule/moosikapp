@@ -4,6 +4,7 @@ import {
   getSongs as getSongsFromDB,
   getSongByUuid as getSongByUuidFromDB,
   findSongs as findSongsInDB,
+  updateSong as updateSongInDB,
 } from '../../apis/mongodb/songs';
 
 export function getSongs() {
@@ -76,5 +77,37 @@ export function uploadSong() {
     }
 
     upload(req, res);
+  };
+}
+
+export function updateSong() {
+  return async (req, res) => {
+    const { body, params: { songId } } = req;
+
+    if (!body) {
+      res.status(400).send({ message: 'No body provided.' });
+      return;
+    }
+
+    const song = await getSongByUuidFromDB(songId);
+
+    if (!song) {
+      res.status(404).send({ message: 'No song found.' });
+      return;
+    }
+
+    const data = {};
+    Object.keys(body).forEach((key) => {
+      if (['author', 'title', 'cover'].includes(key)) {
+        data[key] = body[key];
+      }
+    });
+
+    try {
+      await updateSongInDB(songId, data);
+      res.status(200).send({ message: 'Successfully updated song.' });
+    } catch (e) {
+      res.status(500).send({ message: 'Internal server error.' });
+    }
   };
 }

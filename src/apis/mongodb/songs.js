@@ -80,3 +80,8 @@ export async function saveSong(songData) {
   await song.save();
   return true;
 }
+
+export async function updateSong(songId, data) {
+  await SongModel.updateOne({ uuid: songId }, data);
+  return true;
+}

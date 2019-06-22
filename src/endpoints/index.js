@@ -7,7 +7,7 @@ import login from './login';
 import register from './register';
 import users from './users';
 import {
-  getSongs, getSongByUuid, findSongs, uploadSong,
+  getSongs, getSongByUuid, findSongs, uploadSong, updateSong,
 } from './songs';
 
 export default function (app) {
@@ -72,7 +72,11 @@ export default function (app) {
 
   // update song
   app.patch('/api/songs/:songId', [
-
+    validateAccept(),
+    validateContentType('application/json'),
+    checkAuth(),
+    checkPermissions(2),
+    updateSong(),
   ]);
 
   // status
