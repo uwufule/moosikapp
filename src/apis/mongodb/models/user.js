@@ -29,10 +29,6 @@ const User = Mongoose.model('User', new Mongoose.Schema({
     type: Number,
     default: 1,
   },
-  playlists: {
-    type: Array,
-    default: [],
-  },
 }, { versionKey: false, timestamps: true }));
 
 export default User;
