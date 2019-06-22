@@ -5,6 +5,7 @@ import {
   getSongByUuid as getSongByUuidFromDB,
   findSongs as findSongsInDB,
   updateSong as updateSongInDB,
+  deleteSong as deleteSongFromDB,
 } from '../../apis/mongodb/songs';
 
 export function getSongs() {
@@ -119,6 +120,20 @@ export function updateSong() {
     try {
       await updateSongInDB(songId, data);
       res.status(200).send({ message: 'Successfully updated song.' });
+    } catch (e) {
+      res.status(500).send({ message: 'Internal server error.' });
+    }
+  };
+}
+
+export function deleteSong() {
+  return async (req, res) => {
+    try {
+      const { songId } = req.params;
+
+      await deleteSongFromDB(songId);
+
+      req.status(200).send({ message: 'Successfully removed song.', uuid: songId });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
