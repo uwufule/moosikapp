@@ -85,3 +85,8 @@ export async function updateSong(songId, data) {
   await SongModel.updateOne({ uuid: songId }, data);
   return true;
 }
+
+export async function deleteSong(songId) {
+  await SongModel.deleteOne({ uuid: songId });
+  return true;
+}
