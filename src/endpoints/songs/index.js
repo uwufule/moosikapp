@@ -35,7 +35,7 @@ export function getSongByUuid() {
         return;
       }
 
-      song.url = await getFileLink(`/${song.hash}.${song.type}`);
+      song.url = await getFileLink(song.url);
 
       res.status(200).send({ message: 'Successfully retrieved song.', song });
     } catch (e) {
