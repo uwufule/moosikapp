@@ -58,7 +58,7 @@ export async function findSongs(queryString) {
   return foundSongs;
 }
 
-export async function getLikedSongs(userUuid) {
+export async function getFavoriteSongs(userUuid) {
   const query = {
     likes: userUuid,
   };
