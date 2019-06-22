@@ -1,6 +1,20 @@
 import UserModel from './models/user';
 
-export async function getUser(queryString) {
+export async function getUser(username) {
+  const projection = {
+    _id: 0,
+    uuid: 1,
+    username: 1,
+    email: 1,
+    permissions: 1,
+    createdAt: 1,
+  };
+
+  const user = await UserModel.findOne({ username }, projection);
+  return user;
+}
+
+export async function findUser(queryString) {
   const query = {
     $or: [
       {
@@ -13,11 +27,6 @@ export async function getUser(queryString) {
 
   const projection = {
     _id: 0,
-    uuid: 1,
-    username: 1,
-    email: 1,
-    permissionLevel: 1,
-    createdAt: 1,
   };
 
   const user = await UserModel.findOne(query, projection);
