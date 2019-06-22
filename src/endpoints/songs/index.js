@@ -9,10 +9,23 @@ import {
 
 export function getSongs() {
   return async (req, res) => {
-    const { skip, limit } = req.body;
+    const { skip, limit } = req.query;
+
+    const s = Number(skip);
+    const l = Number(limit);
+
+    if (s < 0) {
+      res.status(400).send({ message: 'Invalid query parameter \'skip\' provided.' });
+      return;
+    }
+
+    if (l < 0 || l > 100) {
+      res.status(400).send({ message: 'Invalid query parameter \'limit\' provided.' });
+      return;
+    }
 
     try {
-      const songs = await getSongsFromDB(skip, limit);
+      const songs = await getSongsFromDB(Number(skip), Number(limit));
 
       if (!songs.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -47,7 +60,7 @@ export function getSongByUuid() {
 
 export function findSongs() {
   return async (req, res) => {
-    const { query } = req.body;
+    const { query } = req.query;
 
     if (!query) {
       res.status(400).send({ message: 'No query provided.' });
@@ -55,7 +68,7 @@ export function findSongs() {
     }
 
     try {
-      const songs = await findSongsInDB(encodeURI(query));
+      const songs = await findSongsInDB(decodeURI(query));
 
       if (!songs.length) {
         res.status(404).send({ message: 'No songs found.' });
