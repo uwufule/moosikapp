@@ -29,10 +29,12 @@ export default function (app) {
     register(),
   ]);
 
+  // forgot
+  app.post('/api/forgot', []);
+
   // get user with provided username
   app.get('/api/users/:username', [
     validateAccept(),
-    validateContentType('application/json'),
     checkAuth(),
     users(),
   ]);
@@ -40,7 +42,6 @@ export default function (app) {
   // get songs
   app.get('/api/songs', [
     validateAccept(),
-    validateContentType('application/json'),
     checkAuth(),
     getSongs(),
   ]);
@@ -48,7 +49,6 @@ export default function (app) {
   // find song
   app.get('/api/songs/find', [
     validateAccept(),
-    validateContentType('application/json'),
     checkAuth(),
     findSongs(),
   ]);
@@ -56,7 +56,6 @@ export default function (app) {
   // get song by id
   app.get('/api/songs/:songId', [
     validateAccept(),
-    validateContentType('application/json'),
     checkAuth(),
     getSongByUuid(),
   ]);
@@ -79,10 +78,18 @@ export default function (app) {
     updateSong(),
   ]);
 
+  // delete song
+  app.delete('/api/songs/:songId', []);
+
+  // get liked songs
+  app.get('/api/likes', []);
+
+  // update liked songs
+  app.patch('/api/likes', []);
+
   // status
   app.get('/api/status', [
     validateAccept(),
-    validateContentType('application/json'),
     status(),
   ]);
 
