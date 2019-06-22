@@ -4,14 +4,29 @@ import {
   getSongs as getSongsFromDB,
   getSongByUuid as getSongByUuidFromDB,
   findSongs as findSongsInDB,
+  updateSong as updateSongInDB,
+  deleteSong as deleteSongFromDB,
 } from '../../apis/mongodb/songs';
 
 export function getSongs() {
   return async (req, res) => {
-    const { skip, limit } = req.body;
+    const { skip, limit } = req.query;
+
+    const s = Number(skip);
+    const l = Number(limit);
+
+    if (s < 0) {
+      res.status(400).send({ message: 'Invalid query parameter \'skip\' provided.' });
+      return;
+    }
+
+    if (l < 0 || l > 100) {
+      res.status(400).send({ message: 'Invalid query parameter \'limit\' provided.' });
+      return;
+    }
 
     try {
-      const songs = await getSongsFromDB(skip, limit);
+      const songs = await getSongsFromDB(Number(skip), Number(limit));
 
       if (!songs.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -35,7 +50,7 @@ export function getSongByUuid() {
         return;
       }
 
-      song.url = await getFileLink(`/${song.hash}.${song.type}`);
+      song.url = await getFileLink(song.url);
 
       res.status(200).send({ message: 'Successfully retrieved song.', song });
     } catch (e) {
@@ -46,7 +61,7 @@ export function getSongByUuid() {
 
 export function findSongs() {
   return async (req, res) => {
-    const { query } = req.body;
+    const { query } = req.query;
 
     if (!query) {
       res.status(400).send({ message: 'No query provided.' });
@@ -54,7 +69,7 @@ export function findSongs() {
     }
 
     try {
-      const songs = await findSongsInDB(encodeURI(query));
+      const songs = await findSongsInDB(decodeURI(query));
 
       if (!songs.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -76,5 +91,51 @@ export function uploadSong() {
     }
 
     upload(req, res);
+  };
+}
+
+export function updateSong() {
+  return async (req, res) => {
+    const { body, params: { songId } } = req;
+
+    if (!body) {
+      res.status(400).send({ message: 'No body provided.' });
+      return;
+    }
+
+    const song = await getSongByUuidFromDB(songId);
+
+    if (!song) {
+      res.status(404).send({ message: 'No song found.' });
+      return;
+    }
+
+    const data = {};
+    Object.keys(body).forEach((key) => {
+      if (['author', 'title', 'cover'].includes(key)) {
+        data[key] = body[key];
+      }
+    });
+
+    try {
+      await updateSongInDB(songId, data);
+      res.status(200).send({ message: 'Successfully updated song.' });
+    } catch (e) {
+      res.status(500).send({ message: 'Internal server error.' });
+    }
+  };
+}
+
+export function deleteSong() {
+  return async (req, res) => {
+    try {
+      const { songId } = req.params;
+
+      await deleteSongFromDB(songId);
+
+      req.status(200).send({ message: 'Successfully removed song.', uuid: songId });
+    } catch (e) {
+      res.status(500).send({ message: 'Internal server error.' });
+    }
   };
 }

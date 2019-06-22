@@ -1,5 +1,5 @@
 import JWT from 'jsonwebtoken';
-import { findByUsername } from '../../apis/mongodb';
+import { findUser } from '../../apis/mongodb/users';
 
 const { JWT_SECRET } = process.env;
 
@@ -17,7 +17,8 @@ export default function () {
     try {
       req.jwt = JWT.verify(token, JWT_SECRET);
 
-      const { password: { time } } = await findByUsername(req.jwt.username);
+      const { password: { time } } = await findUser(req.jwt.username);
+
       if (new Date(req.jwt.time).valueOf() !== time.valueOf()) {
         throw new Error('NotAuthorizedError');
       }

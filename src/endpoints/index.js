@@ -7,16 +7,18 @@ import login from './login';
 import register from './register';
 import users from './users';
 import {
-  getSongs, getSongByUuid, findSongs, uploadSong,
+  getSongs,
+  getSongByUuid,
+  findSongs,
+  uploadSong,
+  updateSong,
+  deleteSong,
 } from './songs';
-// import {
-//   getPlaylistEndpoint,
-//   createPlaylistEndpoint,
-//   updatePlaylistEndpoint,
-//   deletePlaylistEndpoint,
-//   addSongEndpoint,
-//   deleteSongEndpoint,
-// } from './endpoints/users/playlist';
+import {
+  getFavoriteSongs,
+  addSongToFavorite,
+  removeSongFromFavorite,
+} from './favorites';
 
 export default function (app) {
   app.all('/api', (req, res) => {
@@ -37,6 +39,9 @@ export default function (app) {
     register(),
   ]);
 
+  // forgot
+  // app.post('/api/forgot', []);
+
   // get user with provided username
   app.get('/api/users/:username', [
     validateAccept(),
@@ -44,55 +49,9 @@ export default function (app) {
     users(),
   ]);
 
-  // // create new playlist
-  // app.post('/api/playlists', [
-  //   validateAccept(),
-  //   validateContentType('application/json'),
-  //   checkAuth(),
-  //   createPlaylistEndpoint(),
-  // ]);
-
-  // // get playlist
-  // app.get('/api/playlists/:playlistId', [
-  //   validateAccept(),
-  //   checkAuth(),
-  //   getPlaylistEndpoint(),
-  // ]);
-
-  // // update playlist
-  // app.patch('/api/playlists/:playlistId', [
-  //   validateAccept(),
-  //   validateContentType('application/json'),
-  //   checkAuth(),
-  //   updatePlaylistEndpoint(),
-  // ]);
-
-  // // delete playlist
-  // app.delete('/api/playlists/:playlistId', [
-  //   validateAccept(),
-  //   checkAuth(),
-  //   deletePlaylistEndpoint(),
-  // ]);
-
-  // // add song in playlist
-  // app.put('/api/playlists/:playlistId', [
-  //   validateAccept(),
-  //   validateContentType('application/json'),
-  //   checkAuth(),
-  //   addSongEndpoint(),
-  // ]);
-
-  // // delete song from playlist
-  // app.delete('/api/playlists/:playlistId/:songId', [
-  //   validateAccept(),
-  //   checkAuth(),
-  //   deleteSongEndpoint(),
-  // ]);
-
   // get songs
   app.get('/api/songs', [
     validateAccept(),
-    validateContentType('application/json'),
     checkAuth(),
     getSongs(),
   ]);
@@ -100,7 +59,6 @@ export default function (app) {
   // find song
   app.get('/api/songs/find', [
     validateAccept(),
-    validateContentType('application/json'),
     checkAuth(),
     findSongs(),
   ]);
@@ -108,7 +66,6 @@ export default function (app) {
   // get song by id
   app.get('/api/songs/:songId', [
     validateAccept(),
-    validateContentType('application/json'),
     checkAuth(),
     getSongByUuid(),
   ]);
@@ -120,6 +77,44 @@ export default function (app) {
     checkAuth(),
     checkPermissions(2),
     uploadSong(),
+  ]);
+
+  // update song
+  app.patch('/api/songs/:songId', [
+    validateAccept(),
+    validateContentType('application/json'),
+    checkAuth(),
+    checkPermissions(2),
+    updateSong(),
+  ]);
+
+  // delete song
+  app.delete('/api/songs/:songId', [
+    validateAccept(),
+    checkAuth(),
+    checkPermissions(2),
+    deleteSong(),
+  ]);
+
+  // get favorites songs
+  app.get('/api/favorites', [
+    validateAccept(),
+    checkAuth(),
+    getFavoriteSongs(),
+  ]);
+
+  // add song to favorites
+  app.post('/api/favorites/:songId', [
+    validateAccept(),
+    checkAuth(),
+    addSongToFavorite(),
+  ]);
+
+  // remove song from favorites
+  app.delete('/api/favorites/:songId', [
+    validateAccept(),
+    checkAuth(),
+    removeSongFromFavorite(),
   ]);
 
   // status

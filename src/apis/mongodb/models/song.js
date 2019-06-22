@@ -1,8 +1,10 @@
-import Mongoose from 'mongoose';
+import Mongoose, { Schema } from 'mongoose';
+import uuidv4 from 'uuid/v4';
 
-const Song = Mongoose.model('Song', new Mongoose.Schema({
+const Song = Mongoose.model('Song', new Schema({
   uuid: {
     type: String,
+    default: uuidv4(),
     unique: true,
   },
   author: {
@@ -13,25 +15,21 @@ const Song = Mongoose.model('Song', new Mongoose.Schema({
     type: String,
     default: 'No Title',
   },
-  uploadedBy: {
-    type: String,
-    required: true,
-  },
-  hash: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    default: 'mp3',
-  },
   cover: {
     type: String,
     default: '',
   },
+  uploadedBy: {
+    type: String,
+    required: true,
+  },
   url: {
     type: String,
-    default: '',
+    required: true,
+  },
+  likes: {
+    type: Array,
+    default: [],
   },
 }, { versionKey: false, timestamps: true }));
 

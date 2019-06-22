@@ -5,7 +5,7 @@ import request from 'request-promise';
 
 const BASE_URL = 'https://cloud-api.yandex.net/v1/disk';
 
-let authorization;
+let authorization = '';
 
 export default function (token) {
   authorization = `OAuth ${token}`;
