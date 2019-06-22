@@ -1,10 +1,8 @@
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import { findByUsername, findByEmail } from '../../apis/mongodb';
+import { findUser } from '../../apis/mongodb/users';
 
 const { JWT_SECRET } = process.env;
-
-const EMAIL_REGEX = /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
 
 function login(res, usr, pwd) {
   if (!usr) {
@@ -12,8 +10,8 @@ function login(res, usr, pwd) {
     return;
   }
 
-  const pwds = usr.password.hash.split('.');
-  const hash = Crypto.createHmac('sha512', pwds[0]).update(pwd).digest('hex');
+  const [salt, passwordHash] = usr.password.hash.split('.');
+  const hash = Crypto.createHmac('sha512', salt).update(pwd).digest('hex');
 
   const {
     uuid, username, permissions, password: { time },
@@ -23,10 +21,11 @@ function login(res, usr, pwd) {
     uuid, username, permissions, time,
   }, JWT_SECRET);
 
-  if (pwds[1] === hash) {
+  if (passwordHash === hash) {
     res.status(200).send({ message: 'Successfully logged in.', token });
     return;
   }
+
   res.status(401).send({ message: 'Invalid authorization.' });
 }
 
@@ -37,23 +36,14 @@ export default function () {
     }
 
     const { username, password } = req.body;
+
     if (!username || !password) {
       res.status(401).send({ message: 'Invalid authorization.' });
       return;
     }
 
-    if (EMAIL_REGEX.test(username)) {
-      try {
-        const user = await findByEmail(username);
-        login(res, user, password);
-      } catch (e) {
-        res.status(500).send({ message: 'Internal server error.' });
-      }
-      return;
-    }
-
     try {
-      const user = await findByUsername(username);
+      const user = await findUser(username);
       login(res, user, password);
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
