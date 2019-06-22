@@ -7,8 +7,18 @@ import login from './login';
 import register from './register';
 import users from './users';
 import {
-  getSongs, getSongByUuid, findSongs, uploadSong, updateSong,
+  getSongs,
+  getSongByUuid,
+  findSongs,
+  uploadSong,
+  updateSong,
+  deleteSong,
 } from './songs';
+import {
+  getFavoriteSongs,
+  addSongToFavorite,
+  removeSongFromFavorite,
+} from './favorites';
 
 export default function (app) {
   app.all('/api', (req, res) => {
@@ -30,7 +40,7 @@ export default function (app) {
   ]);
 
   // forgot
-  app.post('/api/forgot', []);
+  // app.post('/api/forgot', []);
 
   // get user with provided username
   app.get('/api/users/:username', [
@@ -79,13 +89,33 @@ export default function (app) {
   ]);
 
   // delete song
-  app.delete('/api/songs/:songId', []);
+  app.delete('/api/songs/:songId', [
+    validateAccept(),
+    checkAuth(),
+    checkPermissions(2),
+    deleteSong(),
+  ]);
 
-  // get liked songs
-  app.get('/api/likes', []);
+  // get favorites songs
+  app.get('/api/favorites', [
+    validateAccept(),
+    checkAuth(),
+    getFavoriteSongs(),
+  ]);
 
-  // update liked songs
-  app.patch('/api/likes', []);
+  // add song to favorites
+  app.post('/api/favorites/:songId', [
+    validateAccept(),
+    checkAuth(),
+    addSongToFavorite(),
+  ]);
+
+  // remove song from favorites
+  app.delete('/api/favorites/:songId', [
+    validateAccept(),
+    checkAuth(),
+    removeSongFromFavorite(),
+  ]);
 
   // status
   app.get('/api/status', [
