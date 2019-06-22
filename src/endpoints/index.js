@@ -70,6 +70,11 @@ export default function (app) {
     uploadSong(),
   ]);
 
+  // update song
+  app.patch('/api/songs/:songId', [
+
+  ]);
+
   // status
   app.get('/api/status', [
     validateAccept(),
