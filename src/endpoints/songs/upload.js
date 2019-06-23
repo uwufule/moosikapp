@@ -12,16 +12,16 @@ export default function (req, res) {
   writeStream.end(req.body, async () => {
     const hash = Crypto.createHash('sha256').update(FS.readFileSync(TEMP_FILE)).digest('hex');
 
-    const url = `/${hash}.mp3`;
+    const path = `/${hash}.mp3`;
 
     const uuid = uuidv4();
 
     const readStream = FS.createReadStream(TEMP_FILE, { autoClose: true });
 
     try {
-      await uploadFileFromStream(url, readStream);
+      await uploadFileFromStream(path, readStream);
 
-      await saveSong({ uuid, uploadedBy: req.jwt.username, url });
+      await saveSong({ uuid, uploadedBy: req.jwt.username, path });
 
       res.status(201).send({ message: 'You have successfully uploaded a new song.', uuid });
     } catch (e) {

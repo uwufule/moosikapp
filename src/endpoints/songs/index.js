@@ -127,7 +127,7 @@ export function updateSong() {
 
     try {
       await updateSongInDB(songId, data);
-      res.status(200).send({ message: 'Successfully updated song.' });
+      res.status(200).send({ message: 'Successfully updated song.', song: data });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -141,7 +141,7 @@ export function deleteSong() {
 
       await deleteSongFromDB(songId);
 
-      req.status(200).send({ message: 'Successfully removed song.', uuid: songId });
+      req.status(204).send({ message: 'Successfully removed song.' });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
