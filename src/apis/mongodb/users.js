@@ -14,6 +14,15 @@ export async function getUser(username) {
   return user;
 }
 
+export async function getUserByUuid(uuid) {
+  const projection = {
+    _id: 0,
+  };
+
+  const user = await UserModel.findOne({ uuid }, projection);
+  return user;
+}
+
 export async function findUser(queryString) {
   const query = {
     $or: [
