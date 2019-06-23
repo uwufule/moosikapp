@@ -1,8 +1,7 @@
 import JWT from 'jsonwebtoken';
-import { findUser } from '../../apis/mongodb/users';
+import { getUserByUuid } from '../../apis/mongodb/users';
 
 const { JWT_SECRET } = process.env;
-
 
 export default function () {
   return async (req, res, next) => {
@@ -12,14 +11,14 @@ export default function () {
       return;
     }
 
-    const token = authorization.split(' ')[1];
+    const token = authorization.slice(7);
 
     try {
       req.jwt = JWT.verify(token, JWT_SECRET);
 
-      const { password: { time } } = await findUser(req.jwt.username);
+      const { password: { timestamp } } = await getUserByUuid(req.jwt.uuid);
 
-      if (new Date(req.jwt.time).valueOf() !== time.valueOf()) {
+      if (new Date(req.jwt.timestamp).getTime() !== timestamp.getTime()) {
         throw new Error('NotAuthorizedError');
       }
 
