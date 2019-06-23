@@ -21,7 +21,9 @@ export default function (req, res) {
     try {
       await uploadFileFromStream(path, readStream);
 
-      await saveSong({ uuid, uploadedBy: req.jwt.uuid, path });
+      await saveSong({
+        uuid, uploadedBy: req.jwt.uuid, path, likes: [req.jwt.uuid],
+      });
 
       res.status(201).send({ message: 'You have successfully uploaded a new song.', uuid });
     } catch (e) {
