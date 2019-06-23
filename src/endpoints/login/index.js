@@ -14,11 +14,11 @@ function login(res, usr, pwd) {
   const hash = Crypto.createHmac('sha512', salt).update(pwd).digest('hex');
 
   const {
-    uuid, username, permissions, password: { time },
+    uuid, role, password: { timestamp },
   } = usr;
 
   const token = JWT.sign({
-    uuid, username, permissions, time,
+    uuid, role, timestamp,
   }, JWT_SECRET);
 
   if (passwordHash === hash) {
