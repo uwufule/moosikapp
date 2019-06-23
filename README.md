@@ -18,17 +18,17 @@ Route: /register
 Тело запроса
 ```javascript
 {
-	"email": "testEmail@gmail.com>",
-	"username": "testUsername",
-	"password": "testPassword"
+  "email": "testEmail@gmail.com>",
+  "username": "testUsername",
+  "password": "testPassword"
 }
 ```
 Ответ
 ```javascript
 # Status Code: 200
 {
-	"message": "You have successfully created a new account.",
-	"uuid": "00000000-0000-0000-0000-000000000000"
+  "message": "You have successfully created a new account.",
+  "uuid": "00000000-0000-0000-0000-000000000000"
 }
 ```
 Возможные ошибки
@@ -46,21 +46,21 @@ Route: /login
 Тело запроса
 ```javascript
 {
-	"username": "testUsername",
-	"password": "testPassword"
+  "username": "testUsername",
+  "password": "testPassword"
 }
 # или
 {
-	"username": "testEmail@gmail.com",
-	"password": "testPassword"
+  "username": "testEmail@gmail.com",
+  "password": "testPassword"
 }
 ```
 Ответ
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully logged in.",
-	"token": "JWT"
+  "message": "Successfully logged in.",
+  "token": "JWT"
 }
 ```
 Возможные ошибки
@@ -90,14 +90,14 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully retrieved user.",
-	"user": {
-		"uuid": "00000000-0000-0000-0000-000000000000",
-		"usernmae": "testUsername",
-		"email": "testEmail@gmail.com",
-		"permissions": 1,
-		"createdAt": "Date"
-	}
+  "message": "Successfully retrieved user.",
+  "user": {
+    "uuid": "00000000-0000-0000-0000-000000000000",
+    "usernmae": "testUsername",
+    "email": "testEmail@gmail.com",
+    "permissions": 1,
+    "createdAt": "Date"
+  }
 }
 ```
 Возможные ошибки
@@ -126,15 +126,15 @@ Value: 1 - 100
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully retrieved songs.",
-	"songs": [
-		{
-			"uuid": "00000000-0000-0000-0000-000000000000",
-			"author": "songAuthor",
-			"title": "songTitle",
-			"cover": "coverUrl"
-		}
-	]
+  "message": "Successfully retrieved songs.",
+  "songs": [
+    {
+      "uuid": "00000000-0000-0000-0000-000000000000",
+      "author": "songAuthor",
+      "title": "songTitle",
+      "cover": "coverUrl"
+    }
+  ]
 }
 ```
 Возможные ошибки
@@ -161,15 +161,15 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully retrieved songs.",
-	"songs": [
-		{
-			"uuid": "00000000-0000-0000-0000-000000000000",
-			"author": "songAuthor",
-			"title": "songTitle",
-			"cover": "coverUrl"
-		}
-	]
+  "message": "Successfully retrieved songs.",
+  "songs": [
+    {
+      "uuid": "00000000-0000-0000-0000-000000000000",
+      "author": "songAuthor",
+      "title": "songTitle",
+      "cover": "coverUrl"
+    }
+  ]
 }
 ```
 Возможные ошибки
@@ -195,16 +195,16 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully retrieved song.",
-	"song":  {
-		"uuid": "00000000-0000-0000-0000-000000000000",
-		"author": "songAuthor",
-		"title": "songTitle",
-		"cover": "coverUrl",
-		"uploadedBy": "testUsername",
-		"url": "URL",
-		"createdAt": "Date"
-	}
+  "message": "Successfully retrieved song.",
+  "song":  {
+    "uuid": "00000000-0000-0000-0000-000000000000",
+    "author": "songAuthor",
+    "title": "songTitle",
+    "cover": "coverUrl",
+    "uploadedBy": "testUsername",
+    "url": "URL",
+    "createdAt": "Date"
+  }
 }
 ```
 Возможные ошибки
@@ -224,8 +224,8 @@ Content-Type: audio/mpeg
 ```javascript
 # Status Code: 201
 {
-	"message": "You have successfully uploaded a new song.",
-	"uuid": "00000000-0000-0000-0000-000000000000"
+  "message": "You have successfully uploaded a new song.",
+  "uuid": "00000000-0000-0000-0000-000000000000"
 }
 ```
 Возможные ошибки
@@ -252,7 +252,7 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully updated song."
+  "message": "Successfully updated song."
 }
 ```
 Возможные ошибки
@@ -278,8 +278,8 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully removed song.",
-	"uuid": "00000000-0000-0000-0000-000000000000"
+  "message": "Successfully removed song.",
+  "uuid": "00000000-0000-0000-0000-000000000000"
 }
 ```
 Возможные ошибки
@@ -293,15 +293,15 @@ Route: /favorites
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully retrieved favorite songs.",
-	"songs": [
-		{
-			"uuid": "00000000-0000-0000-0000-000000000000",
-			"author": "songAuthor",
-			"title": "songTitle",
-			"cover": "coverUrl"
-		}
-	]
+  "message": "Successfully retrieved favorite songs.",
+  "songs": [
+    {
+      "uuid": "00000000-0000-0000-0000-000000000000",
+      "author": "songAuthor",
+      "title": "songTitle",
+      "cover": "coverUrl"
+    }
+  ]
 }
 ```
 Возможные ошибки
@@ -324,8 +324,8 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully added song to favorites."
-	"uuid": "00000000-0000-0000-0000-000000000000"
+  "message": "Successfully added song to favorites."
+  "uuid": "00000000-0000-0000-0000-000000000000"
 }
 ```
 Возможные ошибки
@@ -344,8 +344,8 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully removed song from favorites.",
-	"uuid": "00000000-0000-0000-0000-000000000000"
+  "message": "Successfully removed song from favorites.",
+  "uuid": "00000000-0000-0000-0000-000000000000"
 }
 ```
 ## Статус
@@ -357,14 +357,14 @@ Route: /status
 ```javascript
 # Status Code: 200
 {
-	"message": "Successfully retrieved status.",
-	"disk": [
-		{
-			"totalSpace": "0",
-			"usedSpace": "0",
-			"maxFileSize": "0"
-		}
-	]
+  "message": "Successfully retrieved status.",
+  "disk": [
+    {
+      "totalSpace": "0",
+      "usedSpace": "0",
+      "maxFileSize": "0"
+    }
+  ]
 }
 ```
 Возможные ошибки
