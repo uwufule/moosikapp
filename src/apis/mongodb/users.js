@@ -6,7 +6,7 @@ export async function getUser(username) {
     uuid: 1,
     username: 1,
     email: 1,
-    permissions: 1,
+    role: 1,
     createdAt: 1,
   };
 
