@@ -26,7 +26,7 @@ export default function () {
         uuid, username, email, password: { hash: `${salt}.${hash}` },
       });
 
-      res.status(200).send({ message: 'You have successfully created a new account.', uuid });
+      res.status(200).send({ message: 'You have successfully created new account.', uuid });
     } catch (e) {
       if (e.errmsg.startsWith('E11000')) {
         res.status(400).send({ message: 'An account with that email address and/or username already exists.' });
