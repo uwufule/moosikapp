@@ -23,7 +23,7 @@ const Song = Mongoose.model('Song', new Schema({
     type: String,
     required: true,
   },
-  url: {
+  path: {
     type: String,
     required: true,
   },
