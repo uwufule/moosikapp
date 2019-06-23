@@ -6,11 +6,20 @@ export async function getUser(username) {
     uuid: 1,
     username: 1,
     email: 1,
-    permissions: 1,
+    role: 1,
     createdAt: 1,
   };
 
   const user = await UserModel.findOne({ username }, projection);
+  return user;
+}
+
+export async function getUserByUuid(uuid) {
+  const projection = {
+    _id: 0,
+  };
+
+  const user = await UserModel.findOne({ uuid }, projection);
   return user;
 }
 

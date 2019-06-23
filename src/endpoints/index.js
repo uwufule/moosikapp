@@ -71,7 +71,7 @@ export default function (app) {
   ]);
 
   // upload song
-  app.put('/api/songs', [
+  app.post('/api/songs', [
     validateAccept(),
     validateContentType('audio/mpeg'),
     checkAuth(),

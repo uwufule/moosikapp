@@ -19,7 +19,7 @@ export async function getSongByUuid(uuid) {
     author: 1,
     title: 1,
     cover: 1,
-    url: 1,
+    path: 1,
     uploadedBy: 1,
     createdAt: 1,
   };
@@ -54,8 +54,8 @@ export async function findSongs(queryString) {
     cover: 1,
   };
 
-  const foundSongs = await SongModel.find(query, projection);
-  return foundSongs;
+  const songs = await SongModel.find(query, projection);
+  return songs;
 }
 
 export async function getFavoriteSongs(userUuid) {
@@ -71,8 +71,8 @@ export async function getFavoriteSongs(userUuid) {
     cover: 1,
   };
 
-  const likedSongs = await SongModel.find(query, projection);
-  return likedSongs;
+  const songs = await SongModel.find(query, projection);
+  return songs;
 }
 
 export async function saveSong(songData) {
@@ -81,12 +81,12 @@ export async function saveSong(songData) {
   return true;
 }
 
-export async function updateSong(songId, data) {
-  await SongModel.updateOne({ uuid: songId }, data);
+export async function updateSong(uuid, data) {
+  await SongModel.updateOne({ uuid }, data);
   return true;
 }
 
-export async function deleteSong(songId) {
-  await SongModel.deleteOne({ uuid: songId });
+export async function deleteSong(uuid) {
+  await SongModel.deleteOne({ uuid });
   return true;
 }

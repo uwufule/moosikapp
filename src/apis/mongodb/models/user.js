@@ -20,12 +20,12 @@ const User = Mongoose.model('User', new Mongoose.Schema({
       type: String,
       required: true,
     },
-    time: {
+    timestamp: {
       type: Date,
       default: Date.now(),
     },
   },
-  permissions: {
+  role: {
     type: Number,
     default: 1,
   },

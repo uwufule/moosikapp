@@ -49,10 +49,18 @@ export function getSongByUuid() {
         res.status(404).send({ message: 'No song found.' });
         return;
       }
+      const {
+        author, title, cover, path, uploadedBy, createdAt,
+      } = song.toJSON();
 
-      song.url = await getFileLink(song.url);
+      const url = await getFileLink(path);
 
-      res.status(200).send({ message: 'Successfully retrieved song.', song });
+      res.status(200).send({
+        message: 'Successfully retrieved song.',
+        song: {
+          author, title, cover, url, uploadedBy, createdAt,
+        },
+      });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -119,7 +127,7 @@ export function updateSong() {
 
     try {
       await updateSongInDB(songId, data);
-      res.status(200).send({ message: 'Successfully updated song.' });
+      res.status(200).send({ message: 'Successfully updated song.', song: data });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -133,7 +141,7 @@ export function deleteSong() {
 
       await deleteSongFromDB(songId);
 
-      req.status(200).send({ message: 'Successfully removed song.', uuid: songId });
+      req.status(204).send({ message: 'Successfully removed song.' });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }

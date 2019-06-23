@@ -1,6 +1,6 @@
-export default function (minimumPermissionLevel) {
+export default function (minimunRequiredRole) {
   return (req, res, next) => {
-    if (req.jwt.permissions < minimumPermissionLevel) {
+    if (req.jwt.role < minimunRequiredRole) {
       res.status(403).send({ message: 'Forbitten.' });
       return;
     }
