@@ -33,7 +33,7 @@ export function addSongToFavorite() {
 
       await updateSongInDB(songId, { $addToSet: { likes: uuid } });
 
-      res.status(200).send({ message: 'Successfully added song to favorites.', uuid: songId });
+      res.status(200).send({ message: 'Successfully added song to favorites.' });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -51,7 +51,7 @@ export function removeSongFromFavorite() {
 
       await updateSongInDB(songId, { $pull: { likes: uuid } });
 
-      res.status(200).send({ message: 'Successfully removed song from favorites.', uuid: songId });
+      res.status(204).send({ message: 'Successfully removed song from favorites.' });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }

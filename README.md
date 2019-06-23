@@ -18,14 +18,14 @@ Route: /register
 Тело запроса
 ```javascript
 {
-  "email": "testEmail@gmail.com>",
-  "username": "testUsername",
-  "password": "testPassword"
+  "email": "testUser@gmail.com>",
+  "username": "testUser",
+  "password": "superSecretPassword"
 }
 ```
 Ответ
 ```javascript
-# Status Code: 200
+# Status Code: 201
 {
   "message": "You have successfully created a new account.",
   "uuid": "00000000-0000-0000-0000-000000000000"
@@ -46,13 +46,13 @@ Route: /login
 Тело запроса
 ```javascript
 {
-  "username": "testUsername",
-  "password": "testPassword"
+  "username": "testUser",
+  "password": "superSecretPassword"
 }
 # или
 {
-  "username": "testEmail@gmail.com",
-  "password": "testPassword"
+  "username": "testUser@gmail.com",
+  "password": "superSecretPassword"
 }
 ```
 Ответ
@@ -93,8 +93,8 @@ Required: true
   "message": "Successfully retrieved user.",
   "user": {
     "uuid": "00000000-0000-0000-0000-000000000000",
-    "usernmae": "testUsername",
-    "email": "testEmail@gmail.com",
+    "usernmae": "testUser",
+    "email": "testUser@gmail.com",
     "permissions": 1,
     "createdAt": "Date"
   }
@@ -149,7 +149,7 @@ Value: 1 - 100
 #### Поиск песен
 ```
 Type: GET
-Route: /songs[?query={String}]
+Route: /songs[?query={queryString}]
 ```
 Параметры запроса
 ```
@@ -201,7 +201,7 @@ Required: true
     "author": "songAuthor",
     "title": "songTitle",
     "cover": "coverUrl",
-    "uploadedBy": "testUsername",
+    "uploadedBy": "testUser",
     "url": "URL",
     "createdAt": "Date"
   }
@@ -214,7 +214,7 @@ Required: true
 ```
 #### Зарузка песни
 ```
-Type: PUT
+Type: POST
 Route: /songs
 ```
 ```
@@ -253,6 +253,7 @@ Required: true
 # Status Code: 200
 {
   "message": "Successfully updated song."
+  "song": {},
 }
 ```
 Возможные ошибки
@@ -276,7 +277,7 @@ Required: true
 ```
 Ответ
 ```javascript
-# Status Code: 200
+# Status Code: 204
 {
   "message": "Successfully removed song.",
   "uuid": "00000000-0000-0000-0000-000000000000"
@@ -325,7 +326,6 @@ Required: true
 # Status Code: 200
 {
   "message": "Successfully added song to favorites."
-  "uuid": "00000000-0000-0000-0000-000000000000"
 }
 ```
 Возможные ошибки
@@ -342,10 +342,9 @@ Required: true
 ```
 Ответ
 ```javascript
-# Status Code: 200
+# Status Code: 204
 {
-  "message": "Successfully removed song from favorites.",
-  "uuid": "00000000-0000-0000-0000-000000000000"
+  "message": "Successfully removed song from favorites."
 }
 ```
 ## Статус
@@ -366,9 +365,3 @@ Route: /status
     }
   ]
 }
-```
-Возможные ошибки
-```javascript
-# Status Code: 404
-{ "message": "No favorite songs found." }
-```

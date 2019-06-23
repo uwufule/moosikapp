@@ -7,6 +7,9 @@ import {
   updateSong as updateSongInDB,
   deleteSong as deleteSongFromDB,
 } from '../../apis/mongodb/songs';
+import {
+  getUserByUuid,
+} from '../../apis/mongodb/users';
 
 export function getSongs() {
   return async (req, res) => {
@@ -49,6 +52,10 @@ export function getSongByUuid() {
         res.status(404).send({ message: 'No song found.' });
         return;
       }
+
+      const user = await getUserByUuid(song.uploadedBy);
+      song.uploadedBy = user.username;
+
       const {
         author, title, cover, path, uploadedBy, createdAt,
       } = song.toJSON();
