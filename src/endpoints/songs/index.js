@@ -29,12 +29,24 @@ export function getSongs() {
     }
 
     try {
-      const songs = await getSongsFromDB(Number(skip), Number(limit));
+      const result = await getSongsFromDB(Number(skip), Number(limit));
 
-      if (!songs.length) {
+      if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
+
+      const songs = [];
+
+      result.forEach((song) => {
+        const {
+          uuid, author, title, cover, likes,
+        } = song.toJSON();
+
+        songs.push({
+          uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
+        });
+      });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
@@ -57,7 +69,7 @@ export function getSongByUuid() {
       song.uploadedBy = user.username;
 
       const {
-        author, title, cover, path, uploadedBy, createdAt,
+        author, title, cover, path, uploadedBy, createdAt, likes,
       } = song.toJSON();
 
       const url = await getFileLink(path);
@@ -65,7 +77,7 @@ export function getSongByUuid() {
       res.status(200).send({
         message: 'Successfully retrieved song.',
         song: {
-          author, title, cover, url, uploadedBy, createdAt,
+          author, title, cover, url, uploadedBy, createdAt, favorite: likes.includes(req.jwt.uuid),
         },
       });
     } catch (e) {
@@ -84,12 +96,24 @@ export function findSongs() {
     }
 
     try {
-      const songs = await findSongsInDB(decodeURI(query));
+      const result = await findSongsInDB(decodeURI(query));
 
-      if (!songs.length) {
+      if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
+
+      const songs = [];
+
+      result.forEach((song) => {
+        const {
+          uuid, author, title, cover, likes,
+        } = song.toJSON();
+
+        songs.push({
+          uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
+        });
+      });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
@@ -148,7 +172,7 @@ export function deleteSong() {
 
       await deleteSongFromDB(songId);
 
-      req.status(204).send({ message: 'Successfully removed song.' });
+      req.status(204).send();
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }

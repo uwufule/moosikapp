@@ -7,6 +7,7 @@ export async function getSongs(skip = 0, limit = 100) {
     author: 1,
     title: 1,
     cover: 1,
+    likes: 1,
   };
 
   const songs = await SongModel.find({}, projection).skip(skip).limit(limit);
@@ -19,6 +20,7 @@ export async function getSongByUuid(uuid) {
     author: 1,
     title: 1,
     cover: 1,
+    likes: 1,
     path: 1,
     uploadedBy: 1,
     createdAt: 1,
@@ -52,6 +54,7 @@ export async function findSongs(queryString) {
     author: 1,
     title: 1,
     cover: 1,
+    likes: 1,
   };
 
   const songs = await SongModel.find(query, projection);
