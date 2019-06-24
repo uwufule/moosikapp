@@ -51,7 +51,7 @@ export function removeSongFromFavorite() {
 
       await updateSongInDB(songId, { $pull: { likes: uuid } });
 
-      res.status(204).send({ message: 'Successfully removed song from favorites.' });
+      res.status(204).send();
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
