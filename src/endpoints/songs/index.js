@@ -36,7 +36,19 @@ export function getSongs() {
         return;
       }
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
+      const list = [];
+
+      songs.forEach((song) => {
+        const {
+          uuid, author, title, cover, likes,
+        } = song.toJSON();
+
+        list.push({
+          uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
+        });
+      });
+
+      res.status(200).send({ message: 'Successfully retrieved songs.', list });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -57,7 +69,7 @@ export function getSongByUuid() {
       song.uploadedBy = user.username;
 
       const {
-        author, title, cover, path, uploadedBy, createdAt,
+        author, title, cover, path, uploadedBy, createdAt, likes,
       } = song.toJSON();
 
       const url = await getFileLink(path);
@@ -65,7 +77,7 @@ export function getSongByUuid() {
       res.status(200).send({
         message: 'Successfully retrieved song.',
         song: {
-          author, title, cover, url, uploadedBy, createdAt,
+          author, title, cover, url, uploadedBy, createdAt, favorite: likes.includes(req.jwt.uuid),
         },
       });
     } catch (e) {
@@ -91,7 +103,19 @@ export function findSongs() {
         return;
       }
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
+      const list = [];
+
+      songs.forEach((song) => {
+        const {
+          uuid, author, title, cover, likes,
+        } = song.toJSON();
+
+        list.push({
+          uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
+        });
+      });
+
+      res.status(200).send({ message: 'Successfully retrieved songs.', list });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -148,7 +172,7 @@ export function deleteSong() {
 
       await deleteSongFromDB(songId);
 
-      req.status(204).send({ message: 'Successfully removed song.' });
+      req.status(204).send();
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
