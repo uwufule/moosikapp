@@ -29,26 +29,26 @@ export function getSongs() {
     }
 
     try {
-      const songs = await getSongsFromDB(Number(skip), Number(limit));
+      const result = await getSongsFromDB(Number(skip), Number(limit));
 
-      if (!songs.length) {
+      if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
 
-      const list = [];
+      const songs = [];
 
-      songs.forEach((song) => {
+      result.forEach((song) => {
         const {
           uuid, author, title, cover, likes,
         } = song.toJSON();
 
-        list.push({
+        songs.push({
           uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
         });
       });
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', list });
+      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -96,26 +96,26 @@ export function findSongs() {
     }
 
     try {
-      const songs = await findSongsInDB(decodeURI(query));
+      const result = await findSongsInDB(decodeURI(query));
 
-      if (!songs.length) {
+      if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
 
-      const list = [];
+      const songs = [];
 
-      songs.forEach((song) => {
+      result.forEach((song) => {
         const {
           uuid, author, title, cover, likes,
         } = song.toJSON();
 
-        list.push({
+        songs.push({
           uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
         });
       });
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', list });
+      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
