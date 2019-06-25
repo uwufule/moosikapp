@@ -16,6 +16,16 @@ export default function () {
       return;
     }
 
+    if (!username || /\s/.test(username)) {
+      res.status(400).send({ message: 'Username must not contain spaces.' });
+      return;
+    }
+
+    if (!password || /\s/.test(password)) {
+      res.status(400).send({ message: 'Password must not contain spaces.' });
+      return;
+    }
+
     const salt = Crypto.randomBytes(16).toString('hex');
     const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
 
