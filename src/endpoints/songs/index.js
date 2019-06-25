@@ -152,7 +152,7 @@ export function updateSong() {
     const data = {};
     Object.keys(body).forEach((key) => {
       if (['author', 'title', 'cover'].includes(key)) {
-        data[key] = body[key];
+        data[key] = body[key].trim();
       }
     });
 
