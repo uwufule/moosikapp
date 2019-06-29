@@ -2,14 +2,14 @@
 ## Вступление
 Каждый запрос к API должен иметь следующие заголовки, иначе он будет отклонен.
 ```
-Accept: application/vnd.moosik.v1+json
+Accept: application/vnd.moosikapp.v1+json
 Content-Type: application/json
 ```
 Некоторые запросы, помимо указанных выше заголовков, требуют авторизацию. Для этого нужно передать заголовок authorization, иначе взаимодействовать с API не получится.
 ```
 Authorization: Bearer JWT
 ```
-Базовый URL каждой конечной точки начинается с `https://moosikapp.tk/api`, это означает что если вам надо сделать http-запрос  к конечной точке входа в систему, URL должен иметь вид `https://moosikapp.tk/api/login`.
+Базовый URL каждой конечной точки начинается с `https://moosikapp.tk/api`, это означает что если вам надо сделать http-запрос к конечной точке входа в систему, URL должен иметь вид `https://moosikapp.tk/api/login`.
 ## Регистрация
 ```
 Type: POST
@@ -93,10 +93,10 @@ Required: true
   "message": "Successfully retrieved user.",
   "user": {
     "uuid": "00000000-0000-0000-0000-000000000000",
-    "usernmae": "testUser",
+    "username": "testUser",
     "email": "testUser@gmail.com",
     "permissions": 1,
-    "createdAt": "Date"
+    "createdAt": "1970-01-01T00:00:00.000Z"
   }
 }
 ```
@@ -109,7 +109,7 @@ Required: true
 #### Получить список песен
 ```
 Type: GET
-Route: /songs[?skip={Number}&limit={Number}]
+Route: /songs[?skip={Number}&limit={Number}&opts={opts}]
 ```
 Параметры запроса
 ```
@@ -119,8 +119,13 @@ Required: false
 
 Name: limit
 Type: Number
+Value: 1-100
 Required: false
-Value: 1 - 100
+
+Name: opts
+Type: string
+Values: [fav,edit]
+Required: false
 ```
 Ответ
 ```javascript
@@ -132,7 +137,9 @@ Value: 1 - 100
       "uuid": "00000000-0000-0000-0000-000000000000",
       "author": "songAuthor",
       "title": "songTitle",
-      "cover": "coverUrl"
+      "cover": "coverUrl",
+      "favorite?": false,
+      "editable?": false
     }
   ]
 }
@@ -149,13 +156,18 @@ Value: 1 - 100
 #### Поиск песен
 ```
 Type: GET
-Route: /songs[?query={queryString}]
+Route: /songs[?query={queryString}&opts={opts}]
 ```
 Параметры запроса
 ```
 Name: query
 Type: String
 Required: true
+
+Name: opts
+Type: string
+Values: [fav,edit]
+Required: false
 ```
 Ответ
 ```javascript
@@ -167,7 +179,9 @@ Required: true
       "uuid": "00000000-0000-0000-0000-000000000000",
       "author": "songAuthor",
       "title": "songTitle",
-      "cover": "coverUrl"
+      "cover": "coverUrl",
+      "favorite?": false,
+      "editable?": false
     }
   ]
 }
@@ -202,8 +216,10 @@ Required: true
     "title": "songTitle",
     "cover": "coverUrl",
     "uploadedBy": "testUser",
-    "url": "URL",
-    "createdAt": "Date"
+    "url": "songUrl",
+    "createdAt": "1970-01-01T00:00:00.000Z",
+    "favorite": false,
+    "editable": false
   }
 }
 ```
@@ -253,7 +269,11 @@ Required: true
 # Status Code: 200
 {
   "message": "Successfully updated song."
-  "song": {},
+  "song": {
+    "author?": "newSongAuthor",
+    "title?": "newSongTitle",
+    "cover?": "newCoverUrl"
+  },
 }
 ```
 Возможные ошибки
@@ -278,10 +298,6 @@ Required: true
 Ответ
 ```javascript
 # Status Code: 204
-{
-  "message": "Successfully removed song.",
-  "uuid": "00000000-0000-0000-0000-000000000000"
-}
 ```
 Возможные ошибки
 ## Избранное
@@ -343,10 +359,8 @@ Required: true
 Ответ
 ```javascript
 # Status Code: 204
-{
-  "message": "Successfully removed song from favorites."
-}
 ```
+Возможные ошибки
 ## Статус
 ```
 Type: GET
@@ -365,3 +379,5 @@ Route: /status
     }
   ]
 }
+```
+Возможные ошибки
