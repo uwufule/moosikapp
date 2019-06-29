@@ -7,6 +7,7 @@ export async function getSongs(skip = 0, limit = 100) {
     author: 1,
     title: 1,
     cover: 1,
+    uploadedBy: 1,
     likes: 1,
   };
 
@@ -30,7 +31,7 @@ export async function getSongByUuid(uuid) {
   return song;
 }
 
-export async function findSongs(queryString) {
+export async function findSongs(queryString, skip = 0, limit = 100) {
   const query = {
     $or: [
       {
@@ -54,14 +55,15 @@ export async function findSongs(queryString) {
     author: 1,
     title: 1,
     cover: 1,
+    uploadedBy: 1,
     likes: 1,
   };
 
-  const songs = await SongModel.find(query, projection);
+  const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
   return songs;
 }
 
-export async function getFavoriteSongs(userUuid) {
+export async function getFavoriteSongs(userUuid, skip = 0, limit = 100) {
   const query = {
     likes: userUuid,
   };
@@ -72,9 +74,10 @@ export async function getFavoriteSongs(userUuid) {
     author: 1,
     title: 1,
     cover: 1,
+    uploadedBy: 1,
   };
 
-  const songs = await SongModel.find(query, projection);
+  const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
   return songs;
 }
 

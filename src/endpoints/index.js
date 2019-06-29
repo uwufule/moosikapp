@@ -84,7 +84,6 @@ export default function (app) {
     validateAccept(),
     validateContentType('application/json'),
     checkAuth(),
-    checkPermissions(2),
     updateSong(),
   ]);
 
