@@ -13,23 +13,25 @@ import {
 
 export function getSongs() {
   return async (req, res) => {
-    const { skip, limit } = req.query;
+    const { skip, limit, opts = '' } = req.query;
 
     const s = Number(skip);
     const l = Number(limit);
 
     if (s < 0) {
-      res.status(400).send({ message: 'Invalid query parameter \'skip\' provided.' });
+      res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
       return;
     }
 
-    if (l < 0 || l > 100) {
-      res.status(400).send({ message: 'Invalid query parameter \'limit\' provided.' });
+    if (l < 1 || l > 100) {
+      res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
       return;
     }
+
+    const userUuid = req.jwt.uuid;
 
     try {
-      const result = await getSongsFromDB(Number(skip), Number(limit));
+      const result = await getSongsFromDB(s, l);
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -40,11 +42,16 @@ export function getSongs() {
 
       result.forEach((song) => {
         const {
-          uuid, author, title, cover, likes,
+          uuid, author, title, cover, likes, uploadedBy,
         } = song.toJSON();
 
         songs.push({
-          uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
+          uuid,
+          author,
+          title,
+          cover,
+          favorite: opts.includes('fav') ? likes.includes(userUuid) : undefined,
+          editable: opts.includes('edit') ? uploadedBy === userUuid : undefined,
         });
       });
 
@@ -65,6 +72,8 @@ export function getSongByUuid() {
         return;
       }
 
+      const editable = song.uploadedBy === req.jwt.uuid;
+
       const user = await getUserByUuid(song.uploadedBy);
       song.uploadedBy = user.username;
 
@@ -77,7 +86,14 @@ export function getSongByUuid() {
       res.status(200).send({
         message: 'Successfully retrieved song.',
         song: {
-          author, title, cover, url, uploadedBy, createdAt, favorite: likes.includes(req.jwt.uuid),
+          author,
+          title,
+          cover,
+          url,
+          uploadedBy,
+          createdAt,
+          favorite: likes.includes(),
+          editable,
         },
       });
     } catch (e) {
@@ -88,15 +104,32 @@ export function getSongByUuid() {
 
 export function findSongs() {
   return async (req, res) => {
-    const { query } = req.query;
+    const {
+      query, skip, limit, opts = '',
+    } = req.query;
 
     if (!query) {
       res.status(400).send({ message: 'No query provided.' });
       return;
     }
 
+    const s = Number(skip);
+    const l = Number(limit);
+
+    if (s < 0) {
+      res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
+      return;
+    }
+
+    if (l < 1 || l > 100) {
+      res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
+      return;
+    }
+
+    const userUuid = req.jwt.uuid;
+
     try {
-      const result = await findSongsInDB(decodeURI(query));
+      const result = await findSongsInDB(decodeURI(query), s, l);
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -107,11 +140,16 @@ export function findSongs() {
 
       result.forEach((song) => {
         const {
-          uuid, author, title, cover, likes,
+          uuid, author, title, cover, likes, uploadedBy,
         } = song.toJSON();
 
         songs.push({
-          uuid, author, title, cover, favorite: likes.includes(req.jwt.uuid),
+          uuid,
+          author,
+          title,
+          cover,
+          favorite: opts.includes('fav') ? likes.includes(userUuid) : undefined,
+          editable: opts.includes('edit') ? uploadedBy === userUuid : undefined,
         });
       });
 
@@ -142,23 +180,30 @@ export function updateSong() {
       return;
     }
 
-    const song = await getSongByUuidFromDB(songId);
+    const { uuid, role } = req.jwt;
 
-    if (!song) {
+    const foundedSong = await getSongByUuidFromDB(songId);
+
+    if (!foundedSong) {
       res.status(404).send({ message: 'No song found.' });
       return;
     }
 
-    const data = {};
+    if (foundedSong.uploadedBy !== uuid && role < 2) {
+      res.status(403).send({ message: 'Forbitten.' });
+      return;
+    }
+
+    const song = {};
     Object.keys(body).forEach((key) => {
       if (['author', 'title', 'cover'].includes(key)) {
-        data[key] = body[key].trim();
+        song[key] = body[key].trim();
       }
     });
 
     try {
-      await updateSongInDB(songId, data);
-      res.status(200).send({ message: 'Successfully updated song.', song: data });
+      await updateSongInDB(songId, song);
+      res.status(200).send({ message: 'Successfully updated song.', song });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
