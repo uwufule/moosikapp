@@ -95,7 +95,7 @@ Required: true
     "uuid": "00000000-0000-0000-0000-000000000000",
     "username": "testUser",
     "email": "testUser@gmail.com",
-    "permissions": 1,
+    "role": 1,
     "createdAt": "1970-01-01T00:00:00.000Z"
   }
 }
