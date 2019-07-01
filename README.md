@@ -147,8 +147,8 @@ Required: false
 Возможные ошибки
 ```javascript
 # Status Code: 400
-{ "message": "Invalid query parameter 'skip' provided." }
-{ "message": "Invalid query parameter 'limit' provided." }
+{ "message": "Invalid query parameter `skip` provided." }
+{ "message": "Invalid query parameter `limit` provided." }
 
 # Status Code: 404
 { "message": "No songs found." }
@@ -156,7 +156,7 @@ Required: false
 #### Поиск песен
 ```
 Type: GET
-Route: /songs[?query={queryString}&opts={opts}]
+Route: /songs?query={queryString}[&opts={opts}]
 ```
 Параметры запроса
 ```
