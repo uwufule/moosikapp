@@ -20,6 +20,8 @@ import {
   removeSongFromFavorite,
 } from './favorites';
 
+const { roles } = require('../config.json');
+
 export default function (app) {
   app.all('/api', (req, res) => {
     res.status(200).send({ message: 'There is API endpoint.' });
@@ -75,7 +77,7 @@ export default function (app) {
     validateAccept(),
     validateContentType('audio/mpeg'),
     checkAuth(),
-    checkPermissions(2),
+    checkPermissions(roles.moderator),
     uploadSong(),
   ]);
 
@@ -91,7 +93,7 @@ export default function (app) {
   app.delete('/api/songs/:songId', [
     validateAccept(),
     checkAuth(),
-    checkPermissions(2),
+    checkPermissions(roles.moderator),
     deleteSong(),
   ]);
 
