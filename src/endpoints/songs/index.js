@@ -1,3 +1,5 @@
+/* eslint-disable no-bitwise */
+
 import upload from './upload';
 import { getFileLink } from '../../apis/yandex-disk';
 import {
@@ -11,27 +13,26 @@ import {
   getUserByUuid,
 } from '../../apis/mongodb/users';
 
+const { scopes, roles } = require('../../config.json');
+
 export function getSongs() {
   return async (req, res) => {
-    const { skip, limit, opts = '' } = req.query;
+    const { skip, limit, scope } = req.query;
 
-    const s = Number(skip);
-    const l = Number(limit);
-
-    if (s < 0) {
+    if (skip < 0) {
       res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
       return;
     }
 
-    if (l < 1 || l > 100) {
+    if (limit < 1 || limit > 100) {
       res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
       return;
     }
 
-    const userUuid = req.jwt.uuid;
+    const user = req.jwt.uuid;
 
     try {
-      const result = await getSongsFromDB(s, l);
+      const result = await getSongsFromDB(Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -45,13 +46,16 @@ export function getSongs() {
           uuid, author, title, cover, likes, uploadedBy,
         } = song.toJSON();
 
+        const isFav = likes.includes(user);
+        const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
+
         songs.push({
           uuid,
           author,
           title,
           cover,
-          favorite: opts.includes('fav') ? likes.includes(userUuid) : undefined,
-          editable: opts.includes('edit') ? uploadedBy === userUuid : undefined,
+          favorite: scope & scopes.favorite ? isFav : undefined,
+          edit: scope & scopes.edit ? canEdit : undefined,
         });
       });
 
@@ -72,10 +76,12 @@ export function getSongByUuid() {
         return;
       }
 
-      const editable = song.uploadedBy === req.jwt.uuid;
+      const user = req.jwt.uuid;
 
-      const user = await getUserByUuid(song.uploadedBy);
-      song.uploadedBy = user.username;
+      const edit = song.uploadedBy === user;
+
+      const { username } = await getUserByUuid(song.uploadedBy);
+      song.uploadedBy = username;
 
       const {
         author, title, cover, path, uploadedBy, createdAt, likes,
@@ -92,8 +98,8 @@ export function getSongByUuid() {
           url,
           uploadedBy,
           createdAt,
-          favorite: likes.includes(),
-          editable,
+          favorite: likes.includes(user),
+          edit,
         },
       });
     } catch (e) {
@@ -105,7 +111,7 @@ export function getSongByUuid() {
 export function findSongs() {
   return async (req, res) => {
     const {
-      query, skip, limit, opts = '',
+      query, skip, limit, scope,
     } = req.query;
 
     if (!query) {
@@ -113,23 +119,20 @@ export function findSongs() {
       return;
     }
 
-    const s = Number(skip);
-    const l = Number(limit);
-
-    if (s < 0) {
+    if (skip < 0) {
       res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
       return;
     }
 
-    if (l < 1 || l > 100) {
+    if (limit < 1 || limit > 100) {
       res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
       return;
     }
 
-    const userUuid = req.jwt.uuid;
+    const user = req.jwt.uuid;
 
     try {
-      const result = await findSongsInDB(decodeURI(query), s, l);
+      const result = await findSongsInDB(decodeURI(query), Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -143,13 +146,16 @@ export function findSongs() {
           uuid, author, title, cover, likes, uploadedBy,
         } = song.toJSON();
 
+        const isFav = likes.includes(user);
+        const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
+
         songs.push({
           uuid,
           author,
           title,
           cover,
-          favorite: opts.includes('fav') ? likes.includes(userUuid) : undefined,
-          editable: opts.includes('edit') ? uploadedBy === userUuid : undefined,
+          favorite: scope & scopes.favorite ? isFav : undefined,
+          edit: scope & scopes.edit ? canEdit : undefined,
         });
       });
 
@@ -189,7 +195,7 @@ export function updateSong() {
       return;
     }
 
-    if (foundedSong.uploadedBy !== uuid && role < 2) {
+    if (foundedSong.uploadedBy !== uuid && role < roles.moderator) {
       res.status(403).send({ message: 'Forbitten.' });
       return;
     }
@@ -214,6 +220,20 @@ export function deleteSong() {
   return async (req, res) => {
     try {
       const { songId } = req.params;
+
+      const { uuid, role } = req.jwt;
+
+      const foundedSong = await getSongByUuidFromDB(songId);
+
+      if (!foundedSong) {
+        res.status(404).send({ message: 'No song found.' });
+        return;
+      }
+
+      if (foundedSong.uploadedBy !== uuid && role < roles.moderator) {
+        res.status(403).send({ message: 'Forbitten.' });
+        return;
+      }
 
       await deleteSongFromDB(songId);
 
