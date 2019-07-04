@@ -1,5 +1,7 @@
 import Mongoose from 'mongoose';
 
+const { roles } = require('../../../config.json');
+
 const User = Mongoose.model('User', new Mongoose.Schema({
   uuid: {
     type: String,
@@ -27,7 +29,7 @@ const User = Mongoose.model('User', new Mongoose.Schema({
   },
   role: {
     type: Number,
-    default: 1,
+    default: roles.user,
   },
 }, { versionKey: false, timestamps: true }));
 

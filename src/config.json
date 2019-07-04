@@ -1,0 +1,12 @@
+{
+  "scopes": {
+    "favorite": 1,
+    "edit": 2
+  },
+  "roles": {
+    "user": 1,
+    "moderator": 2,
+    "admin": 1024
+  },
+  "MAX_FILE_SIZE": "10mb"
+}
