@@ -7,6 +7,8 @@ import mongoDB from './apis/mongodb';
 import yandexDiskApi from './apis/yandex-disk';
 import apiEndpoint from './endpoints';
 
+const { MAX_FILE_SIZE } = require('./config.json');
+
 const { PORT, YANDEX_DISK_API_TOKEN } = process.env;
 
 mongoDB();
@@ -14,10 +16,13 @@ yandexDiskApi(YANDEX_DISK_API_TOKEN);
 
 const app = Express();
 
+app.disable('x-powered-by');
+app.disable('etag');
+
 app.use(Express.static(Path.resolve('./static')));
 
 app.use(BodyParser.json());
-app.use(BodyParser.raw({ type: 'audio/mpeg', limit: '10mb' }));
+app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
 
 app.use(cors());
 
