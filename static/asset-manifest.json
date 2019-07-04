@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.3220cdd1.chunk.css",
+    "main.css": "/static/css/main.48a680f5.chunk.css",
     "main.js": "/static/js/main.8571ec76.chunk.js",
     "main.js.map": "/static/js/main.8571ec76.chunk.js.map",
     "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
@@ -8,9 +8,9 @@
     "static/js/2.170de4bb.chunk.js": "/static/js/2.170de4bb.chunk.js",
     "static/js/2.170de4bb.chunk.js.map": "/static/js/2.170de4bb.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.653fef88fbe56dc5ea3d18b711320817.js": "/precache-manifest.653fef88fbe56dc5ea3d18b711320817.js",
+    "precache-manifest.7f0ac6a4f89f33d620c32a509e6f2ad0.js": "/precache-manifest.7f0ac6a4f89f33d620c32a509e6f2ad0.js",
     "service-worker.js": "/service-worker.js",
-    "static/css/main.3220cdd1.chunk.css.map": "/static/css/main.3220cdd1.chunk.css.map",
+    "static/css/main.48a680f5.chunk.css.map": "/static/css/main.48a680f5.chunk.css.map",
     "static/media/bg.webp": "/static/media/bg.d36aebff.webp",
     "static/media/bg.jpf": "/static/media/bg.ef2963a8.jpf",
     "static/media/icons.svg": "/static/media/icons.6b9d14e4.svg"
