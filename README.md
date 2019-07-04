@@ -109,7 +109,7 @@ Required: true
 #### Получить список песен
 ```
 Type: GET
-Route: /songs[?skip={Number}&limit={Number}&opts={opts}]
+Route: /songs[?skip={Number}&limit={Number}&scope={scopes}]
 ```
 Параметры запроса
 ```
@@ -122,9 +122,12 @@ Type: Number
 Value: 1-100
 Required: false
 
-Name: opts
-Type: string
-Values: [fav,edit]
+Name: scope
+Type: Number
+Value: {
+  "+1": "favorite",
+  "+2": "edit"
+}
 Required: false
 ```
 Ответ
@@ -139,7 +142,7 @@ Required: false
       "title": "songTitle",
       "cover": "coverUrl",
       "favorite?": false,
-      "editable?": false
+      "edit?": false
     }
   ]
 }
@@ -156,7 +159,7 @@ Required: false
 #### Поиск песен
 ```
 Type: GET
-Route: /songs?query={queryString}[&opts={opts}]
+Route: /songs?query={queryString}[&scope={scopes}]
 ```
 Параметры запроса
 ```
@@ -164,10 +167,12 @@ Name: query
 Type: String
 Required: true
 
-Name: opts
-Type: string
-Values: [fav,edit]
-Required: false
+Name: scope
+Type: Number
+Value: {
+  "+1": "favorite",
+  "+2": "edit"
+}
 ```
 Ответ
 ```javascript
@@ -181,7 +186,7 @@ Required: false
       "title": "songTitle",
       "cover": "coverUrl",
       "favorite?": false,
-      "editable?": false
+      "edit?": false
     }
   ]
 }
@@ -211,7 +216,6 @@ Required: true
 {
   "message": "Successfully retrieved song.",
   "song":  {
-    "uuid": "00000000-0000-0000-0000-000000000000",
     "author": "songAuthor",
     "title": "songTitle",
     "cover": "coverUrl",
@@ -219,7 +223,7 @@ Required: true
     "url": "songUrl",
     "createdAt": "1970-01-01T00:00:00.000Z",
     "favorite": false,
-    "editable": false
+    "edit": false
   }
 }
 ```
@@ -228,7 +232,7 @@ Required: true
 # Status Code: 404
 { "message": "No song found." }
 ```
-#### Зарузка песни
+#### Загрузка песни
 ```
 Type: POST
 Route: /songs
@@ -248,6 +252,9 @@ Content-Type: audio/mpeg
 ```javascript
 # Status Code: 400
 { "message": "No body provided." }
+
+# Status Code: 403
+{ "message": "Forbitten." }
 
 # Status Code: 406
 { "message": "Already exists." }
@@ -281,6 +288,9 @@ Required: true
 # Status Code: 400
 { "message": "No body provided." }
 
+# Status Code: 403
+{ "message": "Forbitten." }
+
 # Status Code: 404
 { "message": "No song found." }
 ```
@@ -300,6 +310,13 @@ Required: true
 # Status Code: 204
 ```
 Возможные ошибки
+```javascript
+# Status Code: 403
+{ "message": "Forbitten." }
+
+# Status Code: 404
+{ "message": "No song found." }
+```
 ## Избранное
 #### Получить список избранных песен
 ```
@@ -341,10 +358,15 @@ Required: true
 ```javascript
 # Status Code: 200
 {
-  "message": "Successfully added song to favorites."
+  "message": "Successfully added song to favorites.",
+  "uuid": "00000000-0000-0000-0000-000000000000"
 }
 ```
 Возможные ошибки
+```javascript
+# Status Code: 404
+{ "message": "No song found." }
+```
 #### Удалить песню из избранного
 ```
 Type: DELETE
@@ -361,6 +383,11 @@ Required: true
 # Status Code: 204
 ```
 Возможные ошибки
+```javascript
+# Status Code: 404
+{ "message": "No song found." }
+{ "message": "No favorite found." }
+```
 ## Статус
 ```
 Type: GET
