@@ -18,6 +18,7 @@ export async function getSongs(skip = 0, limit = 100) {
 export async function getSongByUuid(uuid) {
   const projection = {
     _id: 0,
+    uuid: 1,
     author: 1,
     title: 1,
     cover: 1,

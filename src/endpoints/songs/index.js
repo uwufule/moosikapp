@@ -84,7 +84,7 @@ export function getSongByUuid() {
       song.uploadedBy = username;
 
       const {
-        author, title, cover, path, uploadedBy, createdAt, likes,
+        uuid, author, title, cover, path, uploadedBy, createdAt, likes,
       } = song.toJSON();
 
       const url = await getFileLink(path);
@@ -92,6 +92,7 @@ export function getSongByUuid() {
       res.status(200).send({
         message: 'Successfully retrieved song.',
         song: {
+          uuid,
           author,
           title,
           cover,
