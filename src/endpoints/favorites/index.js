@@ -73,7 +73,7 @@ export function addSongToFavorite() {
 
       await updateSongInDB(songId, { $addToSet: { likes: uuid } });
 
-      res.status(200).send({ message: 'Successfully added song to favorites.' });
+      res.status(200).send({ message: 'Successfully added song to favorites.', uuid: songId });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
