@@ -19,6 +19,7 @@ import {
   addSongToFavorite,
   removeSongFromFavorite,
 } from './favorites';
+import { upload, verify } from './upload';
 
 const { roles } = require('../config.json');
 
@@ -42,7 +43,11 @@ export default function (app) {
   ]);
 
   // forgot
-  // app.post('/api/forgot', []);
+  app.post('/api/forgot', [
+    (req, res) => {
+      res.status(200).send({ message: 'Not implemented.' });
+    },
+  ]);
 
   // get user with provided username
   app.get('/api/users/:username', [
@@ -123,6 +128,26 @@ export default function (app) {
     validateAccept(),
     status(),
   ]);
+
+
+  /* experimental */
+
+  // upload song
+  app.get('/api/upload', [
+    validateAccept(),
+    validateContentType('audio/mpeg'),
+    checkAuth(),
+    checkPermissions(roles.moderator),
+    upload(),
+  ]);
+
+  // verify upload
+  app.get('/api/upload/verify', [
+    verify(),
+  ]);
+
+  /* experimental */
+
 
   // 404 not found
   app.all('/api/*', (req, res) => {
