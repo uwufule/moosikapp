@@ -3,14 +3,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const webpackNodeExternals = require('webpack-node-externals');
-const dotenv = require('dotenv');
-const { version } = require('./package.json');
 
 const prod = process.env.NODE_ENV === 'production';
-
-if (!prod) {
-  dotenv.config();
-}
 
 module.exports = {
   target: 'node',
@@ -18,7 +12,7 @@ module.exports = {
   mode: prod ? 'production' : 'development',
   output: {
     path: path.resolve('./build'),
-    filename: `server${process.env.VERSIONED ? version : ''}${prod ? '.min' : ''}.js`,
+    filename: 'server.js',
   },
   node: {
     __dirname: true,
