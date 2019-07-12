@@ -12,7 +12,7 @@
   "homepage": "https://github.com/Ferisef/moosik#readme",
   "keywords": [],
   "scripts": {
-    "start": "node ./build/server.min.js",
+    "start": "node ./build/server.js",
     "build": "webpack"
   },
   "private": true,
