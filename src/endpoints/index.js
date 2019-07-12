@@ -135,7 +135,6 @@ export default function (app) {
   // upload song
   app.get('/api/upload', [
     validateAccept(),
-    validateContentType('audio/mpeg'),
     checkAuth(),
     checkPermissions(roles.moderator),
     upload(),
