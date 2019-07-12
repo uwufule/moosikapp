@@ -1,25 +1,25 @@
 {
   "name": "moosik",
-  "version": "1.0.0",
-  "description": "Server",
-  "private": true,
-  "main": "./src/index.js",
-  "scripts": {
-    "start": "webpack&&node -r dotenv/config ./build/server.js",
-    "build:dev": "webpack",
-    "build:prod": "set NODE_ENV=production&&webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "1.1.0",
+  "description": "MoosikApp server",
+  "author": "Ferisef",
+  "license": "MIT",
+  "main": "./build/server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ferisef/moosik.git"
   },
-  "author": "Ferisef",
-  "license": "ISC",
+  "homepage": "https://github.com/Ferisef/moosik#readme",
+  "keywords": [],
+  "scripts": {
+    "start": "webpack&&node -r dotenv/config ./build/server.js",
+    "build:dev": "webpack",
+    "build:prod": "set NODE_ENV=production&&webpack"
+  },
+  "private": true,
   "bugs": {
     "url": "https://github.com/Ferisef/moosik/issues"
   },
-  "homepage": "https://github.com/Ferisef/moosik#readme",
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
