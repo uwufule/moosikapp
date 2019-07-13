@@ -1,7 +1,6 @@
 /* eslint-disable no-bitwise */
 
 import upload from './upload';
-import { getFileLink } from '../../apis/yandex-disk';
 import {
   getSongs as getSongsFromDB,
   getSongByUuid as getSongByUuidFromDB,
@@ -12,6 +11,8 @@ import {
 import {
   getUserByUuid,
 } from '../../apis/mongodb/users';
+
+const { CDN_SERVER } = process.env;
 
 const { scopes, roles } = require('../../config.json');
 
@@ -78,16 +79,11 @@ export function getSongByUuid() {
 
       const user = req.jwt.uuid;
 
-      const edit = song.uploadedBy === user;
-
       const { username } = await getUserByUuid(song.uploadedBy);
-      song.uploadedBy = username;
 
       const {
         uuid, author, title, cover, path, uploadedBy, createdAt, likes,
       } = song.toJSON();
-
-      const url = await getFileLink(path);
 
       res.status(200).send({
         message: 'Successfully retrieved song.',
@@ -96,11 +92,11 @@ export function getSongByUuid() {
           author,
           title,
           cover,
-          url,
-          uploadedBy,
+          url: `${CDN_SERVER}${path}`,
+          uploadedBy: username,
           createdAt,
           favorite: likes.includes(user),
-          edit,
+          edit: uploadedBy === user,
         },
       });
     } catch (e) {
