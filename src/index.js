@@ -4,15 +4,13 @@ import cors from 'cors';
 import BodyParser from 'body-parser';
 import errorHandler from './middlewares/errorHandler';
 import mongoDB from './apis/mongodb';
-import yandexDiskApi from './apis/yandex-disk';
 import apiEndpoint from './endpoints';
 
 const { MAX_FILE_SIZE } = require('./config.json');
 
-const { PORT, YANDEX_DISK_API_TOKEN } = process.env;
+const { PORT } = process.env;
 
 mongoDB();
-yandexDiskApi(YANDEX_DISK_API_TOKEN);
 
 const app = Express();
 
