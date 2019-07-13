@@ -252,13 +252,13 @@ Content-Type: audio/mpeg
 ```javascript
 # Status Code: 400
 { "message": "No body provided." }
+{ "message": "Error while uploading." }
 
 # Status Code: 403
 { "message": "Forbitten." }
 
 # Status Code: 406
 { "message": "Already exists." }
-{ "message": "Error while uploading." }
 ```
 #### Редактирование информации о песне
 ```
