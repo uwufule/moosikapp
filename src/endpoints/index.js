@@ -19,7 +19,7 @@ import {
   addSongToFavorite,
   removeSongFromFavorite,
 } from './favorites';
-import { upload, verify } from './upload';
+import { verify } from './songs/upload';
 
 const { roles } = require('../config.json');
 
@@ -129,25 +129,10 @@ export default function (app) {
     status(),
   ]);
 
-
-  /* experimental */
-
-  // upload song
-  app.get('/api/upload', [
-    validateAccept(),
-    validateContentType('audio/mpeg'),
-    checkAuth(),
-    checkPermissions(roles.moderator),
-    upload(),
-  ]);
-
   // verify upload
-  app.get('/api/upload/verify', [
+  app.get('/api/verify', [
     verify(),
   ]);
-
-  /* experimental */
-
 
   // 404 not found
   app.all('/api/*', (req, res) => {
