@@ -4,9 +4,9 @@ import {
   getFavoriteSongs as getFavoriteSongsFromDB,
   getSongByUuid as getSongByUuidFromDB,
   updateSong as updateSongInDB,
-} from '../../apis/mongodb/songs';
+} from '../../../apis/mongodb/songs';
 
-const { scopes, roles } = require('../../config.json');
+const { scopes, roles } = require('../../../config.json');
 
 export function getFavoriteSongs() {
   return async (req, res) => {

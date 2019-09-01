@@ -7,14 +7,14 @@ import {
   findSongs as findSongsInDB,
   updateSong as updateSongInDB,
   deleteSong as deleteSongFromDB,
-} from '../../apis/mongodb/songs';
+} from '../../../apis/mongodb/songs';
 import {
   getUserByUuid,
-} from '../../apis/mongodb/users';
+} from '../../../apis/mongodb/users';
 
 const { CDN_SERVER } = process.env;
 
-const { scopes, roles } = require('../../config.json');
+const { scopes, roles } = require('../../../config.json');
 
 export function getSongs() {
   return async (req, res) => {

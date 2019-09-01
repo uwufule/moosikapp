@@ -1,6 +1,6 @@
 import Crypto from 'crypto';
 import uuidv4 from 'uuid/v4';
-import { createUser } from '../../apis/mongodb/users';
+import { createUser } from '../../../apis/mongodb/users';
 
 const EMAIL_REGEX = /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
 

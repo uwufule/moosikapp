@@ -1,4 +1,4 @@
-import { getUser } from '../../apis/mongodb/users';
+import { getUser } from '../../../apis/mongodb/users';
 
 export default function () {
   return async (req, res) => {

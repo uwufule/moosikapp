@@ -1,6 +1,6 @@
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import { findUser } from '../../apis/mongodb/users';
+import { findUser } from '../../../apis/mongodb/users';
 
 const { JWT_SECRET } = process.env;
 

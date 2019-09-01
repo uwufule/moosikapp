@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 import { Readable } from 'stream';
 import uuidv4 from 'uuid/v4';
 import request from 'request';
-import { saveSong } from '../../apis/mongodb/songs';
+import { saveSong } from '../../../apis/mongodb/songs';
 
 const { CDN_SERVER } = process.env;
 
