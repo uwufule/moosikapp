@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/Ferisef/moosik.git"
   },
-  "homepage": "https://github.com/Ferisef/moosik#readme",
+  "homepage": "https://github.com/Ferisef/moosik",
   "keywords": [],
   "scripts": {
     "start": "node build/server.js",
