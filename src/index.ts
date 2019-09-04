@@ -1,5 +1,5 @@
 import Path from 'path';
-import Express, { Application, Request, Response } from 'express';
+import Express, { Application } from 'express';
 import cors from 'cors';
 import BodyParser from 'body-parser';
 import errorHandler from './middlewares/errorHandler';
@@ -26,14 +26,6 @@ app.use(cors());
 
 app.use(errorHandler());
 
-// app.get('/', (req: Request, res: Response) => {
-//   res.sendFile(Path.resolve('./html/index.html'));
-// });
-
 withApi(app);
-
-// app.get('*', (req: Request, res: Response) => {
-//   res.redirect('/');
-// });
 
 app.listen(PORT);
