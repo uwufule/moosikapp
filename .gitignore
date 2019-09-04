@@ -16,7 +16,6 @@ tmp
 .env
 
 # Static
-html/
 static/
 
 # TODO
