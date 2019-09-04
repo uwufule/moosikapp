@@ -5,7 +5,7 @@ import { createUser } from '../../../apis/mongodb/users';
 
 const EMAIL_REGEX = /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
 
-export default function () {
+export default () => {
   return async (req: Request, res: Response) => {
     if (!req.body) {
       res.status(400).send({ message: 'No body provided.' });

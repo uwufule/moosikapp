@@ -6,7 +6,7 @@ import { findUser } from '../../../apis/mongodb/users';
 
 const { JWT_SECRET = '' } = process.env;
 
-function login(res:  Response, usr: IUser | null, pwd: string) {
+function login(res: Response, usr: IUser | null, pwd: string) {
   if (!usr) {
     res.status(403).send({ message: 'This account has been deactivated.' });
     return;
@@ -31,7 +31,7 @@ function login(res:  Response, usr: IUser | null, pwd: string) {
   res.status(401).send({ message: 'Invalid authorization.' });
 }
 
-export default function () {
+export default () => {
   return async (req: Request, res: Response) => {
     if (!req.body) {
       res.status(400).send({ message: 'No body provided.' });
