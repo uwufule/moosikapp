@@ -6,8 +6,6 @@ dist/
 node_modules/
 yarn.lock
 
-# VS Code
-.vscode/
 
 # Temp files
 tmp
@@ -20,3 +18,7 @@ static/
 
 # TODO
 TODO.md
+
+# Misc
+.DS_Store
+.vscode/
