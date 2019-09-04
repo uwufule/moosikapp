@@ -1,5 +1,7 @@
 /* eslint-disable no-bitwise */
 
+import { Response } from 'express';
+import { AuthorizedRequest, Song, IUser } from '../../../../typings';
 import upload from './upload';
 import {
   getSongs as getSongsFromDB,
@@ -17,7 +19,7 @@ const { CDN_SERVER } = process.env;
 const { scopes, roles } = require('../../../config.json');
 
 export function getSongs() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const { skip, limit, scope } = req.query;
 
     if (skip < 0) {
@@ -40,17 +42,17 @@ export function getSongs() {
         return;
       }
 
-      const songs = [];
+      const songs: Array<Song> = [];
 
       result.forEach((song) => {
         const {
           uuid, author, title, cover, likes, uploadedBy,
-        } = song.toJSON();
+        } = song;
 
         const isFav = likes.includes(user);
         const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
 
-        songs.push({
+        songs.push(<Song>{
           uuid,
           author,
           title,
@@ -68,7 +70,7 @@ export function getSongs() {
 }
 
 export function getSongByUuid() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const song = await getSongByUuidFromDB(req.params.songId);
 
@@ -79,7 +81,7 @@ export function getSongByUuid() {
 
       const user = req.jwt.uuid;
 
-      const { username } = await getUserByUuid(song.uploadedBy);
+      const { username } = <IUser>(await getUserByUuid(song.uploadedBy));
 
       const {
         uuid, author, title, cover, path, uploadedBy, createdAt, likes,
@@ -106,7 +108,7 @@ export function getSongByUuid() {
 }
 
 export function findSongs() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const {
       query, skip, limit, scope,
     } = req.query;
@@ -136,7 +138,7 @@ export function findSongs() {
         return;
       }
 
-      const songs = [];
+      const songs: Array<Song> = [];
 
       result.forEach((song) => {
         const {
@@ -146,7 +148,7 @@ export function findSongs() {
         const isFav = likes.includes(user);
         const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
 
-        songs.push({
+        songs.push(<Song>{
           uuid,
           author,
           title,
@@ -164,7 +166,7 @@ export function findSongs() {
 }
 
 export function uploadSong() {
-  return (req, res) => {
+  return (req: AuthorizedRequest, res: Response) => {
     if (!req.body || Number(req.headers['content-length']) === 0) {
       res.status(400).send({ message: 'No body provided.' });
       return;
@@ -175,7 +177,7 @@ export function uploadSong() {
 }
 
 export function updateSong() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const { body, params: { songId } } = req;
 
     if (!body) {
@@ -197,7 +199,7 @@ export function updateSong() {
       return;
     }
 
-    const song = {};
+    const song: any = {};
     Object.keys(body).forEach((key) => {
       if (['author', 'title', 'cover'].includes(key)) {
         song[key] = body[key].trim();
@@ -206,7 +208,7 @@ export function updateSong() {
 
     try {
       await updateSongInDB(songId, song);
-      res.status(200).send({ message: 'Successfully updated song.', song });
+      res.status(200).send({ message: 'Successfully updated song.', song: [...song] });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -214,7 +216,7 @@ export function updateSong() {
 }
 
 export function deleteSong() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const { songId } = req.params;
 
@@ -234,7 +236,7 @@ export function deleteSong() {
 
       await deleteSongFromDB(songId);
 
-      req.status(204).send();
+      res.status(204).send();
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }

@@ -1,7 +1,8 @@
+import { Request, Response } from 'express';
 import { getUser } from '../../../apis/mongodb/users';
 
 export default function () {
-  return async (req, res) => {
+  return async (req: Request, res: Response) => {
     const { username } = req.params;
 
     try {

@@ -1,3 +1,4 @@
+import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import uuidv4 from 'uuid/v4';
 import { createUser } from '../../../apis/mongodb/users';
@@ -5,9 +6,9 @@ import { createUser } from '../../../apis/mongodb/users';
 const EMAIL_REGEX = /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
 
 export default function () {
-  return async (req, res) => {
+  return async (req: Request, res: Response) => {
     if (!req.body) {
-      req.status(400).send({ message: 'No body provided.' });
+      res.status(400).send({ message: 'No body provided.' });
     }
 
     const { email, username, password } = req.body;

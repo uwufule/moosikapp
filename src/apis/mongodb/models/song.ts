@@ -1,7 +1,8 @@
 import Mongoose, { Schema } from 'mongoose';
 import uuidv4 from 'uuid/v4';
+import { ISong } from '../../../../typings';
 
-const Song = Mongoose.model('Song', new Schema({
+const Song = Mongoose.model<ISong>('Song', new Schema({
   uuid: {
     type: String,
     default: uuidv4(),

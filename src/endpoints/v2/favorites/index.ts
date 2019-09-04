@@ -1,5 +1,7 @@
 /* eslint-disable no-bitwise */
 
+import { Response } from 'express';
+import { AuthorizedRequest, Song } from '../../../../typings';
 import {
   getFavoriteSongs as getFavoriteSongsFromDB,
   getSongByUuid as getSongByUuidFromDB,
@@ -9,7 +11,7 @@ import {
 const { scopes, roles } = require('../../../config.json');
 
 export function getFavoriteSongs() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const { skip, limit, scope } = req.query;
 
     if (skip < 0) {
@@ -32,7 +34,7 @@ export function getFavoriteSongs() {
         return;
       }
 
-      const songs = [];
+      const songs: Array<Song> = [];
 
       result.forEach((song) => {
         const {
@@ -41,7 +43,7 @@ export function getFavoriteSongs() {
 
         const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
 
-        songs.push({
+        songs.push(<Song>{
           uuid,
           author,
           title,
@@ -58,7 +60,7 @@ export function getFavoriteSongs() {
 }
 
 export function addSongToFavorite() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const { songId } = req.params;
 
@@ -81,7 +83,7 @@ export function addSongToFavorite() {
 }
 
 export function removeSongFromFavorite() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const { songId } = req.params;
 

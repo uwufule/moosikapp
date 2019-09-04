@@ -1,8 +1,9 @@
 import Mongoose from 'mongoose';
+import { IUser } from '../../../../typings';
 
-const { roles } = require('../../../config.json');
+import { roles } from '../../../config.json';
 
-const User = Mongoose.model('User', new Mongoose.Schema({
+const User = Mongoose.model<IUser>('User', new Mongoose.Schema({
   uuid: {
     type: String,
     unique: true,

@@ -1,5 +1,7 @@
+import { Request, Response } from 'express';
+
 export default function () {
-  return async (req, res) => {
+  return async (req: Request, res: Response) => {
     try {
       res.status(200).send({ message: 'Not implemented.' });
     } catch (e) {
