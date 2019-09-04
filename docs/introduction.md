@@ -9,4 +9,4 @@ Accept: application/json
 Authorization: Bearer JWT
 ```
 Базовый URL каждой конечной точки начинается с `https://moosikapp.tk/api/{API_VERSION}`, это означает что если вам надо сделать http-запрос к конечной точке входа в систему, URL должен иметь вид `https://moosikapp.tk/api/{API_VERSION}/login`.
-Вместо {API_VERSION} Должно быть значение используемой версии API. Актуальная на данный момент версия v1.
+Вместо {API_VERSION} Должно быть значение используемой версии API. Актуальная на данный момент версия v2.
