@@ -12,8 +12,8 @@
   "homepage": "https://github.com/Ferisef/moosik",
   "keywords": [],
   "scripts": {
-    "start": "node dist/server.js",
-    "build": "tsc",
+    "start": "node build/server.js",
+    "build": "webpack",
     "dev": "nodemon --exec node -r dotenv/config -r ts-node/register ./src/index.ts"
   },
   "private": true,
@@ -30,16 +30,16 @@
     "@types/mongoose": "^5.5.16",
     "@types/request": "^2.48.2",
     "@types/uuid": "^3.4.5",
-    "babel-loader": "^8.0.5",
     "dotenv": "^8.0.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
     "nodemon": "^1.19.1",
+    "ts-loader": "^6.0.4",
     "ts-node": "^8.3.0",
     "typescript": "^3.6.2",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.3.0",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
