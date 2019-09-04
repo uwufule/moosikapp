@@ -1,10 +1,10 @@
 {
   "name": "moosikapp",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "MoosikApp backend",
   "author": "Hibikaze",
   "license": "MIT",
-  "main": "./build/server.js",
+  "main": "./dist/server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ferisef/moosik.git"
@@ -12,10 +12,9 @@
   "homepage": "https://github.com/Ferisef/moosik",
   "keywords": [],
   "scripts": {
-    "start": "node build/server.js",
-    "build": "webpack",
-    "tsc": "tsc",
-    "dev": "nodemon -r node_modules/dotenv/config --exec babel-node src/index.js"
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "dev": "nodemon --exec node -r dotenv/config -r ts-node/register ./src/index.ts"
   },
   "private": true,
   "bugs": {
@@ -37,6 +36,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
     "nodemon": "^1.19.1",
+    "ts-node": "^8.3.0",
     "typescript": "^3.6.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
