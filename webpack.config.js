@@ -8,7 +8,7 @@ const prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
   target: 'node',
-  entry: './src/index.js',
+  entry: './src/index.ts',
   mode: prod ? 'production' : 'development',
   output: {
     path: path.resolve('./build'),
@@ -20,12 +20,15 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.ts$/,
         use: {
-          loader: 'babel-loader',
+          loader: 'ts-loader',
         },
       },
     ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   externals: [
     webpackNodeExternals(),
