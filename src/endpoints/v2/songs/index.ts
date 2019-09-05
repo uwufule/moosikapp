@@ -3,16 +3,8 @@
 import { Response } from 'express';
 import { AuthorizedRequest, Song, IUser } from '../../../../typings';
 import upload from './upload';
-import {
-  getSongs as getSongsFromDB,
-  getSongByUuid as getSongByUuidFromDB,
-  findSongs as findSongsInDB,
-  updateSong as updateSongInDB,
-  deleteSong as deleteSongFromDB,
-} from '../../../apis/mongodb/songs';
-import {
-  getUserByUuid,
-} from '../../../apis/mongodb/users';
+import * as DB from '../../../apis/mongodb/songs';
+import { getUserByUuid } from '../../../apis/mongodb/users';
 
 const { CDN_SERVER } = process.env;
 
@@ -35,7 +27,7 @@ export function getSongs() {
     const user = req.jwt.uuid;
 
     try {
-      const result = await getSongsFromDB(Number(skip), Number(limit));
+      const result = await DB.getSongs(Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -72,7 +64,7 @@ export function getSongs() {
 export function getSongByUuid() {
   return async (req: AuthorizedRequest, res: Response) => {
     try {
-      const song = await getSongByUuidFromDB(req.params.songId);
+      const song = await DB.getSongByUuid(req.params.songId);
 
       if (!song) {
         res.status(404).send({ message: 'No song found.' });
@@ -131,7 +123,7 @@ export function findSongs() {
     const user = req.jwt.uuid;
 
     try {
-      const result = await findSongsInDB(decodeURI(query), Number(skip), Number(limit));
+      const result = await DB.findSongs(decodeURI(query), Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
@@ -187,7 +179,7 @@ export function updateSong() {
 
     const { uuid, role } = req.jwt;
 
-    const foundedSong = await getSongByUuidFromDB(songId);
+    const foundedSong = await DB.getSongByUuid(songId);
 
     if (!foundedSong) {
       res.status(404).send({ message: 'No song found.' });
@@ -207,7 +199,7 @@ export function updateSong() {
     });
 
     try {
-      await updateSongInDB(songId, song);
+      await DB.updateSong(songId, song);
       res.status(200).send({ message: 'Successfully updated song.', song: [...song] });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
@@ -222,7 +214,7 @@ export function deleteSong() {
 
       const { uuid, role } = req.jwt;
 
-      const foundedSong = await getSongByUuidFromDB(songId);
+      const foundedSong = await DB.getSongByUuid(songId);
 
       if (!foundedSong) {
         res.status(404).send({ message: 'No song found.' });
@@ -234,7 +226,7 @@ export function deleteSong() {
         return;
       }
 
-      await deleteSongFromDB(songId);
+      await DB.deleteSong(songId);
 
       res.status(204).send();
     } catch (e) {

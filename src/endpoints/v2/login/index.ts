@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 import { IUser } from '../../../../typings';
-import { findUser } from '../../../apis/mongodb/users';
+import * as DB from '../../../apis/mongodb/users';
 
 const { JWT_SECRET = '' } = process.env;
 
@@ -45,7 +45,7 @@ export default () => {
     }
 
     try {
-      const user = await findUser(username);
+      const user = await DB.findUser(username);
       login(res, user, password);
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });

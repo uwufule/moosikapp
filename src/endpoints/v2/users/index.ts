@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { getUser } from '../../../apis/mongodb/users';
+import * as DB from '../../../apis/mongodb/users';
 
 export default () => {
   return async (req: Request, res: Response) => {
     const { username } = req.params;
 
     try {
-      const user = await getUser(decodeURI(username));
+      const user = await DB.getUser(decodeURI(username));
 
       if (!user) {
         res.status(404).send({ message: 'No user found.' });

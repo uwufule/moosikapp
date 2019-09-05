@@ -4,7 +4,7 @@ import { Readable } from 'stream';
 import uuidv4 from 'uuid/v4';
 import request from 'request';
 import { AuthorizedRequest } from '../../../../typings';
-import { saveSong } from '../../../apis/mongodb/songs';
+import * as DB from '../../../apis/mongodb/songs';
 
 const { CDN_SERVER = '' } = process.env;
 
@@ -37,7 +37,7 @@ export default (req: AuthorizedRequest, res: Response) => {
     if (statusCode === 201) {
       const uuid = uuidv4();
 
-      await saveSong({
+      await DB.saveSong({
         uuid,
         uploadedBy: req.jwt.uuid,
         path: body,

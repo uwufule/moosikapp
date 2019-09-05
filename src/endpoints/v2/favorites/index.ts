@@ -2,11 +2,7 @@
 
 import { Response } from 'express';
 import { AuthorizedRequest, Song } from '../../../../typings';
-import {
-  getFavoriteSongs as getFavoriteSongsFromDB,
-  getSongByUuid as getSongByUuidFromDB,
-  updateSong as updateSongInDB,
-} from '../../../apis/mongodb/songs';
+import * as DB from '../../../apis/mongodb/songs';
 
 const { scopes, roles } = require('../../../config.json');
 
@@ -27,7 +23,7 @@ export function getFavoriteSongs() {
     const user = req.jwt.uuid;
 
     try {
-      const result = await getFavoriteSongsFromDB(user, Number(skip), Number(limit));
+      const result = await DB.getFavoriteSongs(user, Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No favorite songs found.' });
@@ -66,14 +62,14 @@ export function addSongToFavorite() {
 
       const { uuid } = req.jwt;
 
-      const foundedSong = await getSongByUuidFromDB(songId);
+      const foundedSong = await DB.getSongByUuid(songId);
 
       if (!foundedSong) {
         res.status(404).send({ message: 'No song found.' });
         return;
       }
 
-      await updateSongInDB(songId, { $addToSet: { likes: uuid } });
+      await DB.updateSong(songId, { $addToSet: { likes: uuid } });
 
       res.status(200).send({ message: 'Successfully added song to favorites.', uuid: songId });
     } catch (e) {
@@ -89,7 +85,7 @@ export function removeSongFromFavorite() {
 
       const { uuid } = req.jwt;
 
-      const foundedSong = await getSongByUuidFromDB(songId);
+      const foundedSong = await DB.getSongByUuid(songId);
 
       if (!foundedSong) {
         res.status(404).send({ message: 'No song found.' });
@@ -101,7 +97,7 @@ export function removeSongFromFavorite() {
         return;
       }
 
-      await updateSongInDB(songId, { $pull: { likes: uuid } });
+      await DB.updateSong(songId, { $pull: { likes: uuid } });
 
       res.status(204).send();
     } catch (e) {
