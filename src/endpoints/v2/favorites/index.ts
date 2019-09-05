@@ -1,13 +1,13 @@
 /* eslint-disable no-bitwise */
 
 import { Response } from 'express';
-import { AuthorizedRequest, Song } from '../../../../typings';
+import { AuthorizedRequest, SongData } from '../../../../typings';
 import * as DB from '../../../apis/mongodb/songs';
-
-const { scopes, roles } = require('../../../config.json');
+ 
+import { scopes, roles } from '../../../config.json';
 
 export function getFavoriteSongs() {
-  return async (req: AuthorizedRequest, res: Response) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const { skip, limit, scope } = req.query;
 
     if (skip < 0) {
@@ -30,7 +30,7 @@ export function getFavoriteSongs() {
         return;
       }
 
-      const songs: Array<Song> = [];
+      const songs: Array<SongData> = [];
 
       result.forEach((song) => {
         const {
@@ -39,13 +39,13 @@ export function getFavoriteSongs() {
 
         const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
 
-        songs.push(<Song>{
+        songs.push({
           uuid,
           author,
           title,
           cover,
           edit: scope & scopes.edit ? canEdit : undefined,
-        });
+        } as SongData);
       });
 
       res.status(200).send({ message: 'Successfully retrieved favorite songs.', songs });
@@ -56,7 +56,7 @@ export function getFavoriteSongs() {
 }
 
 export function addSongToFavorite() {
-  return async (req: AuthorizedRequest, res: Response) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
       const { songId } = req.params;
 
@@ -79,7 +79,7 @@ export function addSongToFavorite() {
 }
 
 export function removeSongFromFavorite() {
-  return async (req: AuthorizedRequest, res: Response) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
       const { songId } = req.params;
 
