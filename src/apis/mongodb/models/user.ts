@@ -1,9 +1,9 @@
-import Mongoose from 'mongoose';
-import { IUser } from '../../../../typings';
+import Mongoose, { Schema } from 'mongoose';
+import { User } from '../../../../typings';
 
 import { roles } from '../../../config.json';
 
-const User = Mongoose.model<IUser>('User', new Mongoose.Schema({
+export default Mongoose.model<User>('User', new Schema({
   uuid: {
     type: String,
     unique: true,
@@ -34,4 +34,3 @@ const User = Mongoose.model<IUser>('User', new Mongoose.Schema({
   },
 }, { versionKey: false, timestamps: true }));
 
-export default User;
