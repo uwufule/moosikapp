@@ -1,38 +1,26 @@
 import { Request } from 'express';
 import { Document } from 'mongoose';
 
-export interface JWTRecord {
-  uuid: string,
-  role: number,
-  timestamp: Date,
-}
-
-export interface AuthorizedRequest extends Request {
-  jwt: JWTRecord,
-}
-
 export interface HTTPException extends Error {
   type: string;
 }
 
-export interface Song {
+export interface JWTRecord {
   uuid: string;
-  author: string;
-  title: string;
-  uploadedBy: string;
-  cover: string;
-  favorite: boolean | undefined;
-  edit: boolean | undefined;
-  createdAt: Date;
-  updatedAt: Date;
+  role: number;
+  timestamp: Date;
 }
 
-export interface IUser extends Document {
+export interface AuthorizedRequest extends Request {
+  jwt: JWTRecord;
+}
+
+export interface User extends Document {
   uuid: string;
   username: string;
   email: string;
   password: {
-    hash: string,
+    hash: string;
     timestamp: Date;
   };
   role: number;
@@ -40,7 +28,7 @@ export interface IUser extends Document {
   updatedAt: Date;
 }
 
-export interface ISong extends Document {
+export interface Song extends Document {
   uuid: string;
   author: string;
   title: string;
@@ -48,6 +36,18 @@ export interface ISong extends Document {
   uploadedBy: string;
   path: string;
   likes: Array<string>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface SongData {
+  uuid: string;
+  author: string;
+  title: string;
+  uploadedBy: string;
+  cover: string;
+  favorite: boolean | undefined;
+  edit: boolean | undefined;
   createdAt: Date;
   updatedAt: Date;
 }
