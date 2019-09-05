@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import { IUser } from '../../../../typings';
+import { User } from '../../../../typings';
 import * as DB from '../../../apis/mongodb/users';
 
 const { JWT_SECRET = '' } = process.env;
 
-function login(res: Response, usr: IUser | null, pwd: string) {
+function login(res: Response, usr: User | null, pwd: string): void {
   if (!usr) {
     res.status(403).send({ message: 'This account has been deactivated.' });
     return;
@@ -32,7 +32,7 @@ function login(res: Response, usr: IUser | null, pwd: string) {
 }
 
 export default () => {
-  return async (req: Request, res: Response) => {
+  return async (req: Request, res: Response): Promise<void> => {
     if (!req.body) {
       res.status(400).send({ message: 'No body provided.' });
     }

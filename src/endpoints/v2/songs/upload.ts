@@ -3,14 +3,14 @@ import { Buffer } from 'buffer';
 import { Readable } from 'stream';
 import uuidv4 from 'uuid/v4';
 import request from 'request';
-import { AuthorizedRequest } from '../../../../typings';
+import { AuthorizedRequest, Song } from '../../../../typings';
 import * as DB from '../../../apis/mongodb/songs';
 
 const { CDN_SERVER = '' } = process.env;
 
-const uploadTargetList: Map<string,  NodeJS.Timeout> = new Map<string, NodeJS.Timeout>();
+const uploadTargetList= new Map<string, NodeJS.Timeout>();
 
-export default (req: AuthorizedRequest, res: Response) => {
+export default (req: AuthorizedRequest, res: Response): void => {
   const uploadTarget = uuidv4();
 
   uploadTargetList.set(uploadTarget, setTimeout(() => {
@@ -21,7 +21,7 @@ export default (req: AuthorizedRequest, res: Response) => {
   const dext = Buffer.from(ext, 'utf8').toString('hex');
 
   const readable = new Readable();
-  readable._read = () => {}; // eslint-disable-line no-underscore-dangle
+  readable._read = () => {}; // eslint-disable-line
 
   readable.push(req.body);
   readable.push(null);
@@ -40,9 +40,9 @@ export default (req: AuthorizedRequest, res: Response) => {
       await DB.saveSong({
         uuid,
         uploadedBy: req.jwt.uuid,
-        path: body,
+        path: body, 
         likes: [req.jwt.uuid],
-      });
+      } as Song);
 
       res.status(statusCode).send({
         message: 'You have successfully uploaded a new song.',
@@ -57,7 +57,7 @@ export default (req: AuthorizedRequest, res: Response) => {
 }
 
 export function verify() {
-  return (req: Request, res: Response) => {
+  return (req: Request, res: Response): void => {
     const { uuid } = req.query;
 
     if (!uploadTargetList.has(uuid)) {
@@ -67,7 +67,7 @@ export function verify() {
 
     res.status(200).send();
 
-    clearTimeout(<NodeJS.Timeout>uploadTargetList.get(uuid));
+    clearTimeout(uploadTargetList.get(uuid) as NodeJS.Timeout);
     uploadTargetList.delete(uuid);
   };
 }

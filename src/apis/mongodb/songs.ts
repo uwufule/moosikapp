@@ -1,7 +1,7 @@
 import SongModel from './models/song';
-import { ISong } from '../../../typings';
+import { Song  } from '../../../typings';
 
-export async function getSongs(skip = 0, limit = 100): Promise<Array<ISong>> {
+export async function getSongs(skip = 0, limit = 100): Promise<Array<Song>> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -16,7 +16,7 @@ export async function getSongs(skip = 0, limit = 100): Promise<Array<ISong>> {
   return songs;
 }
 
-export async function getSongByUuid(uuid: string): Promise<ISong | null> {
+export async function getSongByUuid(uuid: string): Promise<Song | null> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -33,7 +33,7 @@ export async function getSongByUuid(uuid: string): Promise<ISong | null> {
   return song;
 }
 
-export async function findSongs(query: string, skip = 0, limit = 100): Promise<Array<ISong>> {
+export async function findSongs(query: string, skip = 0, limit = 100): Promise<Array<Song>> {
   const q = {
     $or: [
       {
@@ -65,7 +65,7 @@ export async function findSongs(query: string, skip = 0, limit = 100): Promise<A
   return songs;
 }
 
-export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100): Promise<Array<ISong>> {
+export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100): Promise<Array<Song>> {
   const query = {
     likes: userUuid,
   };
@@ -83,13 +83,13 @@ export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100):
   return songs;
 }
 
-export async function saveSong(data: any): Promise<boolean> {
+export async function saveSong(data: Song): Promise<boolean> {
   const song = new SongModel(data);
   await song.save();
   return true;
 }
 
-export async function updateSong(uuid: string, data: any): Promise<boolean> {
+export async function updateSong(uuid: string, data: any): Promise<boolean> {  // eslint-disable-line
   await SongModel.updateOne({ uuid }, data);
   return true;
 }

@@ -1,7 +1,7 @@
 import UserModel from './models/user';
-import { IUser } from '../../../typings';
+import { User } from '../../../typings';
 
-export async function getUser(username: string): Promise<IUser | null> {
+export async function getUser(username: string): Promise<User | null> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -15,7 +15,7 @@ export async function getUser(username: string): Promise<IUser | null> {
   return user;
 }
 
-export async function getUserByUuid(uuid: string): Promise<IUser | null> {
+export async function getUserByUuid(uuid: string): Promise<User | null> {
   const projection = {
     _id: 0,
   };
@@ -24,7 +24,7 @@ export async function getUserByUuid(uuid: string): Promise<IUser | null> {
   return user;
 }
 
-export async function findUser(query: string): Promise<IUser | null> {
+export async function findUser(query: string): Promise<User | null> {
   const q = {
     $or: [
       {
