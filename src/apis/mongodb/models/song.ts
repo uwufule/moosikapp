@@ -1,11 +1,10 @@
 import Mongoose, { Schema } from 'mongoose';
-import uuidv4 from 'uuid/v4';
-import { ISong } from '../../../../typings';
+import { Song } from '../../../../typings';
 
-const Song = Mongoose.model<ISong>('Song', new Schema({
+export default Mongoose.model<Song>('Song', new Schema({
   uuid: {
     type: String,
-    default: uuidv4(),
+    required: true,
     unique: true,
   },
   author: {
@@ -33,5 +32,3 @@ const Song = Mongoose.model<ISong>('Song', new Schema({
     default: [],
   },
 }, { versionKey: false, timestamps: true }));
-
-export default Song;
