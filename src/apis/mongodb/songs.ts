@@ -1,6 +1,7 @@
 import SongModel from './models/song';
+import { ISong } from '../../../typings';
 
-export async function getSongs(skip = 0, limit = 100) {
+export async function getSongs(skip = 0, limit = 100): Promise<Array<ISong>> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -15,7 +16,7 @@ export async function getSongs(skip = 0, limit = 100) {
   return songs;
 }
 
-export async function getSongByUuid(uuid: string) {
+export async function getSongByUuid(uuid: string): Promise<ISong | null> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -32,7 +33,7 @@ export async function getSongByUuid(uuid: string) {
   return song;
 }
 
-export async function findSongs(query: string, skip = 0, limit = 100) {
+export async function findSongs(query: string, skip = 0, limit = 100): Promise<Array<ISong>> {
   const q = {
     $or: [
       {
@@ -64,7 +65,7 @@ export async function findSongs(query: string, skip = 0, limit = 100) {
   return songs;
 }
 
-export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100) {
+export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100): Promise<Array<ISong>> {
   const query = {
     likes: userUuid,
   };
@@ -82,18 +83,18 @@ export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100) 
   return songs;
 }
 
-export async function saveSong(data: any) {
+export async function saveSong(data: any): Promise<boolean> {
   const song = new SongModel(data);
   await song.save();
   return true;
 }
 
-export async function updateSong(uuid: string, data: any) {
+export async function updateSong(uuid: string, data: any): Promise<boolean> {
   await SongModel.updateOne({ uuid }, data);
   return true;
 }
 
-export async function deleteSong(uuid: string) {
+export async function deleteSong(uuid: string): Promise<boolean> {
   await SongModel.deleteOne({ uuid });
   return true;
 }

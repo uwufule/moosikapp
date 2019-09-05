@@ -1,6 +1,7 @@
 import UserModel from './models/user';
+import { IUser } from '../../../typings';
 
-export async function getUser(username: string) {
+export async function getUser(username: string): Promise<IUser | null> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -14,7 +15,7 @@ export async function getUser(username: string) {
   return user;
 }
 
-export async function getUserByUuid(uuid: string) {
+export async function getUserByUuid(uuid: string): Promise<IUser | null> {
   const projection = {
     _id: 0,
   };
@@ -23,7 +24,7 @@ export async function getUserByUuid(uuid: string) {
   return user;
 }
 
-export async function findUser(query: string) {
+export async function findUser(query: string): Promise<IUser | null> {
   const q = {
     $or: [
       {
@@ -42,18 +43,18 @@ export async function findUser(query: string) {
   return user;
 }
 
-export async function createUser(data: any) {
+export async function createUser(data: any): Promise<boolean> {
   const user = new UserModel(data);
   await user.save();
   return true;
 }
 
-export async function updateUser(userId: string, data: any) {
+export async function updateUser(userId: string, data: any): Promise<boolean> {
   await UserModel.updateOne({ uuid: userId }, data);
   return true;
 }
 
-export async function deleteUser(userId: string) {
+export async function deleteUser(userId: string): Promise<boolean> {
   await UserModel.deleteOne({ uuid: userId });
   return true;
 }
