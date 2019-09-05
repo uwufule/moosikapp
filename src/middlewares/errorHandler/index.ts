@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { HTTPException } from '../../../typings';
 
 export default () => {
-  return (error: HTTPException, req: Request, res: Response, next: NextFunction) => {
+  return (error: HTTPException, req: Request, res: Response, next: NextFunction): void => {
     if (!error) {
       next();
     }

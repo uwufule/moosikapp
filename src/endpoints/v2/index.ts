@@ -26,7 +26,7 @@ import { roles } from'../../config.json';
 
 const API_VERSION = 'v2';
 
-export default (app: Application) => {
+export default (app: Application): void => {
   app.all(`/api/${API_VERSION}`, (req: Request, res: Response) => {
     res.status(200).send({ message: `There is API${API_VERSION} endpoint.` });
   });
@@ -41,7 +41,7 @@ export default (app: Application) => {
   // logout
   app.post(`/api/${API_VERSION}/logout`, [
     validateAccept(),
-    (req: Request, res: Response) => {
+    (req: Request, res: Response): void => {
       res.status(200).send({ message: 'Not implemented.' });
     },
   ]);
@@ -55,7 +55,7 @@ export default (app: Application) => {
 
   // forgot
   app.post(`/api/${API_VERSION}/forgot`, [
-    (req: Request, res: Response) => {
+    (req: Request, res: Response): void => {
       res.status(200).send({ message: 'Not implemented.' });
     },
   ]);

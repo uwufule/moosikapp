@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import * as DB from '../../../apis/mongodb/users';
 
 export default () => {
-  return async (req: Request, res: Response) => {
+  return async (req: Request, res: Response): Promise<void> => {
     const { username } = req.params;
 
     try {
