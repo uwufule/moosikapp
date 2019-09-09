@@ -3,7 +3,7 @@
 import { Response } from 'express';
 import { AuthorizedRequest, SongData } from '../../../../typings';
 import * as DB from '../../../apis/mongodb/songs';
- 
+
 import { scopes, roles } from '../../../config.json';
 
 export function getFavoriteSongs() {

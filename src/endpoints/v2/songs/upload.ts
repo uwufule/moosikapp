@@ -40,7 +40,7 @@ export default (req: AuthorizedRequest, res: Response): void => {
       await DB.saveSong({
         uuid,
         uploadedBy: req.jwt.uuid,
-        path: body, 
+        path: body,
         likes: [req.jwt.uuid],
       } as Song);
 

@@ -74,7 +74,7 @@ export function getSongByUuid() {
       const user = req.jwt.uuid;
 
       const foundedUser = await getUserByUuid(song.uploadedBy);
-      
+
       if (!foundedUser) {
         res.status(500).send({ message: 'Something went wrong.' });
         return;
