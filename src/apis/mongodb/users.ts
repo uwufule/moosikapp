@@ -1,6 +1,7 @@
 import UserModel from './models/user';
+import { User } from '../../../typings';
 
-export async function getUser(username) {
+export async function getUser(username: string): Promise<User | null> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -14,7 +15,7 @@ export async function getUser(username) {
   return user;
 }
 
-export async function getUserByUuid(uuid) {
+export async function getUserByUuid(uuid: string): Promise<User | null> {
   const projection = {
     _id: 0,
   };
@@ -23,13 +24,13 @@ export async function getUserByUuid(uuid) {
   return user;
 }
 
-export async function findUser(queryString) {
-  const query = {
+export async function findUser(query: string): Promise<User | null> {
+  const q = {
     $or: [
       {
-        username: queryString,
+        username: query,
       }, {
-        email: queryString,
+        email: query,
       },
     ],
   };
@@ -38,22 +39,22 @@ export async function findUser(queryString) {
     _id: 0,
   };
 
-  const user = await UserModel.findOne(query, projection);
+  const user = await UserModel.findOne(q, projection);
   return user;
 }
 
-export async function createUser(userData) {
-  const user = new UserModel(userData);
+export async function createUser(data: any): Promise<boolean> {
+  const user = new UserModel(data);
   await user.save();
   return true;
 }
 
-export async function updateUser(userId, data) {
+export async function updateUser(userId: string, data: any): Promise<boolean> {
   await UserModel.updateOne({ uuid: userId }, data);
   return true;
 }
 
-export async function deleteUser(userId) {
+export async function deleteUser(userId: string): Promise<boolean> {
   await UserModel.deleteOne({ uuid: userId });
   return true;
 }

@@ -1,10 +1,12 @@
+import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import { findUser } from '../../apis/mongodb/users';
+import { User } from '../../../../typings';
+import * as DB from '../../../apis/mongodb/users';
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET = '' } = process.env;
 
-function login(res, usr, pwd) {
+function login(res: Response, usr: User | null, pwd: string): void {
   if (!usr) {
     res.status(403).send({ message: 'This account has been deactivated.' });
     return;
@@ -29,8 +31,8 @@ function login(res, usr, pwd) {
   res.status(401).send({ message: 'Invalid authorization.' });
 }
 
-export default function () {
-  return async (req, res) => {
+export default () => {
+  return async (req: Request, res: Response): Promise<void> => {
     if (!req.body) {
       res.status(400).send({ message: 'No body provided.' });
     }
@@ -43,7 +45,7 @@ export default function () {
     }
 
     try {
-      const user = await findUser(username);
+      const user = await DB.findUser(username);
       login(res, user, password);
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });

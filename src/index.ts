@@ -4,9 +4,9 @@ import cors from 'cors';
 import BodyParser from 'body-parser';
 import errorHandler from './middlewares/errorHandler';
 import mongoDB from './apis/mongodb';
-import apiEndpoint from './endpoints';
+import withApi from './endpoints';
 
-const { MAX_FILE_SIZE } = require('./config.json');
+import { MAX_FILE_SIZE } from './config.json';
 
 const { PORT } = process.env;
 
@@ -26,14 +26,6 @@ app.use(cors());
 
 app.use(errorHandler());
 
-app.get('/', (req, res) => {
-  res.sendFile(Path.resolve('./html/index.html'));
-});
+withApi(app);
 
-apiEndpoint(app);
-
-app.get('*', (req, res) => {
-  res.redirect('/');
-});
-
-app.listen(PORT || 8080);
+app.listen(PORT);

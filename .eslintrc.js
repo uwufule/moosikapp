@@ -1,9 +1,13 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
   env: {
     es6: true,
     node: true,
   },
-  extends: 'airbnb-base',
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -13,5 +17,9 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-trailing-spaces': 'error',
+    '@typescript-eslint/explicit-function-return-type': ['error'],
+    'no-underscore-dangle': 'error',
   },
 };
+  

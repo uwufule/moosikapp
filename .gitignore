@@ -1,15 +1,28 @@
 # Build
 build/
+dist/
 
 # Modules
 node_modules/
 yarn.lock
 
-# VS Code
-.vscode/
 
 # Temp files
 tmp
 
 # Env variables
+<<<<<<< HEAD
 .env
+=======
+.env
+
+# Static
+static/
+
+# TODO
+TODO.md
+
+# Misc
+.DS_Store
+.vscode/
+>>>>>>> 19b2f5cd4f653138961ccd95295699582c4b97db

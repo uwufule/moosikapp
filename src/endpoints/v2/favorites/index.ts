@@ -1,15 +1,13 @@
 /* eslint-disable no-bitwise */
 
-import {
-  getFavoriteSongs as getFavoriteSongsFromDB,
-  getSongByUuid as getSongByUuidFromDB,
-  updateSong as updateSongInDB,
-} from '../../apis/mongodb/songs';
+import { Response } from 'express';
+import { AuthorizedRequest, SongData } from '../../../../typings';
+import * as DB from '../../../apis/mongodb/songs';
 
-const { scopes, roles } = require('../../config.json');
+import { scopes, roles } from '../../../config.json';
 
 export function getFavoriteSongs() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const { skip, limit, scope } = req.query;
 
     if (skip < 0) {
@@ -25,14 +23,14 @@ export function getFavoriteSongs() {
     const user = req.jwt.uuid;
 
     try {
-      const result = await getFavoriteSongsFromDB(user, Number(skip), Number(limit));
+      const result = await DB.getFavoriteSongs(user, Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No favorite songs found.' });
         return;
       }
 
-      const songs = [];
+      const songs: Array<SongData> = [];
 
       result.forEach((song) => {
         const {
@@ -47,7 +45,7 @@ export function getFavoriteSongs() {
           title,
           cover,
           edit: scope & scopes.edit ? canEdit : undefined,
-        });
+        } as SongData);
       });
 
       res.status(200).send({ message: 'Successfully retrieved favorite songs.', songs });
@@ -58,20 +56,20 @@ export function getFavoriteSongs() {
 }
 
 export function addSongToFavorite() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
       const { songId } = req.params;
 
       const { uuid } = req.jwt;
 
-      const foundedSong = await getSongByUuidFromDB(songId);
+      const foundedSong = await DB.getSongByUuid(songId);
 
       if (!foundedSong) {
         res.status(404).send({ message: 'No song found.' });
         return;
       }
 
-      await updateSongInDB(songId, { $addToSet: { likes: uuid } });
+      await DB.updateSong(songId, { $addToSet: { likes: uuid } });
 
       res.status(200).send({ message: 'Successfully added song to favorites.', uuid: songId });
     } catch (e) {
@@ -81,13 +79,13 @@ export function addSongToFavorite() {
 }
 
 export function removeSongFromFavorite() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
       const { songId } = req.params;
 
       const { uuid } = req.jwt;
 
-      const foundedSong = await getSongByUuidFromDB(songId);
+      const foundedSong = await DB.getSongByUuid(songId);
 
       if (!foundedSong) {
         res.status(404).send({ message: 'No song found.' });
@@ -99,7 +97,7 @@ export function removeSongFromFavorite() {
         return;
       }
 
-      await updateSongInDB(songId, { $pull: { likes: uuid } });
+      await DB.updateSong(songId, { $pull: { likes: uuid } });
 
       res.status(204).send();
     } catch (e) {

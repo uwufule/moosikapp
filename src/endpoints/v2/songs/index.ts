@@ -1,23 +1,17 @@
 /* eslint-disable no-bitwise */
 
+import { Response } from 'express';
+import { AuthorizedRequest, SongData } from '../../../../typings';
 import upload from './upload';
-import {
-  getSongs as getSongsFromDB,
-  getSongByUuid as getSongByUuidFromDB,
-  findSongs as findSongsInDB,
-  updateSong as updateSongInDB,
-  deleteSong as deleteSongFromDB,
-} from '../../apis/mongodb/songs';
-import {
-  getUserByUuid,
-} from '../../apis/mongodb/users';
+import * as DB from '../../../apis/mongodb/songs';
+import { getUserByUuid } from '../../../apis/mongodb/users';
+
+import { scopes, roles } from '../../../config.json';
 
 const { CDN_SERVER } = process.env;
 
-const { scopes, roles } = require('../../config.json');
-
 export function getSongs() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const { skip, limit, scope } = req.query;
 
     if (skip < 0) {
@@ -33,19 +27,19 @@ export function getSongs() {
     const user = req.jwt.uuid;
 
     try {
-      const result = await getSongsFromDB(Number(skip), Number(limit));
+      const result = await DB.getSongs(Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
 
-      const songs = [];
+      const songs: Array<SongData> = [];
 
       result.forEach((song) => {
         const {
           uuid, author, title, cover, likes, uploadedBy,
-        } = song.toJSON();
+        } = song;
 
         const isFav = likes.includes(user);
         const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
@@ -57,7 +51,7 @@ export function getSongs() {
           cover,
           favorite: scope & scopes.favorite ? isFav : undefined,
           edit: scope & scopes.edit ? canEdit : undefined,
-        });
+        } as SongData);
       });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
@@ -68,9 +62,9 @@ export function getSongs() {
 }
 
 export function getSongByUuid() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
-      const song = await getSongByUuidFromDB(req.params.songId);
+      const song = await DB.getSongByUuid(req.params.songId);
 
       if (!song) {
         res.status(404).send({ message: 'No song found.' });
@@ -79,11 +73,18 @@ export function getSongByUuid() {
 
       const user = req.jwt.uuid;
 
-      const { username } = await getUserByUuid(song.uploadedBy);
+      const foundedUser = await getUserByUuid(song.uploadedBy);
+
+      if (!foundedUser) {
+        res.status(500).send({ message: 'Something went wrong.' });
+        return;
+      }
+
+      const { username } = foundedUser;
 
       const {
         uuid, author, title, cover, path, uploadedBy, createdAt, likes,
-      } = song.toJSON();
+      } = song;
 
       res.status(200).send({
         message: 'Successfully retrieved song.',
@@ -106,7 +107,7 @@ export function getSongByUuid() {
 }
 
 export function findSongs() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const {
       query, skip, limit, scope,
     } = req.query;
@@ -129,14 +130,14 @@ export function findSongs() {
     const user = req.jwt.uuid;
 
     try {
-      const result = await findSongsInDB(decodeURI(query), Number(skip), Number(limit));
+      const result = await DB.findSongs(decodeURI(query), Number(skip), Number(limit));
 
       if (!result.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
 
-      const songs = [];
+      const songs: Array<SongData> = [];
 
       result.forEach((song) => {
         const {
@@ -153,7 +154,7 @@ export function findSongs() {
           cover,
           favorite: scope & scopes.favorite ? isFav : undefined,
           edit: scope & scopes.edit ? canEdit : undefined,
-        });
+        } as SongData);
       });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
@@ -164,7 +165,7 @@ export function findSongs() {
 }
 
 export function uploadSong() {
-  return (req, res) => {
+  return (req: AuthorizedRequest, res: Response): void => {
     if (!req.body || Number(req.headers['content-length']) === 0) {
       res.status(400).send({ message: 'No body provided.' });
       return;
@@ -175,7 +176,7 @@ export function uploadSong() {
 }
 
 export function updateSong() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const { body, params: { songId } } = req;
 
     if (!body) {
@@ -185,7 +186,7 @@ export function updateSong() {
 
     const { uuid, role } = req.jwt;
 
-    const foundedSong = await getSongByUuidFromDB(songId);
+    const foundedSong = await DB.getSongByUuid(songId);
 
     if (!foundedSong) {
       res.status(404).send({ message: 'No song found.' });
@@ -197,7 +198,7 @@ export function updateSong() {
       return;
     }
 
-    const song = {};
+    const song: any = {}; // eslint-disable-line
     Object.keys(body).forEach((key) => {
       if (['author', 'title', 'cover'].includes(key)) {
         song[key] = body[key].trim();
@@ -205,7 +206,7 @@ export function updateSong() {
     });
 
     try {
-      await updateSongInDB(songId, song);
+      await DB.updateSong(songId, song);
       res.status(200).send({ message: 'Successfully updated song.', song });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
@@ -214,13 +215,13 @@ export function updateSong() {
 }
 
 export function deleteSong() {
-  return async (req, res) => {
+  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
       const { songId } = req.params;
 
       const { uuid, role } = req.jwt;
 
-      const foundedSong = await getSongByUuidFromDB(songId);
+      const foundedSong = await DB.getSongByUuid(songId);
 
       if (!foundedSong) {
         res.status(404).send({ message: 'No song found.' });
@@ -232,9 +233,9 @@ export function deleteSong() {
         return;
       }
 
-      await deleteSongFromDB(songId);
+      await DB.deleteSong(songId);
 
-      req.status(204).send();
+      res.status(204).send();
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }

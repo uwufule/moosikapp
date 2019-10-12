@@ -1,6 +1,7 @@
 import SongModel from './models/song';
+import { Song  } from '../../../typings';
 
-export async function getSongs(skip = 0, limit = 100) {
+export async function getSongs(skip = 0, limit = 100): Promise<Array<Song>> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -15,7 +16,7 @@ export async function getSongs(skip = 0, limit = 100) {
   return songs;
 }
 
-export async function getSongByUuid(uuid) {
+export async function getSongByUuid(uuid: string): Promise<Song | null> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -32,18 +33,18 @@ export async function getSongByUuid(uuid) {
   return song;
 }
 
-export async function findSongs(queryString, skip = 0, limit = 100) {
-  const query = {
+export async function findSongs(query: string, skip = 0, limit = 100): Promise<Array<Song>> {
+  const q = {
     $or: [
       {
         author: {
-          $regex: queryString,
+          $regex: query,
           $options: 'i',
         },
       },
       {
         title: {
-          $regex: queryString,
+          $regex: query,
           $options: 'i',
         },
       },
@@ -60,11 +61,11 @@ export async function findSongs(queryString, skip = 0, limit = 100) {
     likes: 1,
   };
 
-  const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
+  const songs = await SongModel.find(q, projection).skip(skip).limit(limit);
   return songs;
 }
 
-export async function getFavoriteSongs(userUuid, skip = 0, limit = 100) {
+export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100): Promise<Array<Song>> {
   const query = {
     likes: userUuid,
   };
@@ -82,18 +83,18 @@ export async function getFavoriteSongs(userUuid, skip = 0, limit = 100) {
   return songs;
 }
 
-export async function saveSong(songData) {
-  const song = new SongModel(songData);
+export async function saveSong(data: Song): Promise<boolean> {
+  const song = new SongModel(data);
   await song.save();
   return true;
 }
 
-export async function updateSong(uuid, data) {
+export async function updateSong(uuid: string, data: any): Promise<boolean> {  // eslint-disable-line
   await SongModel.updateOne({ uuid }, data);
   return true;
 }
 
-export async function deleteSong(uuid) {
+export async function deleteSong(uuid: string): Promise<boolean> {
   await SongModel.deleteOne({ uuid });
   return true;
 }
