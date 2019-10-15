@@ -1,11 +1,24 @@
-import Mongoose, { Schema } from 'mongoose';
-import { User } from '../../../../typings';
+import Mongoose, { Schema, Document } from 'mongoose';
 
 import { roles } from '../../../config.json';
+
+export interface User extends Document {
+  uuid: string;
+  username: string;
+  email: string;
+  password: {
+    hash: string;
+    timestamp: Date;
+  };
+  role?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export default Mongoose.model<User>('User', new Schema({
   uuid: {
     type: String,
+    required: true,
     unique: true,
   },
   username: {

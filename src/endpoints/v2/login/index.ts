@@ -1,34 +1,24 @@
 import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import { User } from '../../../../typings';
-import * as DB from '../../../apis/mongodb/users';
+import { findUser, ExtendedUserInfo } from '../../../apis/mongodb/users';
 
 const { JWT_SECRET = '' } = process.env;
 
-function login(res: Response, usr: User | null, pwd: string): void {
-  if (!usr) {
-    res.status(403).send({ message: 'This account has been deactivated.' });
+function login(res: Response, user: ExtendedUserInfo, password: string): void {
+  const [salt, passwordHash] = user.password.hash.split('.');
+  const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
+
+  if (passwordHash !== hash) {
+    res.status(401).send({ message: 'Invalid authorization.' });
     return;
   }
 
-  const [salt, passwordHash] = usr.password.hash.split('.');
-  const hash = Crypto.createHmac('sha512', salt).update(pwd).digest('hex');
+  const { uuid, role, password: { timestamp }} = user;
 
-  const {
-    uuid, role, password: { timestamp },
-  } = usr;
+  const token = JWT.sign({ uuid, role, timestamp }, JWT_SECRET);
 
-  const token = JWT.sign({
-    uuid, role, timestamp,
-  }, JWT_SECRET);
-
-  if (passwordHash === hash) {
-    res.status(200).send({ message: 'Successfully logged in.', token });
-    return;
-  }
-
-  res.status(401).send({ message: 'Invalid authorization.' });
+  res.status(200).send({ message: 'Successfully logged in.', token });
 }
 
 export default () => {
@@ -45,7 +35,12 @@ export default () => {
     }
 
     try {
-      const user = await DB.findUser(username);
+      const user = await findUser(username);
+      if (!user) {
+        res.status(403).send({ message: 'This account has been deactivated.' });
+        return;
+      }
+
       login(res, user, password);
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });

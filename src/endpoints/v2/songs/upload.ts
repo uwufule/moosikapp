@@ -3,12 +3,13 @@ import { Buffer } from 'buffer';
 import { Readable } from 'stream';
 import uuidv4 from 'uuid/v4';
 import request from 'request';
-import { AuthorizedRequest, Song } from '../../../../typings';
+import { AuthorizedRequest } from '../../../middlewares/authorization';
 import * as DB from '../../../apis/mongodb/songs';
+import { Song } from '../../../apis/mongodb/models/song';
 
 const { CDN_SERVER = '' } = process.env;
 
-const uploadTargetList= new Map<string, NodeJS.Timeout>();
+const uploadTargetList = new Map<string, NodeJS.Timeout>();
 
 export default (req: AuthorizedRequest, res: Response): void => {
   const uploadTarget = uuidv4();
