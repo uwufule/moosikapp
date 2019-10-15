@@ -7,7 +7,7 @@ const { JWT_SECRET = '' } = process.env;
 interface JWTRecord {
   uuid: string;
   role: number;
-  timestamp: Date;
+  timestamp: string;
 }
 
 export interface AuthorizedRequest extends Request {
@@ -35,7 +35,7 @@ export default () => {
 
       const { timestamp } = user.password;
 
-      if (req.jwt.timestamp.getTime() !== timestamp.getTime()) {
+      if (new Date(req.jwt.timestamp).getTime() !== timestamp.getTime()) {
         throw new Error('NotAuthorizedError');
       }
 
