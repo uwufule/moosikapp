@@ -1,57 +1,68 @@
 /* eslint-disable no-bitwise */
 
 import { Response } from 'express';
-import { AuthorizedRequest, SongData } from '../../../../typings';
+import { AuthorizedRequest } from '../../../middlewares/authorization';
 import upload from './upload';
 import * as DB from '../../../apis/mongodb/songs';
 import { getUserByUuid } from '../../../apis/mongodb/users';
 
 import { scopes, roles } from '../../../config.json';
 
-const { CDN_SERVER } = process.env;
+const { CDN_SERVER = '' } = process.env;
+
+interface SongData {
+  uuid: string;
+  author: string;
+  title: string;
+  cover: string;
+  favorite?: boolean;
+  edit?: boolean;
+}
 
 export function getSongs() {
   return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const { skip, limit, scope } = req.query;
 
-    if (skip < 0) {
+    const s = Number(skip);
+    if (s < 0) {
       res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
       return;
     }
 
-    if (limit < 1 || limit > 100) {
+    const l = Number(limit);
+    if (l < 1 || l > 100) {
       res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
       return;
     }
 
-    const user = req.jwt.uuid;
-
     try {
-      const result = await DB.getSongs(Number(skip), Number(limit));
+      const songList = await DB.getSongs(s, l);
 
-      if (!result.length) {
+      if (!songList.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
 
       const songs: Array<SongData> = [];
 
-      result.forEach((song) => {
+      songList.forEach((songItem) => {
         const {
           uuid, author, title, cover, likes, uploadedBy,
-        } = song;
+        } = songItem;
 
-        const isFav = likes.includes(user);
-        const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
+        const song: SongData = {
+          uuid, author, title, cover,
+        };
 
-        songs.push({
-          uuid,
-          author,
-          title,
-          cover,
-          favorite: scope & scopes.favorite ? isFav : undefined,
-          edit: scope & scopes.edit ? canEdit : undefined,
-        } as SongData);
+        if (scope & scopes.favorite) {
+          song.favorite = likes.includes(req.jwt.uuid);
+        }
+
+        if (scope & scopes.edit) {
+          song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
+        }
+
+        songs.push(song);
       });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
@@ -64,26 +75,18 @@ export function getSongs() {
 export function getSongByUuid() {
   return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
-      const song = await DB.getSongByUuid(req.params.songId);
-
+      const song = await DB.getSongByUuid(req.params.id);
       if (!song) {
         res.status(404).send({ message: 'No song found.' });
         return;
       }
 
-      const user = req.jwt.uuid;
+      const user = await getUserByUuid(song.uploadedBy);
 
-      const foundedUser = await getUserByUuid(song.uploadedBy);
-
-      if (!foundedUser) {
-        res.status(500).send({ message: 'Something went wrong.' });
-        return;
-      }
-
-      const { username } = foundedUser;
+      const username = (user && user.username) || 'deactivated user';
 
       const {
-        uuid, author, title, cover, path, uploadedBy, createdAt, likes,
+        uuid, author, title, cover, path, uploadedBy, likes, createdAt,
       } = song;
 
       res.status(200).send({
@@ -96,8 +99,8 @@ export function getSongByUuid() {
           url: `${CDN_SERVER}${path}`,
           uploadedBy: username,
           createdAt,
-          favorite: likes.includes(user),
-          edit: uploadedBy === user,
+          favorite: likes.includes(req.jwt.uuid),
+          edit: uploadedBy === req.jwt.uuid,
         },
       });
     } catch (e) {
@@ -117,44 +120,46 @@ export function findSongs() {
       return;
     }
 
-    if (skip < 0) {
+    const s = Number(skip);
+    if (s < 0) {
       res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
       return;
     }
 
-    if (limit < 1 || limit > 100) {
+    const l = Number(limit);
+    if (l < 1 || l > 100) {
       res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
       return;
     }
 
-    const user = req.jwt.uuid;
-
     try {
-      const result = await DB.findSongs(decodeURI(query), Number(skip), Number(limit));
+      const songList = await DB.findSongs(decodeURI(query), s, l);
 
-      if (!result.length) {
+      if (!songList.length) {
         res.status(404).send({ message: 'No songs found.' });
         return;
       }
 
       const songs: Array<SongData> = [];
 
-      result.forEach((song) => {
+      songList.forEach((songItem) => {
         const {
           uuid, author, title, cover, likes, uploadedBy,
-        } = song.toJSON();
+        } = songItem;
 
-        const isFav = likes.includes(user);
-        const canEdit = uploadedBy === user || req.jwt.role >= roles.moderator;
+        const song: SongData = {
+          uuid, author, title, cover,
+        };
 
-        songs.push({
-          uuid,
-          author,
-          title,
-          cover,
-          favorite: scope & scopes.favorite ? isFav : undefined,
-          edit: scope & scopes.edit ? canEdit : undefined,
-        } as SongData);
+        if (scope & scopes.favorite) {
+          song.favorite = likes.includes(req.jwt.uuid);
+        }
+
+        if (scope & scopes.edit) {
+          song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
+        }
+
+        songs.push(song);
       });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
@@ -177,37 +182,43 @@ export function uploadSong() {
 
 export function updateSong() {
   return async (req: AuthorizedRequest, res: Response): Promise<void> => {
-    const { body, params: { songId } } = req;
+    const {
+      body,
+      params: {
+        id,
+      },
+      jwt: {
+        uuid, role,
+      },
+    } = req;
 
     if (!body) {
       res.status(400).send({ message: 'No body provided.' });
       return;
     }
 
-    const { uuid, role } = req.jwt;
-
-    const foundedSong = await DB.getSongByUuid(songId);
-
-    if (!foundedSong) {
+    const song = await DB.getSongByUuid(id);
+    if (!song) {
       res.status(404).send({ message: 'No song found.' });
       return;
     }
 
-    if (foundedSong.uploadedBy !== uuid && role < roles.moderator) {
+    if (song.uploadedBy !== uuid && role < roles.moderator) {
       res.status(403).send({ message: 'Forbitten.' });
       return;
     }
 
-    const song: any = {}; // eslint-disable-line
-    Object.keys(body).forEach((key) => {
+    const songData = Object.entries(body).reduce((acc, [key, val]) => {
       if (['author', 'title', 'cover'].includes(key)) {
-        song[key] = body[key].trim();
+        acc[key] = String(val);
+        return acc;
       }
-    });
+    }, {} as { [key: string]: string });
 
     try {
-      await DB.updateSong(songId, song);
-      res.status(200).send({ message: 'Successfully updated song.', song });
+      await DB.updateSong(id, songData as DB.GenericParams);
+
+      res.status(200).send({ message: 'Successfully updated song.', song: songData });
     } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
@@ -217,23 +228,28 @@ export function updateSong() {
 export function deleteSong() {
   return async (req: AuthorizedRequest, res: Response): Promise<void> => {
     try {
-      const { songId } = req.params;
+      const {
+        params: {
+          id,
+        },
+        jwt: {
+          uuid, role,
+        },
+      } = req;
 
-      const { uuid, role } = req.jwt;
+      const song = await DB.getSongByUuid(id);
 
-      const foundedSong = await DB.getSongByUuid(songId);
-
-      if (!foundedSong) {
+      if (!song) {
         res.status(404).send({ message: 'No song found.' });
         return;
       }
 
-      if (foundedSong.uploadedBy !== uuid && role < roles.moderator) {
+      if (song.uploadedBy !== uuid && role < roles.moderator) {
         res.status(403).send({ message: 'Forbitten.' });
         return;
       }
 
-      await DB.deleteSong(songId);
+      await DB.deleteSong(id);
 
       res.status(204).send();
     } catch (e) {
