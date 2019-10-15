@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { HTTPException } from '../../../typings';
+
+interface HTTPException extends Error {
+  type: string;
+}
 
 export default () => {
   return (error: HTTPException, req: Request, res: Response, next: NextFunction): void => {
