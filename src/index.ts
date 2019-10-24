@@ -28,4 +28,8 @@ app.use(errorHandler());
 
 withApi(app);
 
+app.get('/*', (req, res) => {
+  res.sendFile(Path.resolve('./static/index.html'));
+});
+
 app.listen(PORT);
