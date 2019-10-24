@@ -1,5 +1,16 @@
-import Mongoose, { Schema } from 'mongoose';
-import { Song } from '../../../../typings';
+import Mongoose, { Schema, Document } from 'mongoose';
+
+export interface Song extends Document {
+  uuid: string;
+  author?: string;
+  title?: string;
+  cover?: string;
+  uploadedBy: string;
+  path: string;
+  likes: Array<string>;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export default Mongoose.model<Song>('Song', new Schema({
   uuid: {

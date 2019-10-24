@@ -1,15 +1,15 @@
 {
   "name": "moosikapp",
-  "version": "2.0.2",
+  "version": "2.1.2",
   "description": "MoosikApp backend",
   "author": "Hibikaze",
   "license": "MIT",
   "main": "./dist/server.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ferisef/moosik.git"
+    "url": "git+https://github.com/Ferisef/moosikapp.git"
   },
-  "homepage": "https://github.com/Ferisef/moosik",
+  "homepage": "https://github.com/Ferisef/moosikapp",
   "keywords": [],
   "scripts": {
     "start": "node ./build/server.js",
@@ -17,7 +17,7 @@
   },
   "private": true,
   "bugs": {
-    "url": "https://github.com/Ferisef/moosik/issues"
+    "url": "https://github.com/Ferisef/moosikapp/issues"
   },
   "devDependencies": {
     "@types/cors": "^2.8.6",

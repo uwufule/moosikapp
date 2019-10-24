@@ -1,7 +1,24 @@
-import SongModel from './models/song';
-import { Song  } from '../../../typings';
+import SongModel, { Song } from './models/song';
 
-export async function getSongs(skip = 0, limit = 100): Promise<Array<Song>> {
+export interface BasicSongInfo {
+  uuid: string;
+  author: string;
+  title: string;
+  cover: string;
+  uploadedBy: string;
+  likes: Array<string>;
+}
+
+export interface ExtendedSongInfo extends BasicSongInfo {
+  path: string;
+  createdAt: Date;
+}
+
+export interface GenericParams {
+  [key: string]: any;
+}
+
+export async function getSongs(skip = 0, limit = 100): Promise<Array<BasicSongInfo>> {
   const projection = {
     _id: 0,
     uuid: 1,
@@ -13,27 +30,31 @@ export async function getSongs(skip = 0, limit = 100): Promise<Array<Song>> {
   };
 
   const songs = await SongModel.find({}, projection).skip(skip).limit(limit);
-  return songs;
+  return songs as Array<BasicSongInfo>;
 }
 
-export async function getSongByUuid(uuid: string): Promise<Song | null> {
+export async function getSongByUuid(uuid: string): Promise<ExtendedSongInfo | null> {
   const projection = {
     _id: 0,
     uuid: 1,
     author: 1,
     title: 1,
     cover: 1,
+    uploadedBy: 1,
     likes: 1,
     path: 1,
-    uploadedBy: 1,
     createdAt: 1,
   };
 
   const song = await SongModel.findOne({ uuid }, projection);
-  return song;
+  return song as ExtendedSongInfo;
 }
 
-export async function findSongs(query: string, skip = 0, limit = 100): Promise<Array<Song>> {
+export async function findSongs(
+  query: string,
+  skip = 0,
+  limit = 100,
+): Promise<Array<BasicSongInfo>> {
   const q = {
     $or: [
       {
@@ -62,12 +83,16 @@ export async function findSongs(query: string, skip = 0, limit = 100): Promise<A
   };
 
   const songs = await SongModel.find(q, projection).skip(skip).limit(limit);
-  return songs;
+  return songs as Array<BasicSongInfo>;
 }
 
-export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100): Promise<Array<Song>> {
+export async function getFavoriteSongs(
+  user: string,
+  skip = 0,
+  limit = 100,
+): Promise<Array<BasicSongInfo>> {
   const query = {
-    likes: userUuid,
+    likes: user,
   };
 
   const projection = {
@@ -77,10 +102,11 @@ export async function getFavoriteSongs(userUuid: string, skip = 0, limit = 100):
     title: 1,
     cover: 1,
     uploadedBy: 1,
+    likes: 1,
   };
 
   const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
-  return songs;
+  return songs as Array<BasicSongInfo>;
 }
 
 export async function saveSong(data: Song): Promise<boolean> {
@@ -89,7 +115,7 @@ export async function saveSong(data: Song): Promise<boolean> {
   return true;
 }
 
-export async function updateSong(uuid: string, data: any): Promise<boolean> {  // eslint-disable-line
+export async function updateSong(uuid: string, data: GenericParams): Promise<boolean> {
   await SongModel.updateOne({ uuid }, data);
   return true;
 }

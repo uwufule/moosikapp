@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { AuthorizedRequest } from '../../../typings';
+import { AuthorizedRequest } from '../authorization';
 
 export default (minimunRequiredRole: number) => {
   return (req: AuthorizedRequest, res: Response, next: NextFunction): void => {
