@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { Buffer } from 'buffer';
 import { Readable } from 'stream';
 import uuidv4 from 'uuid/v4';
 import request from 'request';
@@ -18,18 +17,19 @@ export default (req: AuthorizedRequest, res: Response): void => {
     uploadTargetList.delete(uploadTarget);
   }, 600000));
 
-  const { ext = 'mp3' } = req.query;
-  const dext = Buffer.from(ext, 'utf8').toString('hex');
-
   const readable = new Readable();
   readable._read = () => {}; // eslint-disable-line
 
   readable.push(req.body);
   readable.push(null);
 
-  const targetUri = `${CDN_SERVER}/upload-target/${uploadTarget}.${dext}`;
+  const targetUri = `${CDN_SERVER}/upload-target/${uploadTarget}`;
 
-  readable.pipe(request.put(targetUri, async (error, { statusCode }, body) => {
+  readable.pipe(request.put(targetUri, {
+    headers: {
+      'content-type': req.headers['content-type'],
+    }
+  }, async (error, { statusCode }, body) => {
     if (error) {
       res.status(500).send({ message: 'Internal server error.' });
       return;
