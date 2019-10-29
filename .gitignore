@@ -1,11 +1,9 @@
 # build
 build/
-dist/
 
 # modules
 node_modules/
 yarn.lock
-
 
 # temp files
 tmp
