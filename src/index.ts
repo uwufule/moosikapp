@@ -1,5 +1,6 @@
 import Path from 'path';
 import Express from 'express';
+import helmet from 'helmet';
 import cors from 'cors';
 import BodyParser from 'body-parser';
 import errorHandler from './middlewares/errorHandler';
@@ -14,8 +15,9 @@ mongoDB();
 
 const app = Express();
 
-app.disable('x-powered-by');
-app.disable('etag');
+app.use(helmet({
+  hsts: false,
+}))
 
 app.use(Express.static(Path.resolve('./static'), { etag: false }));
 

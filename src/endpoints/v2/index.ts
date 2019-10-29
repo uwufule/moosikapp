@@ -24,72 +24,72 @@ import { verify } from './songs/upload';
 
 import { roles } from'../../config.json';
 
-const API_VERSION = 'v2';
+const VERSION = 2;
 
 export default (app: Application): void => {
-  app.all(`/api/${API_VERSION}`, (req: Request, res: Response) => {
-    res.status(200).send({ message: `There is API${API_VERSION} endpoint.` });
+  app.all(`/api/v${VERSION}`, (req: Request, res: Response) => {
+    res.status(200).send({ message: `There is APIv${VERSION} endpoint.` });
   });
 
   // login
-  app.post(`/api/${API_VERSION}/login`, [
+  app.post(`/api/v${VERSION}/login`, [
     validateAccept(),
     validateContentType('application/json'),
     login(),
   ]);
 
   // logout
-  app.post(`/api/${API_VERSION}/logout`, [
+  app.post(`/api/v${VERSION}/logout`, [
     validateAccept(),
     (req: Request, res: Response): void => {
-      res.status(200).send({ message: 'Not implemented.' });
+      res.status(501).send();
     },
   ]);
 
   // register
-  app.post(`/api/${API_VERSION}/register`, [
+  app.post(`/api/v${VERSION}/register`, [
     validateAccept(),
     validateContentType('application/json'),
     register(),
   ]);
 
   // forgot
-  app.post(`/api/${API_VERSION}/forgot`, [
+  app.post(`/api/v${VERSION}/forgot`, [
     (req: Request, res: Response): void => {
-      res.status(200).send({ message: 'Not implemented.' });
+      res.status(501).send();
     },
   ]);
 
   // get user with provided username
-  app.get(`/api/${API_VERSION}/users/:username`, [
+  app.get(`/api/v${VERSION}/users/:username`, [
     validateAccept(),
     checkAuth(),
     users(),
   ]);
 
   // get songs
-  app.get(`/api/${API_VERSION}/songs`, [
+  app.get(`/api/v${VERSION}/songs`, [
     validateAccept(),
     checkAuth(),
     getSongs(),
   ]);
 
   // find song
-  app.get(`/api/${API_VERSION}/songs/find`, [
+  app.get(`/api/v${VERSION}/songs/find`, [
     validateAccept(),
     checkAuth(),
     findSongs(),
   ]);
 
   // get song by id
-  app.get(`/api/${API_VERSION}/songs/:id`, [
+  app.get(`/api/v${VERSION}/songs/:id`, [
     validateAccept(),
     checkAuth(),
     getSongByUuid(),
   ]);
 
   // upload song
-  app.post(`/api/${API_VERSION}/songs`, [
+  app.post(`/api/v${VERSION}/songs`, [
     validateAccept(),
     validateContentType(`audio/mpeg`),
     checkAuth(),
@@ -98,7 +98,7 @@ export default (app: Application): void => {
   ]);
 
   // update song
-  app.patch(`/api/${API_VERSION}/songs/:id`, [
+  app.patch(`/api/v${VERSION}/songs/:id`, [
     validateAccept(),
     validateContentType('application/json'),
     checkAuth(),
@@ -106,7 +106,7 @@ export default (app: Application): void => {
   ]);
 
   // delete song
-  app.delete(`/api/${API_VERSION}/songs/:id`, [
+  app.delete(`/api/v${VERSION}/songs/:id`, [
     validateAccept(),
     checkAuth(),
     checkPermissions(roles.moderator),
@@ -114,34 +114,34 @@ export default (app: Application): void => {
   ]);
 
   // get favorites songs
-  app.get(`/api/${API_VERSION}/favorites`, [
+  app.get(`/api/v${VERSION}/favorites`, [
     validateAccept(),
     checkAuth(),
     getFavoriteSongs(),
   ]);
 
   // add song to favorites
-  app.post(`/api/${API_VERSION}/favorites/:id`, [
+  app.post(`/api/v${VERSION}/favorites/:id`, [
     validateAccept(),
     checkAuth(),
     addSongToFavorite(),
   ]);
 
   // remove song from favorites
-  app.delete(`/api/${API_VERSION}/favorites/:id`, [
+  app.delete(`/api/v${VERSION}/favorites/:id`, [
     validateAccept(),
     checkAuth(),
     removeSongFromFavorite(),
   ]);
 
   // status
-  app.get(`/api/${API_VERSION}/status`, [
+  app.get(`/api/v${VERSION}/status`, [
     validateAccept(),
     status(),
   ]);
 
   // verify upload
-  app.get(`/api/${API_VERSION}/verify`, [
+  app.get(`/api/v${VERSION}/verify`, [
     verify(),
   ]);
 };

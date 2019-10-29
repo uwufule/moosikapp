@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import JWT from 'jsonwebtoken';
-import { getUserByUuid } from '../../apis/mongodb/users';
+import { getUserByUuid } from '../apis/mongodb/users';
 
 const { JWT_SECRET = '' } = process.env;
 
