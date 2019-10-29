@@ -1,6 +1,6 @@
 {
   "name": "moosikapp",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "MoosikApp backend",
   "author": "Hibikaze",
   "license": "MIT",
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.1",
+    "@types/helmet": "^0.0.44",
     "@types/jsonwebtoken": "^8.3.3",
     "@types/mongoose": "^5.5.16",
     "@types/request": "^2.48.2",
@@ -44,6 +45,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "helmet": "^3.21.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.22",
     "request": "^2.88.0",
