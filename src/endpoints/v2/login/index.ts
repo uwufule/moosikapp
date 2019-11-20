@@ -14,36 +14,34 @@ function login(res: Response, user: ExtendedUserInfo, password: string): void {
     return;
   }
 
-  const { uuid, role, password: { timestamp }} = user;
+  const { uuid, role, password: { timestamp } } = user;
 
   const token = JWT.sign({ uuid, role, timestamp }, JWT_SECRET);
 
   res.status(200).send({ message: 'Successfully logged in.', token });
 }
 
-export default () => {
-  return async (req: Request, res: Response): Promise<void> => {
-    if (!req.body) {
-      res.status(400).send({ message: 'No body provided.' });
-    }
+export default () => async (req: Request, res: Response): Promise<void> => {
+  if (!req.body) {
+    res.status(400).send({ message: 'No body provided.' });
+  }
 
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    if (!username || !password) {
-      res.status(401).send({ message: 'Invalid authorization.' });
+  if (!username || !password) {
+    res.status(401).send({ message: 'Invalid authorization.' });
+    return;
+  }
+
+  try {
+    const user = await findUser(username);
+    if (!user) {
+      res.status(403).send({ message: 'This account has been deactivated.' });
       return;
     }
 
-    try {
-      const user = await findUser(username);
-      if (!user) {
-        res.status(403).send({ message: 'This account has been deactivated.' });
-        return;
-      }
-
-      login(res, user, password);
-    } catch (e) {
-      res.status(500).send({ message: 'Internal server error.' });
-    }
-  };
-}
+    login(res, user, password);
+  } catch (e) {
+    res.status(500).send({ message: 'Internal server error.' });
+  }
+};

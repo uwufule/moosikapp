@@ -1,6 +1,6 @@
 import Mongoose, { Schema, Document } from 'mongoose';
 
-export interface Song extends Document {
+export interface SongDocument extends Document {
   uuid: string;
   author?: string;
   title?: string;
@@ -12,7 +12,7 @@ export interface Song extends Document {
   updatedAt: Date;
 }
 
-export default Mongoose.model<Song>('Song', new Schema({
+export default Mongoose.model<SongDocument>('Song', new Schema({
   uuid: {
     type: String,
     required: true,
@@ -42,4 +42,4 @@ export default Mongoose.model<Song>('Song', new Schema({
     type: Array,
     default: [],
   },
-}, { versionKey: false, timestamps: true }));
+}, { _id: false, versionKey: false, timestamps: true }));

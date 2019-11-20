@@ -2,7 +2,7 @@ import Mongoose, { Schema, Document } from 'mongoose';
 
 import { roles } from '../../../config.json';
 
-export interface User extends Document {
+export interface UserDocument extends Document {
   uuid: string;
   username: string;
   email: string;
@@ -15,7 +15,7 @@ export interface User extends Document {
   updatedAt: Date;
 }
 
-export default Mongoose.model<User>('User', new Schema({
+export default Mongoose.model<UserDocument>('User', new Schema({
   uuid: {
     type: String,
     required: true,
@@ -45,5 +45,4 @@ export default Mongoose.model<User>('User', new Schema({
     type: Number,
     default: roles.user,
   },
-}, { versionKey: false, timestamps: true }));
-
+}, { _id: false, versionKey: false, timestamps: true }));

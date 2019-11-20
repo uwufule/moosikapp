@@ -78,7 +78,7 @@ export function addSongToFavorite() {
         jwt: {
           uuid,
         },
-       } = req;
+      } = req;
 
       const song = await DB.getSongByUuid(id);
       if (!song) {
@@ -105,7 +105,7 @@ export function removeSongFromFavorite() {
         jwt: {
           uuid,
         },
-       } = req;
+      } = req;
 
       const song = await DB.getSongByUuid(id);
       if (!song) {

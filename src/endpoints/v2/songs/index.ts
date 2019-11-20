@@ -211,12 +211,13 @@ export function updateSong() {
     const songData = Object.entries(body).reduce((acc, [key, val]) => {
       if (['author', 'title', 'cover'].includes(key)) {
         acc[key] = String(val);
-        return acc;
       }
+
+      return acc;
     }, {} as { [key: string]: string });
 
     try {
-      await DB.updateSong(id, songData as DB.GenericParams);
+      await DB.updateSong(id, songData);
 
       res.status(200).send({ message: 'Successfully updated song.', song: songData });
     } catch (e) {

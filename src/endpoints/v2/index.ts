@@ -22,7 +22,7 @@ import {
 } from './favorites';
 import { verify } from './songs/upload';
 
-import { roles } from'../../config.json';
+import { roles } from '../../config.json';
 
 const VERSION = 2;
 
@@ -91,7 +91,7 @@ export default (app: Application): void => {
   // upload song
   app.post(`/api/v${VERSION}/songs`, [
     validateAccept(),
-    validateContentType(`audio/mpeg`),
+    validateContentType('audio/mpeg'),
     checkAuth(),
     checkPermissions(roles.moderator),
     uploadSong(),

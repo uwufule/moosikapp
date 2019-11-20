@@ -4,7 +4,6 @@ import uuidv4 from 'uuid/v4';
 import request from 'request';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import * as DB from '../../../apis/mongodb/songs';
-import { Song } from '../../../apis/mongodb/models/song';
 
 const { CDN_SERVER = '' } = process.env;
 
@@ -28,7 +27,7 @@ export default (req: AuthorizedRequest, res: Response): void => {
   readable.pipe(request.put(targetUri, {
     headers: {
       'content-type': req.headers['content-type'],
-    }
+    },
   }, async (error, { statusCode }, body) => {
     if (error) {
       res.status(500).send({ message: 'Internal server error.' });
@@ -43,7 +42,7 @@ export default (req: AuthorizedRequest, res: Response): void => {
         uploadedBy: req.jwt.uuid,
         path: body,
         likes: [req.jwt.uuid],
-      } as Song);
+      });
 
       res.status(statusCode).send({
         message: 'You have successfully uploaded a new song.',
@@ -55,7 +54,7 @@ export default (req: AuthorizedRequest, res: Response): void => {
     const message = body || 'Error while uploading.';
     res.status(400).send({ message });
   }));
-}
+};
 
 export function verify() {
   return (req: Request, res: Response): void => {

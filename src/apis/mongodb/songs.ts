@@ -1,4 +1,14 @@
-import SongModel, { Song } from './models/song';
+import SongModel from './models/song';
+
+interface ISong {
+  uuid: string;
+  author?: string;
+  title?: string;
+  cover?: string;
+  uploadedBy: string;
+  path: string;
+  likes?: Array<string>;
+}
 
 export interface BasicSongInfo {
   uuid: string;
@@ -109,7 +119,7 @@ export async function getFavoriteSongs(
   return songs as Array<BasicSongInfo>;
 }
 
-export async function saveSong(data: Song): Promise<boolean> {
+export async function saveSong(data: ISong): Promise<boolean> {
   const song = new SongModel(data);
   await song.save();
   return true;
