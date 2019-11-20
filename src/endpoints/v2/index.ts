@@ -26,7 +26,7 @@ import { roles } from '../../config.json';
 
 const VERSION = 2;
 
-export default (app: Application): void => {
+export default (app: Application) => {
   app.all(`/api/v${VERSION}`, (req: Request, res: Response) => {
     res.status(200).send({ message: `There is APIv${VERSION} endpoint.` });
   });
@@ -41,7 +41,7 @@ export default (app: Application): void => {
   // logout
   app.post(`/api/v${VERSION}/logout`, [
     validateAccept(),
-    (req: Request, res: Response): void => {
+    (req: Request, res: Response) => {
       res.status(501).send();
     },
   ]);
@@ -55,7 +55,7 @@ export default (app: Application): void => {
 
   // forgot
   app.post(`/api/v${VERSION}/forgot`, [
-    (req: Request, res: Response): void => {
+    (req: Request, res: Response) => {
       res.status(501).send();
     },
   ]);

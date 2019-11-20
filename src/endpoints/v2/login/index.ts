@@ -5,7 +5,7 @@ import { findUser, ExtendedUserInfo } from '../../../apis/mongodb/users';
 
 const { JWT_SECRET = '' } = process.env;
 
-function login(res: Response, user: ExtendedUserInfo, password: string): void {
+function login(res: Response, user: ExtendedUserInfo, password: string) {
   const [salt, passwordHash] = user.password.hash.split('.');
   const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
 
@@ -21,7 +21,7 @@ function login(res: Response, user: ExtendedUserInfo, password: string): void {
   res.status(200).send({ message: 'Successfully logged in.', token });
 }
 
-export default () => async (req: Request, res: Response): Promise<void> => {
+export default () => async (req: Request, res: Response) => {
   if (!req.body) {
     res.status(400).send({ message: 'No body provided.' });
   }

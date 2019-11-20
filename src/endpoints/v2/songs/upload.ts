@@ -9,7 +9,7 @@ const { CDN_SERVER = '' } = process.env;
 
 const uploadTargetList = new Map<string, NodeJS.Timeout>();
 
-export default (req: AuthorizedRequest, res: Response): void => {
+export default (req: AuthorizedRequest, res: Response) => {
   const uploadTarget = uuidv4();
 
   uploadTargetList.set(uploadTarget, setTimeout(() => {
@@ -57,7 +57,7 @@ export default (req: AuthorizedRequest, res: Response): void => {
 };
 
 export function verify() {
-  return (req: Request, res: Response): void => {
+  return (req: Request, res: Response) => {
     const { uuid } = req.query;
 
     if (!uploadTargetList.has(uuid)) {
@@ -67,7 +67,10 @@ export function verify() {
 
     res.status(200).send();
 
-    clearTimeout(uploadTargetList.get(uuid) as NodeJS.Timeout);
+    const uploadTarget = uploadTargetList.get(uuid);
+    if (uploadTarget !== undefined) {
+      clearTimeout(uploadTarget);
+    }
     uploadTargetList.delete(uuid);
   };
 }

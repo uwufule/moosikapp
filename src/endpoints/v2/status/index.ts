@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-export default () => async (req: Request, res: Response): Promise<void> => {
+export default () => async (req: Request, res: Response) => {
   try {
     res.status(501).send();
   } catch (e) {

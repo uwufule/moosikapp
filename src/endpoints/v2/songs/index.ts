@@ -20,7 +20,7 @@ interface SongData {
 }
 
 export function getSongs() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const { skip, limit, scope } = req.query;
 
     const s = Number(skip);
@@ -73,7 +73,7 @@ export function getSongs() {
 }
 
 export function getSongByUuid() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const song = await DB.getSongByUuid(req.params.id);
       if (!song) {
@@ -110,7 +110,7 @@ export function getSongByUuid() {
 }
 
 export function findSongs() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const {
       query, skip, limit, scope,
     } = req.query;
@@ -170,7 +170,7 @@ export function findSongs() {
 }
 
 export function uploadSong() {
-  return (req: AuthorizedRequest, res: Response): void => {
+  return (req: AuthorizedRequest, res: Response) => {
     if (!req.body || Number(req.headers['content-length']) === 0) {
       res.status(400).send({ message: 'No body provided.' });
       return;
@@ -181,7 +181,7 @@ export function uploadSong() {
 }
 
 export function updateSong() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const {
       body,
       params: {
@@ -227,7 +227,7 @@ export function updateSong() {
 }
 
 export function deleteSong() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const {
         params: {

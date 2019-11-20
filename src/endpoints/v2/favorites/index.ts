@@ -16,7 +16,7 @@ interface SongData {
 }
 
 export function getFavoriteSongs() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const { skip, limit, scope } = req.query;
 
     const s = Number(skip);
@@ -69,7 +69,7 @@ export function getFavoriteSongs() {
 }
 
 export function addSongToFavorite() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const {
         params: {
@@ -96,7 +96,7 @@ export function addSongToFavorite() {
 }
 
 export function removeSongFromFavorite() {
-  return async (req: AuthorizedRequest, res: Response): Promise<void> => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const {
         params: {
