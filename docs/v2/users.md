@@ -5,7 +5,7 @@
 Route: /users/{username}
 Method: GET
 Headers: {
-  Authorization: Bearer JWT-token
+  Authorization: Bearer JWT
 }
 ```
 

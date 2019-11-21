@@ -20,7 +20,7 @@ Headers: {
 // Status Code: 200
 {
   message: 'Successfully logged in.',
-  token: String, // JWT-token
+  token: String, // json web token (JWT)
 }
 ```
 

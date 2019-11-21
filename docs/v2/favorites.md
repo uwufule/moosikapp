@@ -2,35 +2,31 @@
 
 #### Получить список избранных песен
 ```
-Route: /favorites[?skip&limit&scope]
+Route: /favorites?[skip | limit | scope]
 Method: GET
 Headers: {
-  Authorization: Bearer JWT-token
+  Authorization: Bearer JWT
 }
 ```
 
 Параметры запроса
 ```js
 {
-  skip: {
-    type: Number,
-  },
-  limit: {
-    type: Number,
-    value: {
-      min: 1,
-      max: 100,
-    },
-  },
-  scope: {
-    type: Number,
-    value: {
-      +1: 'favorite',
-      +2: 'edit',
-    }
-  }
+  skip: [Number, 'positive'],
+  limit: [Number, {
+    min: 1, max: 100,
+  }],
+  scope: [Number, {
+    +1: 'favorite', +2: 'edit',
+  }],
 }
 ```
+Параметр **scope** представляет собой битовую маску.
+Если вы хотите получить список с указанием, находится ли песня в вашем списке избранного, нужно указать **1**.
+Если нужно узнать о возможности редактирования песен, нужно указать **2**.
+Если вам нужно узнать и то, и другое, то нужно указать значение **3** (2 + 1).
+
+В будущем значений **scope** может стать больше, однако, механизм выборки необходимых полей останется прежним.
 
 Ответ
 ```js
@@ -59,7 +55,7 @@ Headers: {
 Route: /favorites/{songId}
 Method: POST
 Headers: {
-  Authorization: Bearer JWT-token
+  Authorization: Bearer JWT
 }
 ```
 
@@ -90,7 +86,7 @@ Headers: {
 Route: /favorites/{songId}
 Method: DELETE
 Headers: {
-  Authorization: Bearer JWT-token
+  Authorization: Bearer JWT
 }
 ```
 
@@ -108,7 +104,7 @@ Status Code: 204
 
 Возможные ошибки
 ```js
-# Status Code: 404
+// Status Code: 404
 { message: 'No song found.' }
 { message: 'No favorite found.' }
 ```
