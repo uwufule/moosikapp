@@ -45,4 +45,4 @@ export default Mongoose.model<UserDocument>('User', new Schema({
     type: Number,
     default: roles.user,
   },
-}, { _id: false, versionKey: false, timestamps: true }));
+}, { versionKey: false, timestamps: true }));

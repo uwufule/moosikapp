@@ -42,4 +42,4 @@ export default Mongoose.model<SongDocument>('Song', new Schema({
     type: Array,
     default: [],
   },
-}, { _id: false, versionKey: false, timestamps: true }));
+}, { versionKey: false, timestamps: true }));
