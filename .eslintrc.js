@@ -18,5 +18,7 @@ module.exports = {
   plugins: [
     '@typescript-eslint',
   ],
-  rules: {},
+  rules: {
+    'no-bitwise': 'off',
+  },
 };
