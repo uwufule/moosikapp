@@ -1,10 +1,9 @@
-/* eslint-disable no-bitwise */
-
 import { Response } from 'express';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import * as DB from '../../../apis/mongodb/songs';
 
 import { scopes, roles } from '../../../config.json';
+import APIError from '../../../errors/APIError';
 
 interface SongData {
   uuid: string;
@@ -17,26 +16,22 @@ interface SongData {
 
 export function getFavoriteSongs() {
   return async (req: AuthorizedRequest, res: Response) => {
-    const { skip, limit, scope } = req.query;
-
-    const s = Number(skip);
-    if (s < 0) {
-      res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
-      return;
-    }
-
-    const l = Number(limit);
-    if (l < 1 || l > 100) {
-      res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
-      return;
-    }
+    const { scope } = req.query;
 
     try {
-      const songList = await DB.getFavoriteSongs(req.jwt.uuid, s, l);
+      const skip = Number(req.query.skip);
+      if (skip < 0) {
+        throw new APIError(400, 'Invalid query parameter `skip` provided.');
+      }
 
+      const limit = Number(req.query.limit);
+      if (limit < 1 || limit > 100) {
+        throw new APIError(400, 'Invalid query parameter `limit` provided.');
+      }
+
+      const songList = await DB.getFavoriteSongs(req.jwt.uuid, skip, limit);
       if (!songList.length) {
-        res.status(404).send({ message: 'No favorite songs found.' });
-        return;
+        throw new APIError(404, 'No favorite songs found.');
       }
 
       const songs: Array<SongData> = [];
@@ -63,6 +58,11 @@ export function getFavoriteSongs() {
 
       res.status(200).send({ message: 'Successfully retrieved favorite songs.', songs });
     } catch (e) {
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send(e.message);
+        return;
+      }
+
       res.status(500).send({ message: 'Internal server error.' });
     }
   };
@@ -73,23 +73,27 @@ export function addSongToFavorite() {
     try {
       const {
         params: {
-          id,
+          songId,
         },
         jwt: {
           uuid,
         },
       } = req;
 
-      const song = await DB.getSongByUuid(id);
+      const song = await DB.getSongByUuid(songId);
       if (!song) {
-        res.status(404).send({ message: 'No song found.' });
+        throw new APIError(404, 'No song found.');
+      }
+
+      await DB.updateSong(songId, { $addToSet: { likes: uuid } });
+
+      res.status(200).send({ message: 'Successfully added song to favorites.', uuid: songId });
+    } catch (e) {
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
         return;
       }
 
-      await DB.updateSong(id, { $addToSet: { likes: uuid } });
-
-      res.status(200).send({ message: 'Successfully added song to favorites.', uuid: id });
-    } catch (e) {
       res.status(500).send({ message: 'Internal server error.' });
     }
   };
@@ -100,28 +104,31 @@ export function removeSongFromFavorite() {
     try {
       const {
         params: {
-          id,
+          songId,
         },
         jwt: {
           uuid,
         },
       } = req;
 
-      const song = await DB.getSongByUuid(id);
+      const song = await DB.getSongByUuid(songId);
       if (!song) {
-        res.status(404).send({ message: 'No song found.' });
-        return;
+        throw new APIError(404, 'No song found.');
       }
 
       if (!song.likes.includes(uuid)) {
-        res.status(404).send({ message: 'No favorite.' });
-        return;
+        throw new APIError(404, 'No favorite.');
       }
 
-      await DB.updateSong(id, { $pull: { likes: uuid } });
+      await DB.updateSong(songId, { $pull: { likes: uuid } });
 
       res.status(204).send();
     } catch (e) {
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
       res.status(500).send({ message: 'Internal server error.' });
     }
   };
