@@ -1,19 +1,21 @@
 import { Request, Response } from 'express';
 import { getUser } from '../../../apis/mongodb/users';
+import APIError from '../../../errors/APIError';
 
 export default () => async (req: Request, res: Response) => {
-  const { username } = req.params;
-
   try {
-    const user = await getUser(decodeURI(username));
-
+    const user = await getUser(decodeURI(req.params.username));
     if (!user) {
-      res.status(404).send({ message: 'No user found.' });
-      return;
+      throw new APIError(404, 'No user found.');
     }
 
     res.status(200).send({ message: 'Successfully retrieved user.', user });
   } catch (e) {
+    if (e instanceof APIError) {
+      res.status(e.statusCode).send({ message: e.message });
+      return;
+    }
+
     res.status(500).send({ message: 'Internal server error.' });
   }
 };
