@@ -82,7 +82,7 @@ export default (app: Application) => {
   ]);
 
   // get song by id
-  app.get(`/api/v${VERSION}/songs/:id`, [
+  app.get(`/api/v${VERSION}/songs/:songId`, [
     validateAccept(),
     checkAuth(),
     getSongByUuid(),
@@ -98,7 +98,7 @@ export default (app: Application) => {
   ]);
 
   // update song
-  app.patch(`/api/v${VERSION}/songs/:id`, [
+  app.patch(`/api/v${VERSION}/songs/:songId`, [
     validateAccept(),
     validateContentType('application/json'),
     checkAuth(),
@@ -106,7 +106,7 @@ export default (app: Application) => {
   ]);
 
   // delete song
-  app.delete(`/api/v${VERSION}/songs/:id`, [
+  app.delete(`/api/v${VERSION}/songs/:songId`, [
     validateAccept(),
     checkAuth(),
     checkPermissions(roles.moderator),
@@ -121,14 +121,14 @@ export default (app: Application) => {
   ]);
 
   // add song to favorites
-  app.post(`/api/v${VERSION}/favorites/:id`, [
+  app.post(`/api/v${VERSION}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
     addSongToFavorite(),
   ]);
 
   // remove song from favorites
-  app.delete(`/api/v${VERSION}/favorites/:id`, [
+  app.delete(`/api/v${VERSION}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
     removeSongFromFavorite(),

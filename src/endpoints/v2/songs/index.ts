@@ -1,10 +1,9 @@
-/* eslint-disable no-bitwise */
-
-import { Response } from 'express';
+import { Response, NextFunction } from 'express';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import upload from './upload';
 import * as DB from '../../../apis/mongodb/songs';
 import { getUserByUuid } from '../../../apis/mongodb/users';
+import APIError from '../../../errors/APIError';
 
 import { scopes, roles } from '../../../config.json';
 
@@ -20,36 +19,33 @@ interface SongData {
 }
 
 export function getSongs() {
-  return async (req: AuthorizedRequest, res: Response) => {
-    const { skip, limit, scope } = req.query;
+  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+    const { scope } = req.query;
 
-    const s = Number(skip);
-    if (s < 0) {
-      res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
+    const skip = Number(req.query.skip);
+    if (skip < 0) {
+      next(new APIError(400, 'Invalid query parameter `skip` provided.'));
       return;
     }
 
-    const l = Number(limit);
-    if (l < 1 || l > 100) {
-      res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
+    const limit = Number(req.query.limit);
+    if (limit < 1 || limit > 100) {
+      next(new APIError(400, 'Invalid query parameter `limit` provided.'));
       return;
     }
 
     try {
-      const songList = await DB.getSongs(s, l);
+      const songList = await DB.getSongs(skip, limit);
 
       if (!songList.length) {
-        res.status(404).send({ message: 'No songs found.' });
-        return;
+        throw new APIError(404, 'No songs found.');
       }
 
       const songs: Array<SongData> = [];
 
-      songList.forEach((songItem) => {
-        const {
-          uuid, author, title, cover, likes, uploadedBy,
-        } = songItem;
-
+      songList.forEach(({
+        uuid, author, title, cover, likes, uploadedBy,
+      }) => {
         const song: SongData = {
           uuid, author, title, cover,
         };
@@ -67,23 +63,20 @@ export function getSongs() {
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
-      res.status(500).send({ message: 'Internal server error.' });
+      next(e);
     }
   };
 }
 
 export function getSongByUuid() {
-  return async (req: AuthorizedRequest, res: Response) => {
+  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     try {
-      const song = await DB.getSongByUuid(req.params.id);
+      const song = await DB.getSongByUuid(req.params.songId);
       if (!song) {
-        res.status(404).send({ message: 'No song found.' });
-        return;
+        throw new APIError(404, 'No song found.');
       }
 
       const user = await getUserByUuid(song.uploadedBy);
-
-      const username = (user && user.username) || 'deactivated user';
 
       const {
         uuid, author, title, cover, path, uploadedBy, likes, createdAt,
@@ -97,47 +90,44 @@ export function getSongByUuid() {
           title,
           cover,
           url: `${CDN_SERVER}${path}`,
-          uploadedBy: username,
+          uploadedBy: user ? user.username : 'deactivated user',
           createdAt,
           favorite: likes.includes(req.jwt.uuid),
           edit: uploadedBy === req.jwt.uuid,
         },
       });
     } catch (e) {
-      res.status(500).send({ message: 'Internal server error.' });
+      next(e);
     }
   };
 }
 
 export function findSongs() {
-  return async (req: AuthorizedRequest, res: Response) => {
-    const {
-      query, skip, limit, scope,
-    } = req.query;
+  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+    const { query, scope } = req.query;
 
     if (!query) {
-      res.status(400).send({ message: 'No query provided.' });
+      next(new APIError(400, 'No query provided.'));
       return;
     }
 
-    const s = Number(skip);
-    if (s < 0) {
-      res.status(400).send({ message: 'Invalid query parameter `skip` provided.' });
+    const skip = Number(req.query.skip);
+    if (skip < 0) {
+      next(new APIError(400, 'Invalid query parameter `skip` provided.'));
       return;
     }
 
-    const l = Number(limit);
-    if (l < 1 || l > 100) {
-      res.status(400).send({ message: 'Invalid query parameter `limit` provided.' });
+    const limit = Number(req.query.limit);
+    if (limit < 1 || limit > 100) {
+      next(new APIError(400, 'Invalid query parameter `limit` provided.'));
       return;
     }
 
     try {
-      const songList = await DB.findSongs(decodeURI(query), s, l);
+      const songList = await DB.findSongs(decodeURI(query), skip, limit);
 
       if (!songList.length) {
-        res.status(404).send({ message: 'No songs found.' });
-        return;
+        throw new APIError(404, 'No songs found.');
       }
 
       const songs: Array<SongData> = [];
@@ -164,28 +154,28 @@ export function findSongs() {
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
     } catch (e) {
-      res.status(500).send({ message: 'Internal server error.' });
+      next(e);
     }
   };
 }
 
 export function uploadSong() {
-  return (req: AuthorizedRequest, res: Response) => {
+  return (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     if (!req.body || Number(req.headers['content-length']) === 0) {
-      res.status(400).send({ message: 'No body provided.' });
+      next(new APIError(400, 'No body provided.'));
       return;
     }
 
-    upload(req, res);
+    upload(req, res, next);
   };
 }
 
 export function updateSong() {
-  return async (req: AuthorizedRequest, res: Response) => {
+  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     const {
       body,
       params: {
-        id,
+        songId,
       },
       jwt: {
         uuid, role,
@@ -193,18 +183,18 @@ export function updateSong() {
     } = req;
 
     if (!body) {
-      res.status(400).send({ message: 'No body provided.' });
+      next(new APIError(400, 'No body provided.'));
       return;
     }
 
-    const song = await DB.getSongByUuid(id);
+    const song = await DB.getSongByUuid(songId);
     if (!song) {
-      res.status(404).send({ message: 'No song found.' });
+      next(new APIError(404, 'No song found.'));
       return;
     }
 
     if (song.uploadedBy !== uuid && role < roles.moderator) {
-      res.status(403).send({ message: 'Forbitten.' });
+      next(new APIError(403, 'Forbitten.'));
       return;
     }
 
@@ -217,44 +207,41 @@ export function updateSong() {
     }, {} as { [key: string]: string });
 
     try {
-      await DB.updateSong(id, songData);
+      await DB.updateSong(songId, songData);
 
       res.status(200).send({ message: 'Successfully updated song.', song: songData });
     } catch (e) {
-      res.status(500).send({ message: 'Internal server error.' });
+      next(e);
     }
   };
 }
 
 export function deleteSong() {
-  return async (req: AuthorizedRequest, res: Response) => {
+  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+    const {
+      params: {
+        songId,
+      },
+      jwt: {
+        uuid, role,
+      },
+    } = req;
+
     try {
-      const {
-        params: {
-          id,
-        },
-        jwt: {
-          uuid, role,
-        },
-      } = req;
-
-      const song = await DB.getSongByUuid(id);
-
+      const song = await DB.getSongByUuid(songId);
       if (!song) {
-        res.status(404).send({ message: 'No song found.' });
-        return;
+        throw new APIError(404, 'No song found.');
       }
 
       if (song.uploadedBy !== uuid && role < roles.moderator) {
-        res.status(403).send({ message: 'Forbitten.' });
-        return;
+        throw new APIError(403, 'Forbitten.');
       }
 
-      await DB.deleteSong(id);
+      await DB.deleteSong(songId);
 
       res.status(204).send();
     } catch (e) {
-      res.status(500).send({ message: 'Internal server error.' });
+      next(e);
     }
   };
 }

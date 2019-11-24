@@ -1,19 +1,20 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { Readable } from 'stream';
 import uuidv4 from 'uuid/v4';
 import request from 'request';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import * as DB from '../../../apis/mongodb/songs';
+import APIError from '../../../errors/APIError';
 
 const { CDN_SERVER = '' } = process.env;
 
 const uploadTargetList = new Map<string, NodeJS.Timeout>();
 
-export default (req: AuthorizedRequest, res: Response) => {
-  const uploadTarget = uuidv4();
+export default (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+  const uploadTargetId = uuidv4();
 
-  uploadTargetList.set(uploadTarget, setTimeout(() => {
-    uploadTargetList.delete(uploadTarget);
+  uploadTargetList.set(uploadTargetId, setTimeout(() => {
+    uploadTargetList.delete(uploadTargetId);
   }, 600000));
 
   const readable = new Readable();
@@ -22,7 +23,7 @@ export default (req: AuthorizedRequest, res: Response) => {
   readable.push(req.body);
   readable.push(null);
 
-  const targetUri = `${CDN_SERVER}/upload-target/${uploadTarget}`;
+  const targetUri = `${CDN_SERVER}/upload-target/${uploadTargetId}`;
 
   readable.pipe(request.put(targetUri, {
     headers: {
@@ -30,7 +31,7 @@ export default (req: AuthorizedRequest, res: Response) => {
     },
   }, async (error, { statusCode }, body) => {
     if (error) {
-      res.status(500).send({ message: 'Internal server error.' });
+      next(new APIError(500, 'Internal server error.'));
       return;
     }
 
@@ -51,8 +52,7 @@ export default (req: AuthorizedRequest, res: Response) => {
       return;
     }
 
-    const message = body || 'Error while uploading.';
-    res.status(400).send({ message });
+    next(new APIError(400, body || 'Error while uploading.'));
   }));
 };
 
@@ -67,10 +67,11 @@ export function verify() {
 
     res.status(200).send();
 
-    const uploadTarget = uploadTargetList.get(uuid);
-    if (uploadTarget !== undefined) {
-      clearTimeout(uploadTarget);
+    const uploadTargetId = uploadTargetList.get(uuid);
+    if (uploadTargetId !== undefined) {
+      clearTimeout(uploadTargetId);
     }
+
     uploadTargetList.delete(uuid);
   };
 }

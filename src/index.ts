@@ -24,8 +24,8 @@ app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
 
 app.use(cors());
 
-app.use(errorHandler());
-
 withApi(app);
+
+app.use(errorHandler());
 
 app.listen(PORT);

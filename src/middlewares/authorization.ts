@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import JWT from 'jsonwebtoken';
+import JWT, { JsonWebTokenError } from 'jsonwebtoken';
 import { getUserByUuid } from '../apis/mongodb/users';
+import APIError from '../errors/APIError';
 
 const { JWT_SECRET = '' } = process.env;
 
@@ -17,7 +18,7 @@ export interface AuthorizedRequest extends Request {
 export default () => async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer')) {
-    res.status(401).send({ message: 'Invalid authorization.' });
+    next(new APIError(401, 'Invalid authorization.'));
     return;
   }
 
@@ -28,18 +29,22 @@ export default () => async (req: AuthorizedRequest, res: Response, next: NextFun
 
     const user = await getUserByUuid(req.jwt.uuid);
     if (!user) {
-      res.status(403).send({ message: 'Invalid authorization.' });
-      return;
+      throw new APIError(401, 'Invalid authorization.');
     }
 
     const { timestamp } = user.password;
 
     if (new Date(req.jwt.timestamp).getTime() !== timestamp.getTime()) {
-      throw new Error('NotAuthorizedError');
+      throw new APIError(403, 'Not authorized.');
     }
 
     next();
   } catch (e) {
-    res.status(403).send({ message: 'Not authorized.' });
+    if (e instanceof JsonWebTokenError) {
+      next(new APIError(403, 'Not authorized.'));
+      return;
+    }
+
+    next(e);
   }
 };
