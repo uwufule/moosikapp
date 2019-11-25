@@ -1,7 +1,6 @@
 import UserModel from './models/user';
 
 export interface UserData {
-  uuid: string;
   username: string;
   email: string;
   password: {
@@ -46,15 +45,11 @@ export async function getUser(username: string): Promise<BasicUserInfo | null> {
 }
 
 export async function getUserByUuid(uuid: string): Promise<ExtendedUserInfo | null> {
-  const projection = {
-    _id: 0,
-  };
-
-  const user = await UserModel.findOne({ uuid }, projection);
-  return user as ExtendedUserInfo;
+  const user = await UserModel.findById(uuid);
+  return user && user.toJSON();
 }
 
-export async function findUser(query: string): Promise<ExtendedUserInfo | null> {
+export async function findUser(query: string) {
   const q = {
     $or: [
       {
@@ -70,13 +65,13 @@ export async function findUser(query: string): Promise<ExtendedUserInfo | null> 
   };
 
   const user = await UserModel.findOne(q, projection);
-  return user as ExtendedUserInfo;
+  return user;
 }
 
-export async function createUser(data: UserData): Promise<boolean> {
+export async function createUser(data: any): Promise<string> {
   const user = new UserModel(data);
-  await user.save();
-  return true;
+  const { _id } = await user.save();
+  return _id;
 }
 
 export async function updateUser(userId: string, data: GenericParams): Promise<boolean> {
@@ -88,3 +83,17 @@ export async function deleteUser(userId: string): Promise<boolean> {
   await UserModel.deleteOne({ uuid: userId });
   return true;
 }
+
+async function main() {
+  console.log('creating');
+
+  try {
+    const u = new UserModel({ email: '1', username: '1', password: { hash: '1' } });
+    const d = await u.save();
+    console.log(d.toJSON());
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+main();

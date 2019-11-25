@@ -24,22 +24,23 @@ import { verify } from './songs/upload';
 
 import { roles } from '../../config.json';
 
-const VERSION = 2;
+const API_VERSION = 2;
+const API_BASE_URL = `/api/v${API_VERSION}`;
 
 export default (app: Application) => {
-  app.all(`/api/v${VERSION}`, (req: Request, res: Response) => {
-    res.status(200).send({ message: `There is APIv${VERSION} endpoint.` });
+  app.all(API_BASE_URL, (req: Request, res: Response) => {
+    res.status(200).send({ message: `There is APIv${API_VERSION} endpoint.` });
   });
 
   // login
-  app.post(`/api/v${VERSION}/login`, [
+  app.post(`${API_BASE_URL}/login`, [
     validateAccept(),
     validateContentType('application/json'),
     login(),
   ]);
 
   // logout
-  app.post(`/api/v${VERSION}/logout`, [
+  app.post(`${API_BASE_URL}/logout`, [
     validateAccept(),
     (req: Request, res: Response) => {
       res.status(501).send();
@@ -47,49 +48,49 @@ export default (app: Application) => {
   ]);
 
   // register
-  app.post(`/api/v${VERSION}/register`, [
+  app.post(`${API_BASE_URL}/register`, [
     validateAccept(),
     validateContentType('application/json'),
     register(),
   ]);
 
   // forgot
-  app.post(`/api/v${VERSION}/forgot`, [
+  app.post(`${API_BASE_URL}/forgot`, [
     (req: Request, res: Response) => {
       res.status(501).send();
     },
   ]);
 
   // get user with provided username
-  app.get(`/api/v${VERSION}/users/:username`, [
+  app.get(`${API_BASE_URL}/users/:username`, [
     validateAccept(),
     checkAuth(),
     users(),
   ]);
 
   // get songs
-  app.get(`/api/v${VERSION}/songs`, [
+  app.get(`${API_BASE_URL}/songs`, [
     validateAccept(),
     checkAuth(),
     getSongs(),
   ]);
 
   // find song
-  app.get(`/api/v${VERSION}/songs/find`, [
+  app.get(`${API_BASE_URL}/songs/find`, [
     validateAccept(),
     checkAuth(),
     findSongs(),
   ]);
 
   // get song by id
-  app.get(`/api/v${VERSION}/songs/:songId`, [
+  app.get(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
     checkAuth(),
     getSongByUuid(),
   ]);
 
   // upload song
-  app.post(`/api/v${VERSION}/songs`, [
+  app.post(`${API_BASE_URL}/songs`, [
     validateAccept(),
     validateContentType('audio/mpeg'),
     checkAuth(),
@@ -98,7 +99,7 @@ export default (app: Application) => {
   ]);
 
   // update song
-  app.patch(`/api/v${VERSION}/songs/:songId`, [
+  app.patch(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
     validateContentType('application/json'),
     checkAuth(),
@@ -106,7 +107,7 @@ export default (app: Application) => {
   ]);
 
   // delete song
-  app.delete(`/api/v${VERSION}/songs/:songId`, [
+  app.delete(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
     checkAuth(),
     checkPermissions(roles.moderator),
@@ -114,34 +115,34 @@ export default (app: Application) => {
   ]);
 
   // get favorites songs
-  app.get(`/api/v${VERSION}/favorites`, [
+  app.get(`${API_BASE_URL}/favorites`, [
     validateAccept(),
     checkAuth(),
     getFavoriteSongs(),
   ]);
 
   // add song to favorites
-  app.post(`/api/v${VERSION}/favorites/:songId`, [
+  app.post(`${API_BASE_URL}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
     addSongToFavorite(),
   ]);
 
   // remove song from favorites
-  app.delete(`/api/v${VERSION}/favorites/:songId`, [
+  app.delete(`${API_BASE_URL}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
     removeSongFromFavorite(),
   ]);
 
   // status
-  app.get(`/api/v${VERSION}/status`, [
+  app.get(`${API_BASE_URL}/status`, [
     validateAccept(),
     status(),
   ]);
 
   // verify upload
-  app.get(`/api/v${VERSION}/verify`, [
+  app.get(`${API_BASE_URL}/verify`, [
     verify(),
   ]);
 };

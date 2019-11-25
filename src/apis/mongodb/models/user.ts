@@ -1,4 +1,7 @@
+/* eslint-disable no-underscore-dangle */
+
 import Mongoose, { Schema, Document } from 'mongoose';
+import uuidv4 from 'uuid/v4';
 
 import { roles } from '../../../config.json';
 
@@ -15,21 +18,18 @@ export interface UserDocument extends Document {
   updatedAt: Date;
 }
 
-export default Mongoose.model<UserDocument>('User', new Schema({
-  uuid: {
+const schema = new Schema({
+  _id: {
     type: String,
-    required: true,
-    unique: true,
+    default: uuidv4,
   },
   username: {
     type: String,
-    required: true,
-    unique: true,
+    index: true,
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
+    index: true,
   },
   password: {
     hash: {
@@ -45,4 +45,16 @@ export default Mongoose.model<UserDocument>('User', new Schema({
     type: Number,
     default: roles.user,
   },
-}, { versionKey: false, timestamps: true }));
+}, { versionKey: false, timestamps: true });
+
+schema.set('toJSON', {
+  virtuals: true,
+  transform: (doc, ret) => {
+    const { _id, ...data } = ret;
+    return { ...data, uuid: _id };
+  },
+});
+
+const model = Mongoose.model<UserDocument>('user', schema);
+
+export default model;
