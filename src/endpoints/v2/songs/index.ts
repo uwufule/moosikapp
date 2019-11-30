@@ -51,7 +51,7 @@ export function getSongs() {
   };
 }
 
-export function getSongByUuid() {
+export function getByUuid() {
   return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     try {
       const song = await Songs.getByUuid(req.params.songId);
