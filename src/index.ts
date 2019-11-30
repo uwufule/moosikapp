@@ -9,7 +9,7 @@ import withApiEndpoints from './endpoints';
 
 import { MAX_FILE_SIZE } from './config.json';
 
-const { PORT = 8080 } = process.env;
+const { PORT } = process.env;
 
 async function main() {
   await mongoDB();
@@ -28,7 +28,7 @@ async function main() {
 
   app.use(errorHandler());
 
-  app.listen(PORT);
+  app.listen(Number(PORT));
 }
 
 main();
