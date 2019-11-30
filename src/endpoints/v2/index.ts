@@ -3,24 +3,13 @@ import checkAuth from '../../middlewares/authorization';
 import checkPermissions from '../../middlewares/permissions';
 import { validateAccept, validateContentType } from '../../middlewares/headers';
 
-import status from './status';
 import login from './login';
 import register from './register';
 import users from './users';
-import {
-  getSongs,
-  getSongByUuid,
-  findSongs,
-  uploadSong,
-  updateSong,
-  deleteSong,
-} from './songs';
-import {
-  getFavoriteSongs,
-  addSongToFavorite,
-  removeSongFromFavorite,
-} from './favorites';
+import * as Songs from './songs';
+import * as Favorites from './favorites';
 import { verify } from './songs/upload';
+import status from './status';
 
 import { roles } from '../../config.json';
 
@@ -72,21 +61,21 @@ export default (app: Application) => {
   app.get(`${API_BASE_URL}/songs`, [
     validateAccept(),
     checkAuth(),
-    getSongs(),
+    Songs.getSongs(),
   ]);
 
   // find song
   app.get(`${API_BASE_URL}/songs/find`, [
     validateAccept(),
     checkAuth(),
-    findSongs(),
+    Songs.findSongs(),
   ]);
 
   // get song by id
   app.get(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
     checkAuth(),
-    getSongByUuid(),
+    Songs.getByUuid(),
   ]);
 
   // upload song
@@ -95,7 +84,7 @@ export default (app: Application) => {
     validateContentType('audio/mpeg'),
     checkAuth(),
     checkPermissions(roles.moderator),
-    uploadSong(),
+    Songs.uploadSong(),
   ]);
 
   // update song
@@ -103,7 +92,7 @@ export default (app: Application) => {
     validateAccept(),
     validateContentType('application/json'),
     checkAuth(),
-    updateSong(),
+    Songs.updateSong(),
   ]);
 
   // delete song
@@ -111,28 +100,28 @@ export default (app: Application) => {
     validateAccept(),
     checkAuth(),
     checkPermissions(roles.moderator),
-    deleteSong(),
+    Songs.deleteSong(),
   ]);
 
   // get favorites songs
   app.get(`${API_BASE_URL}/favorites`, [
     validateAccept(),
     checkAuth(),
-    getFavoriteSongs(),
+    Favorites.getFavoriteSongs(),
   ]);
 
   // add song to favorites
   app.post(`${API_BASE_URL}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
-    addSongToFavorite(),
+    Favorites.addSongToFavorite(),
   ]);
 
   // remove song from favorites
   app.delete(`${API_BASE_URL}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
-    removeSongFromFavorite(),
+    Favorites.removeSongFromFavorite(),
   ]);
 
   // status
