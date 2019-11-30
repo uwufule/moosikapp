@@ -73,7 +73,7 @@ export function getByUuid() {
         message: 'Successfully retrieved song.',
         song: {
           ...songData,
-          url: `${CDN_SERVER}/${path}`,
+          url: `${CDN_SERVER}${path}`,
           uploadedBy: user ? user.username : 'deactivated user',
           favorite: likes.includes(req.jwt.uuid),
           edit: uploadedBy === req.jwt.uuid,
