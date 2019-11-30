@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import JWT, { JsonWebTokenError } from 'jsonwebtoken';
-import { getUserByUuid } from '../apis/mongodb/users';
+import { getByUuid } from '../api/mongodb/users';
 import APIError from '../errors/APIError';
 
 const { JWT_SECRET = '' } = process.env;
@@ -27,14 +27,12 @@ export default () => async (req: AuthorizedRequest, res: Response, next: NextFun
   try {
     req.jwt = JWT.verify(token, JWT_SECRET) as JWTRecord;
 
-    const user = await getUserByUuid(req.jwt.uuid);
+    const user = await getByUuid(req.jwt.uuid);
     if (!user) {
       throw new APIError(401, 'Invalid authorization.');
     }
 
-    const { timestamp } = user.password;
-
-    if (new Date(req.jwt.timestamp).getTime() !== timestamp.getTime()) {
+    if (new Date(req.jwt.timestamp).getTime() !== user.passwordTimestamp.getTime()) {
       throw new APIError(403, 'Not authorized.');
     }
 
