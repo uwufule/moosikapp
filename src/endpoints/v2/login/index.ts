@@ -1,26 +1,21 @@
 import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import { findUser, ExtendedUserInfo } from '../../../apis/mongodb/users';
+import { findByUsernameOrEmail, ExtendedUserInfo } from '../../../api/mongodb/users';
 import APIError from '../../../errors/APIError';
 
 const { JWT_SECRET = '' } = process.env;
 
 function login(user: ExtendedUserInfo, password: string): string {
-  const [salt, passwordHash] = user.password.hash.split('.');
+  const [salt, passwordHash] = user.password.split('.');
   const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
 
   if (passwordHash !== hash) {
     throw new APIError(401, 'Invalid authorization.');
   }
 
-  const {
-    uuid,
-    role,
-    password: { timestamp },
-  } = user;
-
-  return JWT.sign({ uuid, role, timestamp }, JWT_SECRET);
+  const { uuid, role, passwordTimestamp } = user;
+  return JWT.sign({ uuid, role, timestamp: passwordTimestamp }, JWT_SECRET);
 }
 
 export default () => async (req: Request, res: Response) => {
@@ -30,11 +25,11 @@ export default () => async (req: Request, res: Response) => {
     }
 
     const { username, password } = req.body;
-    if (!username || !password) {
+    if (typeof username !== 'string' || typeof password !== 'string') {
       throw new APIError(401, 'Invalid authorization.');
     }
 
-    const user = await findUser(username);
+    const user = await findByUsernameOrEmail(username);
     if (!user) {
       throw new APIError(403, 'This account has been deactivated.');
     }
