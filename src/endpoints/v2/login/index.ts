@@ -1,49 +1,47 @@
 import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import { findUser, ExtendedUserInfo } from '../../../apis/mongodb/users';
+import { findByUsernameOrEmail, ExtendedUserInfo } from '../../../api/mongodb/users';
+import APIError from '../../../errors/APIError';
 
-const { JWT_SECRET = '' } = process.env;
+const { JWT_SECRET } = process.env;
 
-function login(res: Response, user: ExtendedUserInfo, password: string): void {
-  const [salt, passwordHash] = user.password.hash.split('.');
+function login(user: ExtendedUserInfo, password: string): string {
+  const [salt, passwordHash] = user.password.split('.');
   const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
 
   if (passwordHash !== hash) {
-    res.status(401).send({ message: 'Invalid authorization.' });
-    return;
+    throw new APIError(401, 'Invalid authorization.');
   }
 
-  const { uuid, role, password: { timestamp }} = user;
-
-  const token = JWT.sign({ uuid, role, timestamp }, JWT_SECRET);
-
-  res.status(200).send({ message: 'Successfully logged in.', token });
+  const { uuid, role, passwordTimestamp } = user;
+  return JWT.sign({ uuid, role, timestamp: passwordTimestamp }, String(JWT_SECRET));
 }
 
-export default () => {
-  return async (req: Request, res: Response): Promise<void> => {
+export default () => async (req: Request, res: Response) => {
+  try {
     if (!req.body) {
-      res.status(400).send({ message: 'No body provided.' });
+      throw new APIError(400, 'No body provided.');
     }
 
     const { username, password } = req.body;
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      throw new APIError(401, 'Invalid authorization.');
+    }
 
-    if (!username || !password) {
-      res.status(401).send({ message: 'Invalid authorization.' });
+    const user = await findByUsernameOrEmail(username);
+    if (!user) {
+      throw new APIError(403, 'This account has been deactivated.');
+    }
+
+    const token = login(user, password);
+    res.status(200).send({ message: 'Successfully logged in.', token });
+  } catch (e) {
+    if (e instanceof APIError) {
+      res.status(e.statusCode).send({ message: e.message });
       return;
     }
 
-    try {
-      const user = await findUser(username);
-      if (!user) {
-        res.status(403).send({ message: 'This account has been deactivated.' });
-        return;
-      }
-
-      login(res, user, password);
-    } catch (e) {
-      res.status(500).send({ message: 'Internal server error.' });
-    }
-  };
-}
+    res.status(500).send({ message: 'Internal server error.' });
+  }
+};

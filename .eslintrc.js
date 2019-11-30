@@ -1,25 +1,24 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
   env: {
     es6: true,
     node: true,
   },
   extends: [
-    'plugin:@typescript-eslint/recommended',
+    'airbnb-typescript/base',
   ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
+  plugins: [
+    '@typescript-eslint',
+  ],
   rules: {
-    'no-trailing-spaces': 'error',
-    '@typescript-eslint/explicit-function-return-type': ['error'],
-    'no-underscore-dangle': 'error',
+    'no-bitwise': 'off',
   },
 };
-  
