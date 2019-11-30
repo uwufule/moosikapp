@@ -4,7 +4,7 @@ import JWT from 'jsonwebtoken';
 import { findByUsernameOrEmail, ExtendedUserInfo } from '../../../api/mongodb/users';
 import APIError from '../../../errors/APIError';
 
-const { JWT_SECRET = '' } = process.env;
+const { JWT_SECRET } = process.env;
 
 function login(user: ExtendedUserInfo, password: string): string {
   const [salt, passwordHash] = user.password.split('.');
@@ -15,7 +15,7 @@ function login(user: ExtendedUserInfo, password: string): string {
   }
 
   const { uuid, role, passwordTimestamp } = user;
-  return JWT.sign({ uuid, role, timestamp: passwordTimestamp }, JWT_SECRET);
+  return JWT.sign({ uuid, role, timestamp: passwordTimestamp }, String(JWT_SECRET));
 }
 
 export default () => async (req: Request, res: Response) => {
