@@ -3,43 +3,33 @@ import checkAuth from '../../middlewares/authorization';
 import checkPermissions from '../../middlewares/permissions';
 import { validateAccept, validateContentType } from '../../middlewares/headers';
 
-import status from './status';
 import login from './login';
 import register from './register';
 import users from './users';
-import {
-  getSongs,
-  getSongByUuid,
-  findSongs,
-  uploadSong,
-  updateSong,
-  deleteSong,
-} from './songs';
-import {
-  getFavoriteSongs,
-  addSongToFavorite,
-  removeSongFromFavorite,
-} from './favorites';
+import * as Songs from './songs';
+import * as Favorites from './favorites';
 import { verify } from './songs/upload';
+import status from './status';
 
 import { roles } from '../../config.json';
 
-const VERSION = 2;
+const API_VERSION = 2;
+const API_BASE_URL = `/api/v${API_VERSION}`;
 
 export default (app: Application) => {
-  app.all(`/api/v${VERSION}`, (req: Request, res: Response) => {
-    res.status(200).send({ message: `There is APIv${VERSION} endpoint.` });
+  app.all(API_BASE_URL, (req: Request, res: Response) => {
+    res.status(200).send({ message: `There is APIv${API_VERSION} endpoint.` });
   });
 
   // login
-  app.post(`/api/v${VERSION}/login`, [
+  app.post(`${API_BASE_URL}/login`, [
     validateAccept(),
     validateContentType('application/json'),
     login(),
   ]);
 
   // logout
-  app.post(`/api/v${VERSION}/logout`, [
+  app.post(`${API_BASE_URL}/logout`, [
     validateAccept(),
     (req: Request, res: Response) => {
       res.status(501).send();
@@ -47,101 +37,101 @@ export default (app: Application) => {
   ]);
 
   // register
-  app.post(`/api/v${VERSION}/register`, [
+  app.post(`${API_BASE_URL}/register`, [
     validateAccept(),
     validateContentType('application/json'),
     register(),
   ]);
 
   // forgot
-  app.post(`/api/v${VERSION}/forgot`, [
+  app.post(`${API_BASE_URL}/forgot`, [
     (req: Request, res: Response) => {
       res.status(501).send();
     },
   ]);
 
   // get user with provided username
-  app.get(`/api/v${VERSION}/users/:username`, [
+  app.get(`${API_BASE_URL}/users/:username`, [
     validateAccept(),
     checkAuth(),
     users(),
   ]);
 
   // get songs
-  app.get(`/api/v${VERSION}/songs`, [
+  app.get(`${API_BASE_URL}/songs`, [
     validateAccept(),
     checkAuth(),
-    getSongs(),
+    Songs.getSongs(),
   ]);
 
   // find song
-  app.get(`/api/v${VERSION}/songs/find`, [
+  app.get(`${API_BASE_URL}/songs/find`, [
     validateAccept(),
     checkAuth(),
-    findSongs(),
+    Songs.findSongs(),
   ]);
 
   // get song by id
-  app.get(`/api/v${VERSION}/songs/:id`, [
+  app.get(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
     checkAuth(),
-    getSongByUuid(),
+    Songs.getByUuid(),
   ]);
 
   // upload song
-  app.post(`/api/v${VERSION}/songs`, [
+  app.post(`${API_BASE_URL}/songs`, [
     validateAccept(),
     validateContentType('audio/mpeg'),
     checkAuth(),
     checkPermissions(roles.moderator),
-    uploadSong(),
+    Songs.uploadSong(),
   ]);
 
   // update song
-  app.patch(`/api/v${VERSION}/songs/:id`, [
+  app.patch(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
     validateContentType('application/json'),
     checkAuth(),
-    updateSong(),
+    Songs.updateSong(),
   ]);
 
   // delete song
-  app.delete(`/api/v${VERSION}/songs/:id`, [
+  app.delete(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
     checkAuth(),
     checkPermissions(roles.moderator),
-    deleteSong(),
+    Songs.deleteSong(),
   ]);
 
   // get favorites songs
-  app.get(`/api/v${VERSION}/favorites`, [
+  app.get(`${API_BASE_URL}/favorites`, [
     validateAccept(),
     checkAuth(),
-    getFavoriteSongs(),
+    Favorites.getFavoriteSongs(),
   ]);
 
   // add song to favorites
-  app.post(`/api/v${VERSION}/favorites/:id`, [
+  app.post(`${API_BASE_URL}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
-    addSongToFavorite(),
+    Favorites.addSongToFavorite(),
   ]);
 
   // remove song from favorites
-  app.delete(`/api/v${VERSION}/favorites/:id`, [
+  app.delete(`${API_BASE_URL}/favorites/:songId`, [
     validateAccept(),
     checkAuth(),
-    removeSongFromFavorite(),
+    Favorites.removeSongFromFavorite(),
   ]);
 
   // status
-  app.get(`/api/v${VERSION}/status`, [
+  app.get(`${API_BASE_URL}/status`, [
     validateAccept(),
     status(),
   ]);
 
   // verify upload
-  app.get(`/api/v${VERSION}/verify`, [
+  app.get(`${API_BASE_URL}/verify`, [
     verify(),
   ]);
 };

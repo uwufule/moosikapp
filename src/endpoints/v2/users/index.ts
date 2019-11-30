@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getUser } from '../../../apis/mongodb/users';
+import { getUser } from '../../../api/mongodb/users';
 import APIError from '../../../errors/APIError';
 
 export default () => async (req: Request, res: Response) => {

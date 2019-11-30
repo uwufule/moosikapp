@@ -1,12 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
+import APIError from '../errors/APIError';
 
-interface HTTPException extends Error {
-  type: string;
-}
-
-export default () => (error: HTTPException, req: Request, res: Response, next: NextFunction) => {
+export default () => (error: any, req: Request, res: Response, next: NextFunction) => {
   if (!error) {
     next();
+    return;
+  }
+
+  if (error instanceof APIError) {
+    res.status(error.statusCode).send({ message: error.message });
+    return;
   }
 
   switch (error.type) {

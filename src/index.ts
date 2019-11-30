@@ -4,28 +4,31 @@ import helmet from 'helmet';
 import cors from 'cors';
 import BodyParser from 'body-parser';
 import errorHandler from './middlewares/errorHandler';
-import mongoDB from './apis/mongodb';
-import withApi from './endpoints';
+import mongoDB from './api/mongodb';
+import withApiEndpoints from './endpoints';
 
 import { MAX_FILE_SIZE } from './config.json';
 
-const { PORT = 8080 } = process.env;
+const { PORT } = process.env;
 
-mongoDB();
+async function main() {
+  await mongoDB();
 
-const app = Express();
+  const app = Express();
 
-app.use(helmet({ hsts: false }));
+  app.use(helmet({ hsts: false }));
+  app.use(cors());
 
-app.use(Express.static(Path.resolve('static')));
+  app.use(Express.static(Path.resolve('static')));
 
-app.use(BodyParser.json());
-app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
+  app.use(BodyParser.json());
+  app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
 
-app.use(cors());
+  withApiEndpoints(app);
 
-app.use(errorHandler());
+  app.use(errorHandler());
 
-withApi(app);
+  app.listen(Number(PORT));
+}
 
-app.listen(PORT);
+main();
