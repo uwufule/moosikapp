@@ -26,6 +26,10 @@ async function main() {
 
   withApiEndpoints(app);
 
+  app.get('*', (req, res) => {
+    res.status(200).sendFile(Path.resolve('static/index.html'));
+  });
+
   app.use(errorHandler());
 
   app.listen(Number(PORT));
