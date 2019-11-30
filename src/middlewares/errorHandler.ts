@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import APIError from '../errors/APIError';
 
-interface HTTPError extends Error {
-  type: string;
-}
-
 export default () => (error: any, req: Request, res: Response, next: NextFunction) => {
   if (!error) {
     next();
