@@ -7,7 +7,7 @@ import errorHandler from './middlewares/errorHandler';
 import mongoDB from './api/mongodb';
 import withApiEndpoints from './endpoints';
 
-import { MAX_FILE_SIZE } from './config.json';
+import { MAX_FILE_SIZE } from './config/constants.json';
 
 const { PORT } = process.env;
 

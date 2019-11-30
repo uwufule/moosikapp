@@ -11,7 +11,7 @@ import * as Favorites from './favorites';
 import { verify } from './songs/upload';
 import status from './status';
 
-import { roles } from '../../config.json';
+import roles from '../../config/roles.json';
 
 const API_VERSION = 2;
 const API_BASE_URL = `/api/v${API_VERSION}`;

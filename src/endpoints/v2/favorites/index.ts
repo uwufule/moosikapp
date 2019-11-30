@@ -2,9 +2,10 @@ import { Response } from 'express';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import * as Songs from '../../../api/mongodb/songs';
 import parseQueryParams from '../../../utils/queryParams';
-
-import { scopes, roles } from '../../../config.json';
 import APIError from '../../../errors/APIError';
+
+import scopes from '../../../config/scopes.json';
+import roles from '../../../config/roles.json';
 
 interface SongData {
   uuid: string;

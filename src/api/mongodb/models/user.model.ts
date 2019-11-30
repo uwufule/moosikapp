@@ -1,7 +1,7 @@
 import Mongoose, { Schema } from 'mongoose';
 import UUID from 'uuid';
 
-import { roles } from '../../../config.json';
+import roles from '../../../config/roles.json';
 
 const schema = new Schema({
   _id: {

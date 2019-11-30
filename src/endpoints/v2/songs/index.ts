@@ -6,7 +6,8 @@ import * as Users from '../../../api/mongodb/users';
 import parseQueryParams from '../../../utils/queryParams';
 import APIError from '../../../errors/APIError';
 
-import { scopes, roles } from '../../../config.json';
+import scopes from '../../../config/scopes.json';
+import roles from '../../../config/roles.json';
 
 const { CDN_SERVER = '' } = process.env;
 
