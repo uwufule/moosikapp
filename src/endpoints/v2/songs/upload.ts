@@ -23,7 +23,7 @@ export default (req: AuthorizedRequest, res: Response, next: NextFunction) => {
   readable.push(req.body);
   readable.push(null);
 
-  const targetUri = `${CDN_SERVER}/v1/upload-target/${uploadTarget}`;
+  const targetUri = `${CDN_SERVER}/upload-target/${uploadTarget}`;
 
   readable.pipe(request.put(targetUri, {
     headers: {
