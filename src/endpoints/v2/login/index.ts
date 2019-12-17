@@ -1,21 +1,19 @@
 import { Request, Response } from 'express';
-import Crypto from 'crypto';
+import Bcrypt from 'bcrypt';
+import Joi from '@hapi/joi';
 import JWT from 'jsonwebtoken';
 import { findByUsernameOrEmail, ExtendedUserInfo } from '../../../api/mongodb/users';
 import APIError from '../../../errors/APIError';
 
 const { JWT_SECRET } = process.env;
 
-function login(user: ExtendedUserInfo, password: string): string {
-  const [salt, passwordHash] = user.password.split('.');
-  const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
-
-  if (passwordHash !== hash) {
+async function login(user: ExtendedUserInfo, password: string): Promise<string> {
+  const compareResult = await Bcrypt.compare(password, user.password);
+  if (!compareResult) {
     throw new APIError(401, 'Invalid authorization.');
   }
 
-  const { uuid, role, passwordTimestamp } = user;
-  return JWT.sign({ uuid, role, timestamp: passwordTimestamp }, String(JWT_SECRET));
+  return JWT.sign({ uuid: user.uuid }, String(JWT_SECRET), { expiresIn: '1d' });
 }
 
 export default () => async (req: Request, res: Response) => {
@@ -24,17 +22,24 @@ export default () => async (req: Request, res: Response) => {
       throw new APIError(400, 'No body provided.');
     }
 
-    const { username, password } = req.body;
-    if (typeof username !== 'string' || typeof password !== 'string') {
-      throw new APIError(401, 'Invalid authorization.');
+    const validationSchema = Joi.object({
+      username: Joi.string().required(),
+      password: Joi.string().required(),
+    });
+
+    const { error, value } = validationSchema.validate(req.body);
+    if (error) {
+      throw new APIError(400, `${error.message.replace(/"/g, '`')}.`);
     }
+
+    const { username, password } = value;
 
     const user = await findByUsernameOrEmail(username);
     if (!user) {
       throw new APIError(403, 'This account has been deactivated.');
     }
 
-    const token = login(user, password);
+    const token = await login(user, password);
     res.status(200).send({ message: 'Successfully logged in.', token });
   } catch (e) {
     if (e instanceof APIError) {
