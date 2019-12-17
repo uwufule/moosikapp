@@ -35,18 +35,18 @@ const schema = new Schema({
 }, { id: false, versionKey: false, timestamps: true });
 
 schema.virtual('password')
-  .get(function () {
+  .get(function get() {
     return this.passwordRecord.hash;
   })
-  .set(function (hash: string) {
+  .set(function set(hash: string) {
     this.set('passwordRecord.hash', hash);
   });
 
 schema.virtual('passwordTimestamp')
-  .get(function () {
+  .get(function get() {
     return this.passwordRecord.timestamp;
   })
-  .set(function (timestamp: Date) {
+  .set(function set(timestamp: Date) {
     this.set('passwordRecord.timestamp', timestamp);
   });
 

@@ -32,7 +32,7 @@ const schema = new Schema({
   },
 }, { id: false, versionKey: false, timestamps: true });
 
-schema.pre('save', function () {
+schema.pre('save', function save() {
   this.set('likes', [this.get('uploadedBy')]);
 });
 
