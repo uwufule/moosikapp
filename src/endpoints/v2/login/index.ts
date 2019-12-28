@@ -15,6 +15,15 @@ import {
 
 const { JWT_SECRET } = process.env;
 
+const validationSchema = Joi.object({
+  username: Joi.string()
+    .required()
+    .error(new Error(INVALID_USERNAME)),
+  password: Joi.string()
+    .required()
+    .error(new Error(INVALID_PASSWORD)),
+});
+
 async function login(user: ExtendedUserInfo, password: string): Promise<string> {
   const comparsionResult = await Bcrypt.compare(password, user.password);
   if (!comparsionResult) {
@@ -26,19 +35,6 @@ async function login(user: ExtendedUserInfo, password: string): Promise<string> 
 
 export default () => async (req: Request, res: Response) => {
   try {
-    if (!req.body) {
-      throw new APIError(400, 'No body provided.');
-    }
-
-    const validationSchema = Joi.object({
-      username: Joi.string()
-        .required()
-        .error(new Error(INVALID_USERNAME)),
-      password: Joi.string()
-        .required()
-        .error(new Error(INVALID_PASSWORD)),
-    });
-
     const { error, value } = validationSchema.validate(req.body);
     if (error) {
       throw new APIError(400, error.message);
