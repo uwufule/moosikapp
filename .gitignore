@@ -14,6 +14,12 @@ tmp
 # static
 static/
 
+# log files
+*.log
+
 # misc
 .DS_Store
 .vscode/
+
+# test
+wallaby.conf.js
