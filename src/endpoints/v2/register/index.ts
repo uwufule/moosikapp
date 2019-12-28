@@ -36,10 +36,6 @@ const validationSchema = Joi.object({
 
 export default () => async (req: Request, res: Response) => {
   try {
-    if (!req.body) {
-      throw new APIError(400, 'No body provided.');
-    }
-
     const { error, value } = validationSchema.validate(req.body);
     if (error) {
       throw new APIError(400, error.message);
