@@ -14,7 +14,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "webpack",
-    "dev": "nodemon --exec node -r dotenv/config -r ts-node/register src/index.ts"
+    "dev": "nodemon --exec node -r dotenv/config -r ts-node/register src/index.ts",
+    "test": "nodemon --watch . --ext ts --exec \"mocha -r dotenv/config -r ts-node/register test/**/*.test.ts --timeout 30000\""
   },
   "private": true,
   "bugs": {
@@ -22,22 +23,28 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
+    "@types/chai": "^4.2.7",
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.1",
     "@types/hapi__joi": "^16.0.4",
     "@types/helmet": "^0.0.45",
     "@types/jsonwebtoken": "^8.3.3",
+    "@types/mocha": "^5.2.7",
     "@types/mongodb": "^3.3.11",
     "@types/mongoose": "^5.5.16",
     "@types/request": "^2.48.2",
+    "@types/supertest": "^2.0.8",
     "@types/uuid": "^3.4.5",
     "@typescript-eslint/eslint-plugin": "^2.8.0",
     "@typescript-eslint/parser": "^2.8.0",
+    "chai": "^4.2.0",
     "dotenv": "^8.0.0",
     "eslint": "^6.7.1",
     "eslint-config-airbnb-typescript": "^6.3.0",
     "eslint-plugin-import": "^2.16.0",
+    "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
+    "supertest": "^4.0.2",
     "terser-webpack-plugin": "^2.2.1",
     "ts-loader": "^6.0.4",
     "ts-node": "^8.3.0",
