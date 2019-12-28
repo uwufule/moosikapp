@@ -30,8 +30,7 @@ export function getSongs() {
         throw new APIError(404, 'No songs found.');
       }
 
-      const songs = new Array<SongData>();
-      songList.forEach(({ likes, uploadedBy, ...songData }) => {
+      const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
         const song: SongData = { ...songData };
 
         if (scope & scopes.favorite) {
@@ -42,7 +41,7 @@ export function getSongs() {
           song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
         }
 
-        songs.push(song);
+        return song;
       });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
@@ -97,8 +96,7 @@ export function findSongs() {
         throw new APIError(404, 'No songs found.');
       }
 
-      const songs: Array<SongData> = [];
-      songList.forEach(({ likes, uploadedBy, ...songData }) => {
+      const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
         const song: SongData = { ...songData };
 
         if (scope & scopes.favorite) {
@@ -109,7 +107,7 @@ export function findSongs() {
           song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
         }
 
-        songs.push(song);
+        return song;
       });
 
       res.status(200).send({ message: 'Successfully retrieved songs.', songs });
