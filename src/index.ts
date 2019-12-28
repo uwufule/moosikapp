@@ -13,21 +13,20 @@ const { PORT } = process.env;
 
 const app = Express();
 
-mongoDB()
-  .then(() => {
-    app.use(helmet({ hsts: false }));
-    app.use(cors());
+mongoDB();
 
-    app.use(Express.static(Path.resolve('static')));
+app.use(helmet({ hsts: false }));
+app.use(cors());
 
-    app.use(BodyParser.json());
-    app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
+app.use(Express.static(Path.resolve('static')));
 
-    withApiEndpoints(app);
+app.use(BodyParser.json());
+app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
 
-    app.use(errorHandler());
+withApiEndpoints(app);
 
-    app.listen(Number(PORT));
-  });
+app.use(errorHandler());
+
+app.listen(Number(PORT));
 
 export default app;
