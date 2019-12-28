@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Bcrypt from 'bcrypt';
+import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
 import JWT from 'jsonwebtoken';
 import { findByUsernameOrEmail, ExtendedUserInfo } from '../../../api/mongodb/users';
@@ -16,8 +16,8 @@ import {
 const { JWT_SECRET } = process.env;
 
 async function login(user: ExtendedUserInfo, password: string): Promise<string> {
-  const compareResult = await Bcrypt.compare(password, user.password);
-  if (!compareResult) {
+  const comparsionResult = await Bcrypt.compare(password, user.password);
+  if (!comparsionResult) {
     throw new APIError(401, INVALID_AUTHORIZATION);
   }
 
@@ -33,15 +33,15 @@ export default () => async (req: Request, res: Response) => {
     const validationSchema = Joi.object({
       username: Joi.string()
         .required()
-        .error(new APIError(400, INVALID_USERNAME)),
+        .error(new Error(INVALID_USERNAME)),
       password: Joi.string()
         .required()
-        .error(new APIError(400, INVALID_PASSWORD)),
+        .error(new Error(INVALID_PASSWORD)),
     });
 
     const { error, value } = validationSchema.validate(req.body);
     if (error) {
-      throw new APIError(400, `${error.message.replace(/"/g, '`')}.`);
+      throw new APIError(400, error.message);
     }
 
     const user = await findByUsernameOrEmail(value.username);
