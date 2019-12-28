@@ -36,6 +36,14 @@ export default (app: Application) => {
     },
   ]);
 
+  // refresh token
+  app.post(`${API_BASE_URL}/refresh`, [
+    validateAccept(),
+    (req: Request, res: Response) => {
+      res.status(501).send();
+    },
+  ]);
+
   // register
   app.post(`${API_BASE_URL}/register`, [
     validateAccept(),

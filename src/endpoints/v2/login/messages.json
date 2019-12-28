@@ -1,0 +1,7 @@
+{
+  "INVALID_AUTHORIZATION": "Invalid authorization.",
+  "INVALID_USERNAME": "Username required.",
+  "INVALID_PASSWORD": "Password required.",
+  "ACCOUNT_DOESNT_EXISTS": "This account has been deactivated.",
+  "SUCCESS": "Successfully logged in."
+}
