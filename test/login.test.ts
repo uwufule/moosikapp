@@ -20,11 +20,10 @@ describe('login', () => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({
+      .send({
         username: 'testuser2',
         password: 'supersecretpassword',
-      }))
+      })
       .expect(200)
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
@@ -38,11 +37,10 @@ describe('login', () => {
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', (done) => {
     request(app)
       .post('/api/v2/login')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({
+      .send({
         username: 'testuser2',
         password: 'supersecretpassword',
-      }))
+      })
       .expect(405)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Incorrect `Accept` header provided.' }, done);
@@ -52,10 +50,7 @@ describe('login', () => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .send(JSON.stringify({
-        username: 'testuser2',
-        password: 'supersecretpassword',
-      }))
+      .send('')
       .expect(400)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Invalid body provided.' }, done);
@@ -65,10 +60,9 @@ describe('login', () => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({
+      .send({
         password: 'supersecretpassword',
-      }))
+      })
       .expect(400)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Username required.' }, done);
@@ -78,10 +72,9 @@ describe('login', () => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({
+      .send({
         username: 'testuser2',
-      }))
+      })
       .expect(400)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Password required.' }, done);
@@ -91,11 +84,10 @@ describe('login', () => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({
+      .send({
         username: 'nonexistent account data',
         password: 'supersecretpassword',
-      }))
+      })
       .expect(403)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'This account has been deactivated.' }, done);
@@ -105,11 +97,10 @@ describe('login', () => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({
+      .send({
         username: 'testuser2',
         password: 'invalidpassword',
-      }))
+      })
       .expect(401)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Invalid authorization.' }, done);
