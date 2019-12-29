@@ -1,5 +1,5 @@
 import request from 'supertest';
-import expect from 'expect';
+import { expect } from 'chai';
 
 import UserModel from '../src/api/mongodb/models/user.model';
 import app from '../src/index';
@@ -21,8 +21,8 @@ describe('registration', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
-        expect(res.body.message).toBe('You have successfully created a new account.');
-        expect(res.body).toHaveProperty('uuid');
+        expect(res.body.message).to.eq('You have successfully created a new account.');
+        expect(res.body).to.have.property('uuid');
 
         done();
       });
@@ -63,7 +63,7 @@ describe('registration', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
-        expect(res.body.message).toMatch(/Invalid username provided./);
+        expect(res.body.message).to.match(/Invalid username provided./);
 
         done();
       });
@@ -81,7 +81,7 @@ describe('registration', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
-        expect(res.body.message).toMatch(/Invalid e-mail address provided./);
+        expect(res.body.message).to.match(/Invalid e-mail address provided./);
 
         done();
       });
@@ -99,7 +99,7 @@ describe('registration', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
-        expect(res.body.message).toMatch(/Invalid password provided./);
+        expect(res.body.message).to.match(/Invalid password provided./);
 
         done();
       });

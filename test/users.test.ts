@@ -1,5 +1,5 @@
 import request from 'supertest';
-import expect from 'expect';
+import { expect } from 'chai';
 import bcrypt from 'bcryptjs';
 
 import app from '../src/index';
@@ -46,8 +46,8 @@ describe('users', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
-        expect(res.body.message).toBe('Successfully retrieved user.');
-        expect(res.body.user).toEqual({
+        expect(res.body.message).to.eq('Successfully retrieved user.');
+        expect(res.body.user).to.deep.include({
           ...userData,
           createdAt: new Date(userData.createdAt).toISOString(),
         });

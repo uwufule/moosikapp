@@ -1,5 +1,5 @@
 import request from 'supertest';
-import expect from 'expect';
+import { expect } from 'chai';
 import bcrypt from 'bcryptjs';
 
 import app from '../src/index';
@@ -28,8 +28,8 @@ describe('login', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
-        expect(res.body.message).toBe('Successfully logged in.');
-        expect(res.body).toHaveProperty('token');
+        expect(res.body.message).to.eq('Successfully logged in.');
+        expect(res.body).to.have.property('token');
 
         done();
       });
