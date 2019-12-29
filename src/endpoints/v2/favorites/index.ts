@@ -1,7 +1,7 @@
 import { Response } from 'express';
+import Joi from '@hapi/joi';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import * as Songs from '../../../api/mongodb/songs';
-import parseQueryParams from '../../../utils/queryParams';
 import APIError from '../../../errors/APIError';
 
 import scopes from '../../../config/scopes.json';
@@ -17,24 +17,40 @@ interface SongData {
 }
 
 export function getFavoriteSongs() {
+  const validationSchema = Joi.object({
+    skip: Joi.number()
+      .min(0)
+      .error(new Error('Invalid query parameter `skip` provided.')),
+    limit: Joi.number()
+      .min(1)
+      .max(100)
+      .error(new Error('Invalid query parameter `limit` provided.')),
+    scope: Joi.number()
+      .error(new Error('Invalid query parameter `scope` provided.')),
+  });
+
   return async (req: AuthorizedRequest, res: Response) => {
     try {
-      const { skip, limit, scope } = parseQueryParams(req.query);
+      const { error, value } = validationSchema.validate(req.body);
+      if (error) {
+        throw new APIError(400, error.message);
+      }
+
+      const { skip, limit, scope } = value;
 
       const songList = await Songs.getFavoriteSongs(req.jwt.uuid, skip, limit);
       if (!songList.length) {
         throw new APIError(404, 'No favorite songs found.');
       }
 
-      const songs: Array<SongData> = [];
-      songList.forEach(({ likes, uploadedBy, ...songData }) => {
-        const song: SongData = { ...songData };
+      const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
+        const song: SongData = songData;
 
         if (scope & scopes.edit) {
-          song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
+          song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
         }
 
-        songs.push(song);
+        return song;
       });
 
       res.status(200).send({ message: 'Successfully retrieved favorite songs.', songs });

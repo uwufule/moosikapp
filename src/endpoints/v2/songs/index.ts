@@ -1,9 +1,9 @@
 import { Response, NextFunction } from 'express';
+import Joi from '@hapi/joi';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import upload from './upload';
 import * as Songs from '../../../api/mongodb/songs';
 import * as Users from '../../../api/mongodb/users';
-import parseQueryParams from '../../../utils/queryParams';
 import APIError from '../../../errors/APIError';
 
 import scopes from '../../../config/scopes.json';
@@ -22,8 +22,25 @@ interface SongData {
 
 export function getSongs() {
   return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+    const validationSchema = Joi.object({
+      skip: Joi.number()
+        .min(0)
+        .error(new Error('Invalid query parameter `skip` provided.')),
+      limit: Joi.number()
+        .min(1)
+        .max(100)
+        .error(new Error('Invalid query parameter `limit` provided.')),
+      scope: Joi.number()
+        .error(new Error('Invalid query parameter `scope` provided.')),
+    });
+
     try {
-      const { skip, limit, scope } = parseQueryParams(req.query);
+      const { error, value } = validationSchema.validate(req.body);
+      if (error) {
+        throw new APIError(400, error.message);
+      }
+
+      const { skip, limit, scope } = value;
 
       const songList = await Songs.getSongs(skip, limit);
       if (!songList.length) {
@@ -31,14 +48,14 @@ export function getSongs() {
       }
 
       const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
-        const song: SongData = { ...songData };
+        const song: SongData = songData;
 
         if (scope & scopes.favorite) {
           song.favorite = likes.includes(req.jwt.uuid);
         }
 
         if (scope & scopes.edit) {
-          song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
+          song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
         }
 
         return song;
@@ -60,10 +77,7 @@ export function getByUuid() {
       }
 
       const {
-        path,
-        uploadedBy,
-        likes,
-        ...songData
+        path, uploadedBy, likes, ...songData
       } = song;
 
       const user = await Users.getByUuid(uploadedBy);
@@ -85,11 +99,31 @@ export function getByUuid() {
 }
 
 export function findSongs() {
+  const validationSchema = Joi.object({
+    skip: Joi.number()
+      .min(0)
+      .error(new Error('Invalid query parameter `skip` provided.')),
+    limit: Joi.number()
+      .min(1)
+      .max(100)
+      .error(new Error('Invalid query parameter `limit` provided.')),
+    scope: Joi.number()
+      .error(new Error('Invalid query parameter `scope` provided.')),
+    query: Joi.string()
+      .required()
+      .error(new Error('Invalid query parameter `query` provided.')),
+  });
+
   return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     try {
+      const { error, value } = validationSchema.validate(req.body);
+      if (error) {
+        throw new APIError(400, error.message);
+      }
+
       const {
         skip, limit, scope, query,
-      } = parseQueryParams(req.query);
+      } = value;
 
       const songList = await Songs.findSongs(decodeURI(query), skip, limit);
       if (!songList.length) {
@@ -154,13 +188,21 @@ export function updateSong() {
         throw new APIError(403, 'Forbitten.');
       }
 
-      const songData = Object.entries(body).reduce((acc, [key, val]) => {
-        if (['author', 'title', 'cover'].includes(key)) {
-          acc[key] = String(val);
-        }
+      const validationSchema = Joi.object({
+        author: Joi.string()
+          .min(1)
+          .error(new Error('Invalid parameter `author` provided.')),
+        title: Joi.string()
+          .min(1)
+          .error(new Error('Invalid parameter `title` provided.')),
+        cover: Joi.string()
+          .error(new Error('Invalid parameter `cover` provided.')),
+      });
 
-        return acc;
-      }, {} as { [key: string]: string });
+      const { error, value: songData } = validationSchema.validate(req.body);
+      if (error) {
+        throw new APIError(400, error.message);
+      }
 
       await Songs.updateSong(songId, songData);
 
