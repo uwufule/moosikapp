@@ -7,6 +7,8 @@ import APIError from '../../../errors/APIError';
 import scopes from '../../../config/scopes.json';
 import roles from '../../../config/roles.json';
 
+import messages from './messages.json';
+
 interface SongData {
   uuid: string;
   author: string;
@@ -20,13 +22,13 @@ export function getFavoriteSongs() {
   const validationSchema = Joi.object({
     skip: Joi.number()
       .min(0)
-      .error(new Error('Invalid query parameter `skip` provided.')),
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
     limit: Joi.number()
       .min(1)
       .max(100)
-      .error(new Error('Invalid query parameter `limit` provided.')),
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
     scope: Joi.number()
-      .error(new Error('Invalid query parameter `scope` provided.')),
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
   });
 
   return async (req: AuthorizedRequest, res: Response) => {
@@ -36,24 +38,22 @@ export function getFavoriteSongs() {
         throw new APIError(400, error.message);
       }
 
-      const { skip, limit, scope } = value;
-
-      const songList = await Songs.getFavoriteSongs(req.jwt.uuid, skip, limit);
+      const songList = await Songs.getFavoriteSongs(req.jwt.uuid, value.skip, value.limit);
       if (!songList.length) {
-        throw new APIError(404, 'No favorite songs found.');
+        throw new APIError(404, messages.NO_FAVORITES_FOUND);
       }
 
       const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
         const song: SongData = songData;
 
-        if (scope & scopes.edit) {
+        if (value.scope & scopes.edit) {
           song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
         }
 
         return song;
       });
 
-      res.status(200).send({ message: 'Successfully retrieved favorite songs.', songs });
+      res.status(200).send({ message: messages.SUCCESS, songs });
     } catch (e) {
       if (e instanceof APIError) {
         res.status(e.statusCode).send(e.message);
@@ -67,24 +67,15 @@ export function getFavoriteSongs() {
 
 export function addSongToFavorite() {
   return async (req: AuthorizedRequest, res: Response) => {
-    const {
-      params: {
-        songId,
-      },
-      jwt: {
-        uuid,
-      },
-    } = req;
-
     try {
-      const song = await Songs.getByUuid(songId);
+      const song = await Songs.getByUuid(req.params.songId);
       if (!song) {
-        throw new APIError(404, 'No song found.');
+        throw new APIError(404, messages.NO_SONG_FOUND);
       }
 
-      await Songs.updateSong(songId, { $addToSet: { likes: uuid } });
+      await Songs.updateSong(req.params.songId, { $addToSet: { likes: req.jwt.uuid } });
 
-      res.status(200).send({ message: 'Successfully added song to favorites.', uuid: songId });
+      res.status(200).send({ message: messages.SUCCESSFULLY_ADDED, uuid: req.params.songId });
     } catch (e) {
       if (e instanceof APIError) {
         res.status(e.statusCode).send({ message: e.message });
@@ -98,26 +89,17 @@ export function addSongToFavorite() {
 
 export function removeSongFromFavorite() {
   return async (req: AuthorizedRequest, res: Response) => {
-    const {
-      params: {
-        songId,
-      },
-      jwt: {
-        uuid,
-      },
-    } = req;
-
     try {
-      const song = await Songs.getByUuid(songId);
+      const song = await Songs.getByUuid(req.params.songId);
       if (!song) {
-        throw new APIError(404, 'No song found.');
+        throw new APIError(404, messages.NO_SONG_FOUND);
       }
 
-      if (!song.likes.includes(uuid)) {
-        throw new APIError(404, 'No favorite.');
+      if (!song.likes.includes(req.jwt.uuid)) {
+        throw new APIError(404, messages.NO_FAVORITE);
       }
 
-      await Songs.updateSong(songId, { $pull: { likes: uuid } });
+      await Songs.updateSong(req.params.songId, { $pull: { likes: req.jwt.uuid } });
 
       res.status(204).send();
     } catch (e) {
