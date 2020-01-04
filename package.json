@@ -1,7 +1,7 @@
 {
   "name": "moosikapp",
   "version": "3.1.46",
-  "description": "MoosikApp backend",
+  "description": "MoosikApp backend.",
   "author": "Uwufule",
   "license": "MIT",
   "main": "dist/server.js",
