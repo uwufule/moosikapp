@@ -8,7 +8,6 @@ import register from './register';
 import users from './users';
 import * as Songs from './songs';
 import * as Favorites from './favorites';
-import { verify } from './songs/upload';
 import status from './status';
 
 import roles from '../../config/roles.json';
@@ -136,10 +135,5 @@ export default (app: Application) => {
   app.get(`${API_BASE_URL}/status`, [
     validateAccept(),
     status(),
-  ]);
-
-  // verify upload
-  app.get(`${API_BASE_URL}/verify`, [
-    verify(),
   ]);
 };
