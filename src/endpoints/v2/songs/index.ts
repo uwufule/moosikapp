@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+import { Response } from 'express';
 import Joi from '@hapi/joi';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import upload from './upload';
@@ -8,6 +8,8 @@ import APIError from '../../../errors/APIError';
 
 import scopes from '../../../config/scopes.json';
 import roles from '../../../config/roles.json';
+
+import messages from './messages.json';
 
 const { CDN_SERVER = '' } = process.env;
 
@@ -21,17 +23,17 @@ interface SongData {
 }
 
 export function getSongs() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     const validationSchema = Joi.object({
       skip: Joi.number()
         .min(0)
-        .error(new Error('Invalid query parameter `skip` provided.')),
+        .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
       limit: Joi.number()
         .min(1)
         .max(100)
-        .error(new Error('Invalid query parameter `limit` provided.')),
+        .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
       scope: Joi.number()
-        .error(new Error('Invalid query parameter `scope` provided.')),
+        .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
     });
 
     try {
@@ -40,40 +42,43 @@ export function getSongs() {
         throw new APIError(400, error.message);
       }
 
-      const { skip, limit, scope } = value;
-
-      const songList = await Songs.getSongs(skip, limit);
-      if (!songList.length) {
-        throw new APIError(404, 'No songs found.');
+      const songList = await Songs.getSongs(value.skip, value.limit);
+      if (songList.length === 0) {
+        throw new APIError(404, messages.songs.NOT_FOUND);
       }
 
       const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
         const song: SongData = songData;
 
-        if (scope & scopes.favorite) {
+        if (value.scope & scopes.favorite) {
           song.favorite = likes.includes(req.jwt.uuid);
         }
 
-        if (scope & scopes.edit) {
+        if (value.scope & scopes.edit) {
           song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
         }
 
         return song;
       });
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
+      res.status(200).send({ message: messages.songs.SUCCESS, songs });
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
 export function getByUuid() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const song = await Songs.getByUuid(req.params.songId);
       if (!song) {
-        throw new APIError(404, 'No song found.');
+        throw new APIError(404, messages.song.NOT_FOUND);
       }
 
       const {
@@ -83,17 +88,22 @@ export function getByUuid() {
       const user = await Users.getByUuid(uploadedBy);
 
       res.status(200).send({
-        message: 'Successfully retrieved song.',
+        message: messages.song.SUCCESS,
         song: {
           ...songData,
           url: `${CDN_SERVER}${path}`,
-          uploadedBy: user ? user.username : 'deactivated user',
+          uploadedBy: user?.username || 'deactivated user',
           favorite: likes.includes(req.jwt.uuid),
           edit: uploadedBy === req.jwt.uuid,
         },
       });
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
@@ -102,101 +112,81 @@ export function findSongs() {
   const validationSchema = Joi.object({
     skip: Joi.number()
       .min(0)
-      .error(new Error('Invalid query parameter `skip` provided.')),
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
     limit: Joi.number()
       .min(1)
       .max(100)
-      .error(new Error('Invalid query parameter `limit` provided.')),
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
     scope: Joi.number()
-      .error(new Error('Invalid query parameter `scope` provided.')),
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
     query: Joi.string()
       .required()
-      .error(new Error('Invalid query parameter `query` provided.')),
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.QUERY)),
   });
 
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const { error, value } = validationSchema.validate(req.body);
       if (error) {
         throw new APIError(400, error.message);
       }
 
-      const {
-        skip, limit, scope, query,
-      } = value;
-
-      const songList = await Songs.findSongs(decodeURI(query), skip, limit);
-      if (!songList.length) {
-        throw new APIError(404, 'No songs found.');
+      const songList = await Songs.findSongs(decodeURI(value.query), value.skip, value.limit);
+      if (songList.length === 0) {
+        throw new APIError(404, messages.songs.NOT_FOUND);
       }
 
       const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
-        const song: SongData = { ...songData };
+        const song: SongData = songData;
 
-        if (scope & scopes.favorite) {
+        if (value.scope & scopes.favorite) {
           song.favorite = likes.includes(req.jwt.uuid);
         }
 
-        if (scope & scopes.edit) {
-          song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
+        if (value.scope & scopes.edit) {
+          song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
         }
 
         return song;
       });
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
+      res.status(200).send({ message: messages.songs.SUCCESS, songs });
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
 export function uploadSong() {
-  return (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    if (!req.body || Number(req.headers['content-length']) === 0) {
-      next(new APIError(400, 'No body provided.'));
-      return;
-    }
-
-    upload(req, res, next);
-  };
+  return upload;
 }
 
 export function updateSong() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    const {
-      body,
-      params: {
-        songId,
-      },
-      jwt: {
-        uuid, role,
-      },
-    } = req;
-
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
-      if (!body) {
-        throw new APIError(400, 'No body provided.');
-      }
-
-      const song = await Songs.getByUuid(songId);
+      const song = await Songs.getByUuid(req.params.songId);
       if (!song) {
-        throw new APIError(404, 'No song found.');
+        throw new APIError(404, messages.song.NOT_FOUND);
       }
 
-      if (song.uploadedBy !== uuid && role < roles.moderator) {
-        throw new APIError(403, 'Forbitten.');
+      if ((song.uploadedBy !== req.jwt.uuid) && (req.jwt.role < roles.moderator)) {
+        throw new APIError(403, messages.ACCESS_DENY);
       }
 
       const validationSchema = Joi.object({
         author: Joi.string()
           .min(1)
-          .error(new Error('Invalid parameter `author` provided.')),
+          .error(new Error(messages.INVALID_BODY_PARAMETER.AUTHOR)),
         title: Joi.string()
           .min(1)
-          .error(new Error('Invalid parameter `title` provided.')),
+          .error(new Error(messages.INVALID_BODY_PARAMETER.TITLE)),
         cover: Joi.string()
-          .error(new Error('Invalid parameter `cover` provided.')),
+          .error(new Error(messages.INVALID_BODY_PARAMETER.COVER)),
       });
 
       const { error, value: songData } = validationSchema.validate(req.body);
@@ -204,41 +194,42 @@ export function updateSong() {
         throw new APIError(400, error.message);
       }
 
-      await Songs.updateSong(songId, songData);
+      await Songs.updateSong(req.params.songId, songData);
 
-      res.status(200).send({ message: 'Successfully updated song.', song: songData });
+      res.status(200).send({ message: messages.UPDATE_SUCCESSFULLY, song: songData });
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
 export function deleteSong() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    const {
-      params: {
-        songId,
-      },
-      jwt: {
-        uuid, role,
-      },
-    } = req;
-
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
-      const song = await Songs.getByUuid(songId);
+      const song = await Songs.getByUuid(req.params.songId);
       if (!song) {
-        throw new APIError(404, 'No song found.');
+        throw new APIError(404, messages.song.NOT_FOUND);
       }
 
-      if (song.uploadedBy !== uuid && role < roles.moderator) {
-        throw new APIError(403, 'Forbitten.');
+      if ((song.uploadedBy !== req.jwt.uuid) && (req.jwt.role < roles.moderator)) {
+        throw new APIError(403, messages.ACCESS_DENY);
       }
 
-      await Songs.deleteSong(songId);
+      await Songs.deleteSong(req.params.songId);
 
       res.status(204).send();
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
