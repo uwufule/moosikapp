@@ -30,7 +30,7 @@ async function login(user: ExtendedUserInfo, password: string): Promise<string> 
     throw new APIError(401, INVALID_AUTHORIZATION);
   }
 
-  return JWT.sign({ uuid: user.uuid }, String(JWT_SECRET), { expiresIn: '1d' });
+  return JWT.sign({ uuid: user.uuid, role: user.role }, String(JWT_SECRET), { expiresIn: '1d' });
 }
 
 export default () => async (req: Request, res: Response) => {
