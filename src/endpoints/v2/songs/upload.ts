@@ -18,7 +18,7 @@ export default async (req: AuthorizedRequest, res: Response) => {
   readable.push(null);
 
   const hex = Crypto.randomBytes(6).toString('hex');
-  const target = JWT.sign({ hex }, String(JWT_SECRET), { expiresIn: 180 });
+  const target = JWT.sign({ hex }, String(JWT_SECRET), { expiresIn: 1800 });
   const targetUri = `${CDN_SERVER}/upload-target/${target}`;
 
   const requestOptions: CoreOptions = {
