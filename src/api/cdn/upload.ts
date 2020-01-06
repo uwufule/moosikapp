@@ -12,7 +12,7 @@ export class UploadError extends Error {
   }
 }
 
-export default async (contentType: string, stream: Readable) => {
+export default async (contentType: string, stream: Readable): Promise<string> => {
   const hex = Crypto.randomBytes(6).toString('hex');
   const target = JWT.sign({ hex }, String(JWT_SECRET), { expiresIn: 1800 });
   const targetUri = `${CDN_SERVER}/upload-target/${target}`;
