@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
 import JWT from 'jsonwebtoken';
-import { findByUsernameOrEmail, ExtendedUserInfo } from '../../../api/mongodb/users';
+import { findByUsernameOrEmail, PrivateUserInfo } from '../../../api/mongodb/users';
 import APIError from '../../../errors/APIError';
 
 import {
@@ -24,7 +24,7 @@ const validationSchema = Joi.object({
     .error(new Error(INVALID_PASSWORD)),
 });
 
-async function login(user: ExtendedUserInfo, password: string): Promise<string> {
+async function login(user: PrivateUserInfo, password: string): Promise<string> {
   const comparsionResult = await Bcrypt.compare(password, user.password);
   if (!comparsionResult) {
     throw new APIError(401, INVALID_AUTHORIZATION);

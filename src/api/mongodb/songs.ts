@@ -9,7 +9,7 @@ interface ISong {
   likes?: Array<string>;
 }
 
-export interface BasicSongInfo {
+export interface GeneralSongInfo {
   uuid: string;
   author: string;
   title: string;
@@ -18,7 +18,7 @@ export interface BasicSongInfo {
   uploadedBy: string;
 }
 
-export interface ExtendedSongInfo extends BasicSongInfo {
+export interface FullSongInfo extends GeneralSongInfo {
   path: string;
   createdAt: Date;
 }
@@ -27,7 +27,7 @@ export interface GenericParams {
   [key: string]: any;
 }
 
-export async function getSongs(skip = 0, limit = 100): Promise<Array<BasicSongInfo>> {
+export async function getSongs(skip = 0, limit = 100): Promise<Array<GeneralSongInfo>> {
   const projection = {
     uuid: 1,
     author: 1,
@@ -41,7 +41,7 @@ export async function getSongs(skip = 0, limit = 100): Promise<Array<BasicSongIn
   return songs.map((song) => song.toJSON());
 }
 
-export async function getByUuid(uuid: string): Promise<ExtendedSongInfo | null> {
+export async function getByUuid(uuid: string): Promise<FullSongInfo | null> {
   const projection = {
     uuid: 1,
     author: 1,
@@ -54,14 +54,14 @@ export async function getByUuid(uuid: string): Promise<ExtendedSongInfo | null> 
   };
 
   const song = await SongModel.findOne({ _id: uuid }, projection);
-  return song && song.toJSON();
+  return song?.toJSON();
 }
 
 export async function findSongs(
   queryString: string,
   skip = 0,
   limit = 100,
-): Promise<Array<BasicSongInfo>> {
+): Promise<Array<GeneralSongInfo>> {
   const query = {
     $or: [
       {
@@ -96,7 +96,7 @@ export async function getFavoriteSongs(
   userId: string,
   skip = 0,
   limit = 100,
-): Promise<Array<BasicSongInfo>> {
+): Promise<Array<GeneralSongInfo>> {
   const query = {
     likes: userId,
   };
@@ -115,8 +115,8 @@ export async function getFavoriteSongs(
 }
 
 export async function saveSong(data: ISong): Promise<string> {
-  const { _id } = await (new SongModel(data)).save();
-  return _id;
+  const { _id: uuid } = await (new SongModel(data)).save();
+  return uuid;
 }
 
 export async function updateSong(uuid: string, data: GenericParams): Promise<boolean> {

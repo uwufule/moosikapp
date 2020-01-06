@@ -7,7 +7,7 @@ interface IUser {
   role?: number;
 }
 
-export interface BasicUserInfo {
+export interface PublicUserInfo {
   uuid: string;
   username: string;
   email: string;
@@ -15,10 +15,8 @@ export interface BasicUserInfo {
   createdAt: Date;
 }
 
-export interface ExtendedUserInfo extends BasicUserInfo {
+export interface PrivateUserInfo extends PublicUserInfo {
   password: string;
-  passwordTimestamp: Date;
-  createdAt: Date;
   updatedAt: Date;
 }
 
@@ -26,7 +24,7 @@ export interface GenericParams {
   [key: string]: any;
 }
 
-export async function getUser(username: string): Promise<BasicUserInfo | null> {
+export async function getUser(username: string): Promise<PublicUserInfo | null> {
   const projection = {
     uuid: 1,
     username: 1,
@@ -36,15 +34,15 @@ export async function getUser(username: string): Promise<BasicUserInfo | null> {
   };
 
   const user = await UserModel.findOne({ username }, projection);
-  return user && user.toJSON();
+  return user?.toJSON();
 }
 
-export async function getByUuid(uuid: string): Promise<ExtendedUserInfo | null> {
+export async function getByUuid(uuid: string): Promise<PrivateUserInfo | null> {
   const user = await UserModel.findById(uuid);
-  return user && user.toJSON();
+  return user?.toJSON();
 }
 
-export async function findByUsernameOrEmail(queryString: string): Promise<ExtendedUserInfo | null> {
+export async function findByUsernameOrEmail(queryString: string): Promise<PrivateUserInfo | null> {
   const query = {
     $or: [
       {
@@ -56,12 +54,12 @@ export async function findByUsernameOrEmail(queryString: string): Promise<Extend
   };
 
   const user = await UserModel.findOne(query);
-  return user && user.toJSON();
+  return user?.toJSON();
 }
 
 export async function createUser(data: IUser): Promise<string> {
-  const { _id } = await (new UserModel(data)).save();
-  return _id;
+  const { _id: uuid } = await (new UserModel(data)).save();
+  return uuid;
 }
 
 export async function updateUser(uuid: string, data: GenericParams): Promise<boolean> {
