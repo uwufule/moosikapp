@@ -1,49 +1,34 @@
 import { Response } from 'express';
 import { Readable } from 'stream';
-import Crypto from 'crypto';
-import JWT from 'jsonwebtoken';
-import request, { CoreOptions } from 'request';
-import * as Songs from '../../../api/mongodb/songs';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
+import * as Songs from '../../../api/mongodb/songs';
+import upload from '../../../api/cdn/upload';
+import APIError from '../../../errors/APIError';
 
 import messages from './messages.json';
 
-const { CDN_SERVER = '', JWT_SECRET } = process.env;
-
 export default async (req: AuthorizedRequest, res: Response) => {
   const readable = new Readable();
-  readable._read = () => {}; // eslint-disable-line no-underscore-dangle
 
   readable.push(req.body);
   readable.push(null);
 
-  const hex = Crypto.randomBytes(6).toString('hex');
-  const target = JWT.sign({ hex }, String(JWT_SECRET), { expiresIn: 1800 });
-  const targetUri = `${CDN_SERVER}/upload-target/${target}`;
+  try {
+    const { 'content-type': contentType } = req.headers;
+    if (!contentType) {
+      throw new APIError(400, 'No `Content-Type` header provided.');
+    }
 
-  const requestOptions: CoreOptions = {
-    headers: {
-      'content-type': req.headers['content-type'],
-    },
-  };
+    const path = await upload(contentType, readable);
+    const uuid = await Songs.saveSong({ uploadedBy: req.jwt.uuid, path });
 
-  readable.pipe(
-    request.put(targetUri, requestOptions, async (uploadError, uploadResult, uploadMsg) => {
-      if (uploadError) {
-        res.status(500).send({ message: 'Internal server error.' });
-        return;
-      }
+    res.status(201).send({ message: messages.UPLOAD_SUCCESSFULLY, uuid });
+  } catch (e) {
+    if (e instanceof APIError) {
+      res.status(e.statusCode).send({ message: e.message });
+      return;
+    }
 
-      switch (uploadResult.statusCode) {
-        case 201: {
-          const uuid = await Songs.saveSong({ uploadedBy: req.jwt.uuid, path: uploadMsg });
-
-          res.status(201).send({ message: messages.UPLOAD_SUCCESSFULLY, uuid });
-          break;
-        }
-        default:
-          res.status(400).send({ message: uploadMsg || messages.UPLOAD_ERROR });
-      }
-    }),
-  );
+    res.status(500).send({ message: 'Internal server error.' });
+  }
 };
