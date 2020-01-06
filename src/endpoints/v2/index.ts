@@ -1,4 +1,5 @@
 import { Application, Request, Response } from 'express';
+import multer from 'multer';
 import checkAuth from '../../middlewares/authorization';
 import checkPermissions from '../../middlewares/permissions';
 import { validateAccept, validateContentType } from '../../middlewares/headers';
@@ -97,8 +98,9 @@ export default (app: Application) => {
   // update song
   app.patch(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
-    validateContentType('application/json'),
+    validateContentType(['application/json', 'multipart/form-data']),
     checkAuth(),
+    multer().single('cover'),
     Songs.updateSong(),
   ]);
 

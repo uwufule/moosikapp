@@ -2,6 +2,7 @@ import { Response } from 'express';
 import Joi from '@hapi/joi';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import upload from './upload';
+import update from './update';
 import * as Songs from '../../../api/mongodb/songs';
 import * as Users from '../../../api/mongodb/users';
 import APIError from '../../../errors/APIError';
@@ -167,45 +168,7 @@ export function uploadSong() {
 }
 
 export function updateSong() {
-  return async (req: AuthorizedRequest, res: Response) => {
-    try {
-      const song = await Songs.getByUuid(req.params.songId);
-      if (!song) {
-        throw new APIError(404, messages.song.NOT_FOUND);
-      }
-
-      if ((song.uploadedBy !== req.jwt.uuid) && (req.jwt.role < roles.moderator)) {
-        throw new APIError(403, messages.ACCESS_DENY);
-      }
-
-      const validationSchema = Joi.object({
-        author: Joi.string()
-          .min(1)
-          .error(new Error(messages.INVALID_BODY_PARAMETER.AUTHOR)),
-        title: Joi.string()
-          .min(1)
-          .error(new Error(messages.INVALID_BODY_PARAMETER.TITLE)),
-        cover: Joi.string()
-          .error(new Error(messages.INVALID_BODY_PARAMETER.COVER)),
-      });
-
-      const { error, value: songData } = validationSchema.validate(req.body);
-      if (error) {
-        throw new APIError(400, error.message);
-      }
-
-      await Songs.updateSong(req.params.songId, songData);
-
-      res.status(200).send({ message: messages.UPDATE_SUCCESSFULLY, song: songData });
-    } catch (e) {
-      if (e instanceof APIError) {
-        res.status(e.statusCode).send({ message: e.message });
-        return;
-      }
-
-      res.status(500).send({ message: 'Internal server error.' });
-    }
-  };
+  return update;
 }
 
 export function deleteSong() {
