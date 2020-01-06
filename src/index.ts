@@ -25,15 +25,11 @@ app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
 
 withApiEndpoints(app);
 
-<<<<<<< HEAD
-  app.get('*', (req, res) => {
-    res.status(200).sendFile(Path.resolve('static/index.html'));
-  });
+app.get('*', (req, res) => {
+  res.status(200).sendFile(Path.resolve('static/index.html'));
+});
 
-  app.use(errorHandler());
-=======
 app.use(errorHandler());
->>>>>>> d5998c00e5410f005716f930f88a92be602a25bc
 
 app.listen(Number(PORT));
 
