@@ -1,41 +1,52 @@
 import { Request, Response } from 'express';
-import Crypto from 'crypto';
+import Bcrypt from 'bcryptjs';
+import Joi from '@hapi/joi';
 import JWT from 'jsonwebtoken';
-import { findByUsernameOrEmail, ExtendedUserInfo } from '../../../api/mongodb/users';
+import { findByUsernameOrEmail, PrivateUserInfo } from '../../../api/mongodb/users';
 import APIError from '../../../errors/APIError';
+
+import {
+  INVALID_AUTHORIZATION,
+  INVALID_USERNAME,
+  INVALID_PASSWORD,
+  ACCOUNT_DOESNT_EXISTS,
+  SUCCESS,
+} from './messages.json';
 
 const { JWT_SECRET } = process.env;
 
-function login(user: ExtendedUserInfo, password: string): string {
-  const [salt, passwordHash] = user.password.split('.');
-  const hash = Crypto.createHmac('sha512', salt).update(password).digest('hex');
+const validationSchema = Joi.object({
+  username: Joi.string()
+    .required()
+    .error(new Error(INVALID_USERNAME)),
+  password: Joi.string()
+    .required()
+    .error(new Error(INVALID_PASSWORD)),
+});
 
-  if (passwordHash !== hash) {
-    throw new APIError(401, 'Invalid authorization.');
+async function login(user: PrivateUserInfo, password: string): Promise<string> {
+  const comparsionResult = await Bcrypt.compare(password, user.password);
+  if (!comparsionResult) {
+    throw new APIError(401, INVALID_AUTHORIZATION);
   }
 
-  const { uuid, role, passwordTimestamp } = user;
-  return JWT.sign({ uuid, role, timestamp: passwordTimestamp }, String(JWT_SECRET));
+  return JWT.sign({ uuid: user.uuid, role: user.role }, String(JWT_SECRET), { expiresIn: '1d' });
 }
 
 export default () => async (req: Request, res: Response) => {
   try {
-    if (!req.body) {
-      throw new APIError(400, 'No body provided.');
+    const { error, value } = validationSchema.validate(req.body);
+    if (error) {
+      throw new APIError(400, error.message);
     }
 
-    const { username, password } = req.body;
-    if (typeof username !== 'string' || typeof password !== 'string') {
-      throw new APIError(401, 'Invalid authorization.');
-    }
-
-    const user = await findByUsernameOrEmail(username);
+    const user = await findByUsernameOrEmail(value.username);
     if (!user) {
-      throw new APIError(403, 'This account has been deactivated.');
+      throw new APIError(403, ACCOUNT_DOESNT_EXISTS);
     }
 
-    const token = login(user, password);
-    res.status(200).send({ message: 'Successfully logged in.', token });
+    const token = await login(user, value.password);
+    res.status(200).send({ message: SUCCESS, token });
   } catch (e) {
     if (e instanceof APIError) {
       res.status(e.statusCode).send({ message: e.message });

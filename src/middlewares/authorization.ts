@@ -8,7 +8,6 @@ const { JWT_SECRET } = process.env;
 interface JWTRecord {
   uuid: string;
   role: number;
-  timestamp: string;
 }
 
 export interface AuthorizedRequest extends Request {
@@ -30,10 +29,6 @@ export default () => async (req: AuthorizedRequest, res: Response, next: NextFun
     const user = await getByUuid(req.jwt.uuid);
     if (!user) {
       throw new APIError(401, 'Invalid authorization.');
-    }
-
-    if (new Date(req.jwt.timestamp).getTime() !== user.passwordTimestamp.getTime()) {
-      throw new APIError(403, 'Not authorized.');
     }
 
     next();

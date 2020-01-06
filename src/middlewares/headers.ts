@@ -10,12 +10,22 @@ export function validateAccept() {
   };
 }
 
-export function validateContentType(contentType: string) {
+export function validateContentType(contentType: string | Array<string>) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    if (!req.headers || req.headers['content-type'] !== contentType) {
+    const { 'content-type': requestContentType } = req.headers;
+
+    const isMatched = typeof contentType === 'string'
+      ? contentType === requestContentType
+      : contentType.reduce(
+        (accumulator, type) => accumulator || requestContentType?.includes(type),
+        false,
+      );
+
+    if (!isMatched) {
       res.status(400).send({ message: 'Invalid body provided.' });
       return;
     }
+
     next();
   };
 }

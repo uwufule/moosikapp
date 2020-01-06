@@ -1,13 +1,16 @@
-import { Response, NextFunction } from 'express';
+import { Response } from 'express';
+import Joi from '@hapi/joi';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import upload from './upload';
+import update from './update';
 import * as Songs from '../../../api/mongodb/songs';
 import * as Users from '../../../api/mongodb/users';
-import parseQueryParams from '../../../utils/queryParams';
 import APIError from '../../../errors/APIError';
 
 import scopes from '../../../config/scopes.json';
 import roles from '../../../config/roles.json';
+
+import messages from './messages.json';
 
 const { CDN_SERVER = '' } = process.env;
 
@@ -21,184 +24,175 @@ interface SongData {
 }
 
 export function getSongs() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    try {
-      const { skip, limit, scope } = parseQueryParams(req.query);
+  return async (req: AuthorizedRequest, res: Response) => {
+    const validationSchema = Joi.object({
+      skip: Joi.number()
+        .min(0)
+        .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
+      limit: Joi.number()
+        .min(1)
+        .max(100)
+        .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
+      scope: Joi.number()
+        .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
+    });
 
-      const songList = await Songs.getSongs(skip, limit);
-      if (!songList.length) {
-        throw new APIError(404, 'No songs found.');
+    try {
+      const { error, value } = validationSchema.validate(req.body);
+      if (error) {
+        throw new APIError(400, error.message);
       }
 
-      const songs = new Array<SongData>();
-      songList.forEach(({ likes, uploadedBy, ...songData }) => {
-        const song: SongData = { ...songData };
+      const songList = await Songs.getSongs(value.skip, value.limit);
+      if (songList.length === 0) {
+        throw new APIError(404, messages.songs.NOT_FOUND);
+      }
 
-        if (scope & scopes.favorite) {
+      const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
+        const song: SongData = songData;
+
+        if (value.scope & scopes.favorite) {
           song.favorite = likes.includes(req.jwt.uuid);
         }
 
-        if (scope & scopes.edit) {
-          song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
+        if (value.scope & scopes.edit) {
+          song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
         }
 
-        songs.push(song);
+        return song;
       });
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
+      res.status(200).send({ message: messages.songs.SUCCESS, songs });
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
 export function getByUuid() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
       const song = await Songs.getByUuid(req.params.songId);
       if (!song) {
-        throw new APIError(404, 'No song found.');
+        throw new APIError(404, messages.song.NOT_FOUND);
       }
 
       const {
-        path,
-        uploadedBy,
-        likes,
-        ...songData
+        path, uploadedBy, likes, ...songData
       } = song;
 
       const user = await Users.getByUuid(uploadedBy);
 
       res.status(200).send({
-        message: 'Successfully retrieved song.',
+        message: messages.song.SUCCESS,
         song: {
           ...songData,
           url: `${CDN_SERVER}${path}`,
-          uploadedBy: user ? user.username : 'deactivated user',
+          uploadedBy: user?.username || 'deactivated user',
           favorite: likes.includes(req.jwt.uuid),
           edit: uploadedBy === req.jwt.uuid,
         },
       });
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
 export function findSongs() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    try {
-      const {
-        skip, limit, scope, query,
-      } = parseQueryParams(req.query);
+  const validationSchema = Joi.object({
+    skip: Joi.number()
+      .min(0)
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
+    limit: Joi.number()
+      .min(1)
+      .max(100)
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
+    scope: Joi.number()
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
+    query: Joi.string()
+      .required()
+      .error(new Error(messages.INVALID_QUERY_PARAMETER.QUERY)),
+  });
 
-      const songList = await Songs.findSongs(decodeURI(query), skip, limit);
-      if (!songList.length) {
-        throw new APIError(404, 'No songs found.');
+  return async (req: AuthorizedRequest, res: Response) => {
+    try {
+      const { error, value } = validationSchema.validate(req.body);
+      if (error) {
+        throw new APIError(400, error.message);
       }
 
-      const songs: Array<SongData> = [];
-      songList.forEach(({ likes, uploadedBy, ...songData }) => {
-        const song: SongData = { ...songData };
+      const songList = await Songs.findSongs(decodeURI(value.query), value.skip, value.limit);
+      if (songList.length === 0) {
+        throw new APIError(404, messages.songs.NOT_FOUND);
+      }
 
-        if (scope & scopes.favorite) {
+      const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
+        const song: SongData = songData;
+
+        if (value.scope & scopes.favorite) {
           song.favorite = likes.includes(req.jwt.uuid);
         }
 
-        if (scope & scopes.edit) {
-          song.edit = uploadedBy === req.jwt.uuid || req.jwt.role >= roles.moderator;
+        if (value.scope & scopes.edit) {
+          song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
         }
 
-        songs.push(song);
+        return song;
       });
 
-      res.status(200).send({ message: 'Successfully retrieved songs.', songs });
+      res.status(200).send({ message: messages.songs.SUCCESS, songs });
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }
 
 export function uploadSong() {
-  return (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    if (!req.body || Number(req.headers['content-length']) === 0) {
-      next(new APIError(400, 'No body provided.'));
-      return;
-    }
-
-    upload(req, res, next);
-  };
+  return upload;
 }
 
 export function updateSong() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    const {
-      body,
-      params: {
-        songId,
-      },
-      jwt: {
-        uuid, role,
-      },
-    } = req;
-
-    try {
-      if (!body) {
-        throw new APIError(400, 'No body provided.');
-      }
-
-      const song = await Songs.getByUuid(songId);
-      if (!song) {
-        throw new APIError(404, 'No song found.');
-      }
-
-      if (song.uploadedBy !== uuid && role < roles.moderator) {
-        throw new APIError(403, 'Forbitten.');
-      }
-
-      const songData = Object.entries(body).reduce((acc, [key, val]) => {
-        if (['author', 'title', 'cover'].includes(key)) {
-          acc[key] = String(val);
-        }
-
-        return acc;
-      }, {} as { [key: string]: string });
-
-      await Songs.updateSong(songId, songData);
-
-      res.status(200).send({ message: 'Successfully updated song.', song: songData });
-    } catch (e) {
-      next(e);
-    }
-  };
+  return update;
 }
 
 export function deleteSong() {
-  return async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    const {
-      params: {
-        songId,
-      },
-      jwt: {
-        uuid, role,
-      },
-    } = req;
-
+  return async (req: AuthorizedRequest, res: Response) => {
     try {
-      const song = await Songs.getByUuid(songId);
+      const song = await Songs.getByUuid(req.params.songId);
       if (!song) {
-        throw new APIError(404, 'No song found.');
+        throw new APIError(404, messages.song.NOT_FOUND);
       }
 
-      if (song.uploadedBy !== uuid && role < roles.moderator) {
-        throw new APIError(403, 'Forbitten.');
+      if ((song.uploadedBy !== req.jwt.uuid) && (req.jwt.role < roles.moderator)) {
+        throw new APIError(403, messages.ACCESS_DENY);
       }
 
-      await Songs.deleteSong(songId);
+      await Songs.deleteSong(req.params.songId);
 
       res.status(204).send();
     } catch (e) {
-      next(e);
+      if (e instanceof APIError) {
+        res.status(e.statusCode).send({ message: e.message });
+        return;
+      }
+
+      res.status(500).send({ message: 'Internal server error.' });
     }
   };
 }

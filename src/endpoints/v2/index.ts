@@ -1,4 +1,5 @@
 import { Application, Request, Response } from 'express';
+import multer from 'multer';
 import checkAuth from '../../middlewares/authorization';
 import checkPermissions from '../../middlewares/permissions';
 import { validateAccept, validateContentType } from '../../middlewares/headers';
@@ -8,7 +9,6 @@ import register from './register';
 import users from './users';
 import * as Songs from './songs';
 import * as Favorites from './favorites';
-import { verify } from './songs/upload';
 import status from './status';
 
 import roles from '../../config/roles.json';
@@ -30,6 +30,14 @@ export default (app: Application) => {
 
   // logout
   app.post(`${API_BASE_URL}/logout`, [
+    validateAccept(),
+    (req: Request, res: Response) => {
+      res.status(501).send();
+    },
+  ]);
+
+  // refresh token
+  app.post(`${API_BASE_URL}/refresh`, [
     validateAccept(),
     (req: Request, res: Response) => {
       res.status(501).send();
@@ -90,8 +98,9 @@ export default (app: Application) => {
   // update song
   app.patch(`${API_BASE_URL}/songs/:songId`, [
     validateAccept(),
-    validateContentType('application/json'),
+    validateContentType(['application/json', 'multipart/form-data']),
     checkAuth(),
+    multer().single('cover'),
     Songs.updateSong(),
   ]);
 
@@ -128,10 +137,5 @@ export default (app: Application) => {
   app.get(`${API_BASE_URL}/status`, [
     validateAccept(),
     status(),
-  ]);
-
-  // verify upload
-  app.get(`${API_BASE_URL}/verify`, [
-    verify(),
   ]);
 };

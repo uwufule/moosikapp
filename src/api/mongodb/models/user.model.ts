@@ -18,15 +18,9 @@ const schema = new Schema({
     required: true,
     unique: true,
   },
-  passwordRecord: {
-    hash: {
-      type: String,
-      required: true,
-    },
-    timestamp: {
-      type: Date,
-      default: Date.now(),
-    },
+  password: {
+    type: String,
+    required: true,
   },
   role: {
     type: Number,
@@ -34,28 +28,10 @@ const schema = new Schema({
   },
 }, { id: false, versionKey: false, timestamps: true });
 
-schema.virtual('password')
-  .get(function () {
-    return this.passwordRecord.hash;
-  })
-  .set(function (hash: string) {
-    this.set('passwordRecord.hash', hash);
-  });
-
-schema.virtual('passwordTimestamp')
-  .get(function () {
-    return this.passwordRecord.timestamp;
-  })
-  .set(function (timestamp: Date) {
-    this.set('passwordRecord.timestamp', timestamp);
-  });
-
 schema.set('toJSON', {
   virtuals: true,
   transform: (doc, ret) => {
     const { _id, ...data } = ret;
-
-    delete data.passwordRecord;
 
     return { ...data, uuid: _id };
   },

@@ -1,0 +1,25 @@
+{
+  "INVALID_QUERY_PARAMETER": {
+    "SKIP": "Invalid query parameter `skip` provided.",
+    "LIMIT": "Invalid query parameter `limit` provided.",
+    "SCOPE": "Invalid query parameter `scope` provided.",
+    "QUERY": "Invalid query parameter `query` provided."
+  },
+  "songs": {
+    "NOT_FOUND": "No songs found.",
+    "SUCCESS": "Successfully retrieved songs."
+  },
+  "song": {
+    "NOT_FOUND": "No song found.",
+    "SUCCESS": "Successfully retrieved song."
+  },
+  "ACCESS_DENY": "Forbitten.",
+  "INVALID_BODY_PARAMETER": {
+    "AUTHOR": "Invalid body parameter `author` provided.",
+    "TITLE": "Invalid body parameter `title` provided.",
+    "COVER": "Invalid body parameter `cover` provided."
+  },
+  "UPDATE_SUCCESSFULLY": "Successfully updated song.",
+  "UPLOAD_SUCCESSFULLY": "You have successfully uploaded a new song.",
+  "UPLOAD_ERROR": "Error while uploading."
+}
