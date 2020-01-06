@@ -14,3 +14,14 @@ tmp
 # misc
 .DS_Store
 .vscode/
+
+# test
+wallaby.conf.js
+
+# other
+README.md
+docs/
+.eslintignore
+.eslinrc.js
+.gitattributes
+.npmrc
