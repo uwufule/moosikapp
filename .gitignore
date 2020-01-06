@@ -16,6 +16,7 @@ tmp
 .vscode/
 
 # test
+test/
 wallaby.conf.js
 
 # other
