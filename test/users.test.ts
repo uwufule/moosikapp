@@ -13,8 +13,6 @@ const userData = {
   createdAt: Date.now(),
 };
 
-let token: string;
-
 before(async () => {
   await UserModel.deleteOne({ username: 'testuser3' });
 
@@ -24,42 +22,40 @@ before(async () => {
   const user = new UserModel({ ...userData, password });
   const { _id } = await user.save();
   userData.uuid = _id;
-
-  request(app)
-    .post('/api/v2/login')
-    .set('Accept', 'application/json')
-    .send({
-      username: 'testuser3',
-      password: 'supersecretpassword',
-    })
-    .end((req, res) => {
-      token = res.body.token;
-    });
 });
 
 describe('users', () => {
   it('should return Status-Code 200 and correct body if user founded', (done) => {
     request(app)
-      .get('/api/v2/users/testuser3')
+      .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .auth(token, { type: 'bearer' })
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-      .end((req, res) => {
-        expect(res.body.message).to.eq('Successfully retrieved user.');
-        expect(res.body.user).to.deep.include({
-          ...userData,
-          createdAt: new Date(userData.createdAt).toISOString(),
-        });
+      .send({
+        username: 'testuser3',
+        password: 'supersecretpassword',
+      })
+      .end((loginReq, loginRes) => {
+        request(app)
+          .get('/api/v2/users/testuser3')
+          .set('Accept', 'application/json')
+          .auth(loginRes.body.token, { type: 'bearer' })
+          .expect(200)
+          .expect('Content-Type', /application\/json/)
+          .end((req, res) => {
+            expect(res.body.message).to.eq('Successfully retrieved user.');
+            expect(res.body.user).to.deep.include({
+              ...userData,
+              createdAt: new Date(userData.createdAt).toISOString(),
+            });
 
-        done();
+            done();
+          });
       });
   });
 
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', (done) => {
     request(app)
       .get('/api/v2/users/testuser3')
-      .auth(token, { type: 'bearer' })
+      .auth('access token', { type: 'bearer' })
       .send({
         username: 'testuser3',
         password: 'supersecretpassword',
@@ -73,7 +69,7 @@ describe('users', () => {
     request(app)
       .get('/api/v2/users/nonexistentaccount')
       .set('Accept', 'application/json')
-      .auth('invalidtoken', { type: 'bearer' })
+      .auth('invalid access token', { type: 'bearer' })
       .expect(403)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Not authorized.' }, done);
@@ -81,11 +77,20 @@ describe('users', () => {
 
   it('should return Status-Code 404 and correct body if nonexistent account username provided', (done) => {
     request(app)
-      .get('/api/v2/users/nonexistentaccount')
+      .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .auth(token, { type: 'bearer' })
-      .expect(404)
-      .expect('Content-Type', /application\/json/)
-      .expect({ message: 'No user found.' }, done);
+      .send({
+        username: 'testuser3',
+        password: 'supersecretpassword',
+      })
+      .end((req, res) => {
+        request(app)
+          .get('/api/v2/users/nonexistent-account')
+          .set('Accept', 'application/json')
+          .auth(res.body.token, { type: 'bearer' })
+          .expect(404)
+          .expect('Content-Type', /application\/json/)
+          .expect({ message: 'No user found.' }, done);
+      });
   });
 });
