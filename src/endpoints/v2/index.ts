@@ -12,6 +12,8 @@ import * as Favorites from './favorites';
 import status from './status';
 
 import roles from '../../config/roles.json';
+import refresh from './login/refresh';
+import logout from './login/logout';
 
 const API_VERSION = 2;
 const API_BASE_URL = `/api/v${API_VERSION}`;
@@ -28,20 +30,17 @@ export default (app: Application) => {
     login(),
   ]);
 
+  // refresh token using refreshToken
+  app.get(`${API_BASE_URL}/login/refresh`, [
+    validateAccept(),
+    refresh(),
+  ]);
+
   // logout
   app.post(`${API_BASE_URL}/logout`, [
     validateAccept(),
-    (req: Request, res: Response) => {
-      res.status(501).send();
-    },
-  ]);
-
-  // refresh token
-  app.post(`${API_BASE_URL}/refresh`, [
-    validateAccept(),
-    (req: Request, res: Response) => {
-      res.status(501).send();
-    },
+    checkAuth(),
+    logout(),
   ]);
 
   // register
