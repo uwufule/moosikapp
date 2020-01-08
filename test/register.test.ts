@@ -22,7 +22,7 @@ describe('registration', () => {
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
         expect(res.body.message).to.eq('You have successfully created a new account.');
-        expect(res.body).to.have.property('uuid');
+        expect(res.body.uuid).to.be.a('string');
 
         done();
       });
