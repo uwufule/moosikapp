@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Crypto from 'crypto';
-import JWT from 'jsonwebtoken';
+import JWT, { JsonWebTokenError } from 'jsonwebtoken';
 import { getByUuid } from '../../../api/mongodb/users';
 import { contains, update, RefreshTokenRecord } from '../../../api/mongodb/tokens';
 import APIError from '../../../errors/APIError';
@@ -48,6 +48,11 @@ export default () => async (req: Request, res: Response) => {
       return;
     }
 
-    res.status(500).send({ message: 'Internal server error.' });
+    if (e instanceof JsonWebTokenError) {
+      res.status(400).send({ message: messages.refresh.INVALID_REFRESH_TOKEN });
+      return;
+    }
+
+    res.status(500).send({ message: 'Internal server error.', e });
   }
 };
