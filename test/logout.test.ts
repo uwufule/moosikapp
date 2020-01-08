@@ -57,7 +57,7 @@ describe('logout', () => {
       .expect({ message: 'Not authorized.' }, done);
   });
 
-  it('should return Status-Code 403 and correct body if already logged out', (done) => {
+  it('should return Status-Code 410 and correct body if already logged out', (done) => {
     request(app)
       .post('/api/v2/logout')
       .set('Accept', 'application/json')
