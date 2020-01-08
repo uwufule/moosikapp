@@ -79,7 +79,7 @@ describe('refresh token', () => {
       });
   });
 
-  it('should return Status-Code 400 and correct body if trying to refresh tokens to deactivated user', (done) => {
+  it('should return Status-Code 400 and correct body if trying to refresh tokens for deactivated user', (done) => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
