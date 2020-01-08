@@ -28,7 +28,8 @@ describe('login', () => {
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
         expect(res.body.message).to.eq('Successfully logged in.');
-        expect(res.body).to.have.property('token');
+        expect(res.body.token).to.be.a('string');
+        expect(res.body.refreshToken).to.be.a('string');
 
         done();
       });
