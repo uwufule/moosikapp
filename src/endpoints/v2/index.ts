@@ -5,6 +5,8 @@ import checkPermissions from '../../middlewares/permissions';
 import { validateAccept, validateContentType } from '../../middlewares/headers';
 
 import login from './login';
+import refresh from './login/refresh';
+import logout from './login/logout';
 import register from './register';
 import users from './users';
 import * as Songs from './songs';
@@ -12,8 +14,6 @@ import * as Favorites from './favorites';
 import status from './status';
 
 import roles from '../../config/roles.json';
-import refresh from './login/refresh';
-import logout from './login/logout';
 
 const API_VERSION = 2;
 const API_BASE_URL = `/api/v${API_VERSION}`;
