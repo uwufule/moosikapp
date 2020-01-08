@@ -1,2 +1,1 @@
-# MoosikApp API
-Бэкенд https://moosikapp.tk
+# [Бэкенд MoosikApp](https://moosikapp.tk)
