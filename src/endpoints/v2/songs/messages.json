@@ -19,7 +19,7 @@
     "TITLE": "Invalid body parameter `title` provided.",
     "COVER": "Invalid body parameter `cover` provided."
   },
-  "UPDATE_SUCCESSFULLY": "Successfully updated song.",
   "UPLOAD_SUCCESSFULLY": "You have successfully uploaded a new song.",
-  "UPLOAD_ERROR": "Error while uploading."
+  "UPLOAD_ERROR": "Error while uploading.",
+  "UPDATE_SUCCESSFULLY": "Successfully updated song."
 }
