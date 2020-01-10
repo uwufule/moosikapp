@@ -90,7 +90,6 @@ export default (app: Application) => {
     validateAccept(),
     validateContentType('audio/mpeg'),
     checkAuth(),
-    checkPermissions(roles.moderator),
     Songs.uploadSong(),
   ]);
 
