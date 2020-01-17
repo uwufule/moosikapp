@@ -9,7 +9,7 @@ Accept: application/json
 Некоторые запросы, помимо указанного выше заголовка, требуют авторизацию.
 Для этого нужно передать заголовок **Authorization**, иначе взаимодействовать с API не получится.
 ```
-Authorization: Bearer JWT-token
+Authorization: Bearer access-token
 ```
 
 Базовый URL каждой конечной точки начинается с `https://moosikapp.tk/api/{API_VERSION}`.
