@@ -1,6 +1,6 @@
 ## Пользователи
 
-### Информация о пользователе
+## Информация о пользователе
 ```
 Route: /users/{username}
 Method: GET
@@ -9,14 +9,14 @@ Headers: {
 }
 ```
 
-Параметры URI
+#### Параметры URI
 ```js
 {
   username: [String, 'required'],
 }
 ```
 
-Ответ
+#### Ответ
 ```js
 {
   message: 'Successfully retrieved user.',
@@ -30,7 +30,7 @@ Headers: {
 }
 ```
 
-Возможные ошибки
+#### Ошибки
 ```js
 // Status Code: 404
 { message: 'No user found.' }
