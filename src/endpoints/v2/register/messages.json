@@ -1,5 +1,5 @@
 {
-  "INVALID_USERNAME": "Invalid username provided. Username must be 2 to 24 symbols long. Use numbers and English or Japanese letters.",
+  "INVALID_USERNAME": "Invalid username provided. Username must contain 2-24 letters or numbers. Please do not use spaces, symbols, or special characters.",
   "INVALID_EMAIL": "Invalid e-mail address provided.",
   "INVALID_PASSWORD": "Invalid password provided. Username must be at least 8 symbols long. Use a mix of English letters, numbers and symbols.",
   "ACCOUNT_ALREADY_EXISTS": "An account with that email address and/or username already exists.",
