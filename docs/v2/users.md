@@ -21,11 +21,11 @@ Headers: {
 {
   message: 'Successfully retrieved user.',
   user: {
-    uuid: String, // e.g. 00000000-0000-0000-0000-000000000000
+    uuid: [String, { example: "00000000-0000-0000-0000-000000000000" }],
     username: String,
     email: String,
     role: Number,
-    createdAt: Date, // e.g. 1970-01-01T00:00:00.000Z
+    createdAt: [Date, { example: "1970-01-01T00:00:00.000Z" }],
   }
 }
 ```

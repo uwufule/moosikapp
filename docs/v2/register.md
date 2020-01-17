@@ -21,7 +21,7 @@ Headers: {
 // Status Code: 201
 {
   message: 'You have successfully created a new account.',
-  uuid: String, // e.g. 00000000-0000-0000-0000-000000000000
+  uuid: [String, { example: "00000000-0000-0000-0000-000000000000" }],
 }
 ```
 
