@@ -1,4 +1,4 @@
-# [MoosikApp](https://moosikapp.tk) API
+# MoosikApp API
 
 ## Вступление
 Каждый запрос к API должен иметь заголовок **Accept**, иначе он будет отклонен.
