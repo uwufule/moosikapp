@@ -7,7 +7,7 @@ Headers: {
 }
 ```
 
-Тело запроса
+#### Тело запроса
 ```js
 {
   username: String,
@@ -16,7 +16,7 @@ Headers: {
 }
 ```
 
-Ответ
+#### Ответ
 ```js
 // Status Code: 201
 {
@@ -25,10 +25,12 @@ Headers: {
 }
 ```
 
-Ошибки
+#### Ошибки
 ```js
 // Status Code 400
-{ message: 'No body provided.' }
+{ message: 'Invalid username provided. Username must contain 2-24 letters or numbers. Please do not use spaces, symbols, or special characters.' }
 { message: 'Invalid e-mail address provided.' }
+{ message: 'Invalid password provided. Username must be at least 8 symbols long. Use a mix of English letters, numbers and symbols.' }
 { message: 'An account with that email address and/or username already exists.' }
 ```
+А также ошибка `Некорректный заголовок Accept`, описанная в **/errors/general.md**.
