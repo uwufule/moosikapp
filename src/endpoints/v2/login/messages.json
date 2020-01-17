@@ -8,7 +8,7 @@
   },
   "refresh": {
     "TOKEN_EXPIRED": "Refresh token expired.",
-    "INVALID_REFRESH_TOKEN": "Invalid refresh token.",
+    "INVALID_REFRESH_TOKEN": "Invalid refresh token provided.",
     "GET_FOR_DEACTIVATED_USER": "Trying to get pair of tokens for deactivated user."
   },
   "logout": {
