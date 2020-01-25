@@ -1,26 +1,26 @@
 import TokenModel from './models/token.model';
 
-export interface RefreshTokenRecord {
+export interface RefreshTokenPayload {
   userId: string;
-  payload: string;
+  hex: string;
 }
 
-export async function insert(record: RefreshTokenRecord): Promise<boolean> {
-  await (new TokenModel(record)).save();
+export async function insert(payload: RefreshTokenPayload): Promise<boolean> {
+  await (new TokenModel(payload)).save();
   return true;
 }
 
-export async function contains(record: RefreshTokenRecord): Promise<boolean> {
-  const res = await TokenModel.find({ userId: record.userId, payload: record.payload });
+export async function contains(payload: RefreshTokenPayload): Promise<boolean> {
+  const res = await TokenModel.find({ ...payload });
   return res.length === 1;
 }
 
-export async function update(oldPayload: string, newPayload: string) {
-  const res = await TokenModel.updateOne({ payload: oldPayload }, { payload: newPayload });
+export async function update(old: string, hex: string): Promise<boolean> {
+  const res = await TokenModel.updateOne({ hex: old }, { hex });
   return res.n === 1;
 }
 
-export async function clear(userId: string) {
+export async function clear(userId: string): Promise<number | undefined> {
   const res = await TokenModel.deleteMany({ userId });
   return res.n;
 }

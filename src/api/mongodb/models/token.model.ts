@@ -10,7 +10,7 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  payload: {
+  hex: {
     type: String,
     required: true,
   },
