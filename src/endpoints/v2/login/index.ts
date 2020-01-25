@@ -25,26 +25,32 @@ const validationSchema = Joi.object({
     .error(new Error(messages.login.INVALID_PASSWORD)),
 });
 
+export function getTokenChain(user: PrivateUserInfo, hex: string): TokenChain {
+  const token = JWT.sign({
+    uuid: user.uuid,
+    role: user.role,
+  }, String(JWT_SECRET), { expiresIn: '30m' });
+
+  const refreshToken = JWT.sign({
+    userId: user.uuid,
+    hex,
+  }, String(JWT_SECRET), { expiresIn: '60d' });
+
+  return { token, refreshToken };
+}
+
 async function login(user: PrivateUserInfo, password: string): Promise<TokenChain> {
   const comparsionResult = await Bcrypt.compare(password, user.password);
   if (!comparsionResult) {
     throw new APIError(401, messages.login.INVALID_AUTHORIZATION);
   }
 
-  const token = JWT.sign({
-    uuid: user.uuid,
-    role: user.role,
-  }, String(JWT_SECRET), { expiresIn: '1d' });
+  const hex = Crypto.randomBytes(12).toString('hex');
+  const tokenChain = getTokenChain(user, hex);
 
-  const record = {
-    userId: user.uuid,
-    payload: Crypto.randomBytes(6).toString('hex'),
-  };
-  const refreshToken = JWT.sign(record, String(JWT_SECRET), { expiresIn: '30d' });
+  await insert({ userId: user.uuid, hex });
 
-  await insert(record);
-
-  return { token, refreshToken };
+  return tokenChain;
 }
 
 export default () => async (req: Request, res: Response) => {

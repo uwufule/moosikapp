@@ -2,12 +2,13 @@ import { Request, Response } from 'express';
 import Crypto from 'crypto';
 import JWT, { JsonWebTokenError } from 'jsonwebtoken';
 import { getByUuid } from '../../../api/mongodb/users';
-import { contains, update, RefreshTokenRecord } from '../../../api/mongodb/tokens';
+import { contains, update, RefreshTokenPayload } from '../../../api/mongodb/tokens';
+import { getTokenChain } from '.';
 import APIError from '../../../errors/APIError';
 
 import messages from './messages.json';
 
-interface RefreshTokenJWT extends RefreshTokenRecord {
+interface RefreshTokenRecord extends RefreshTokenPayload {
   iat: number;
   exp: number;
 }
@@ -16,9 +17,9 @@ const { JWT_SECRET } = process.env;
 
 export default () => async (req: Request, res: Response) => {
   try {
-    const jwt = JWT.verify(req.query.refreshToken, String(JWT_SECRET)) as RefreshTokenJWT;
+    const jwt = <RefreshTokenRecord>JWT.verify(req.query.refreshToken, String(JWT_SECRET));
 
-    const searchResult = await contains({ userId: jwt.userId, payload: jwt.payload });
+    const searchResult = await contains({ userId: jwt.userId, hex: jwt.hex });
     if (!searchResult) {
       throw new APIError(400, messages.refresh.TOKEN_EXPIRED);
     }
@@ -28,20 +29,12 @@ export default () => async (req: Request, res: Response) => {
       throw new APIError(400, messages.refresh.GET_FOR_DEACTIVATED_USER);
     }
 
-    const token = JWT.sign({
-      uuid: user.uuid,
-      role: user.role,
-    }, String(JWT_SECRET), { expiresIn: '1d' });
+    const hex = Crypto.randomBytes(12).toString('hex');
+    const tokenChain = getTokenChain(user, hex);
 
-    const payload = Crypto.randomBytes(6).toString('hex');
-    const refreshToken = JWT.sign({
-      userId: user.uuid,
-      payload,
-    }, String(JWT_SECRET), { expiresIn: '30d' });
+    await update(jwt.hex, hex);
 
-    await update(jwt.payload, payload);
-
-    res.status(200).send({ token, refreshToken });
+    res.status(200).send(tokenChain);
   } catch (e) {
     if (e instanceof APIError) {
       res.status(e.statusCode).send({ message: e.message });
@@ -53,6 +46,6 @@ export default () => async (req: Request, res: Response) => {
       return;
     }
 
-    res.status(500).send({ message: 'Internal server error.', e });
+    res.status(500).send({ message: 'Internal server error.' });
   }
 };
