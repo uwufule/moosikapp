@@ -85,7 +85,7 @@ export default async (req: AuthorizedRequest, res: Response) => {
   try {
     const song = await getByUuid(req.params.songId);
     if (!song) {
-      throw new APIError(404, 'No song found.');
+      throw new APIError(404, messages.song.NOT_FOUND);
     }
 
     if ((song.uploadedBy !== req.jwt.uuid) && (req.jwt.role < roles.moderator)) {
