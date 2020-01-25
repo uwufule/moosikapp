@@ -21,5 +21,6 @@
   },
   "UPLOAD_SUCCESSFULLY": "You have successfully uploaded a new song.",
   "UPLOAD_ERROR": "Error while uploading.",
+  "UNSUPPORTED_MEDIA_TYPE": "Your audio file has to be in MP3 format.",
   "UPDATE_SUCCESSFULLY": "Successfully updated song."
 }

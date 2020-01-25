@@ -15,8 +15,8 @@ export default async (req: AuthorizedRequest, res: Response) => {
 
   try {
     const { 'content-type': contentType } = req.headers;
-    if (!contentType) {
-      throw new APIError(400, 'No `Content-Type` header provided.');
+    if (!contentType || contentType !== 'audio/mpeg') {
+      throw new APIError(415, messages.UNSUPPORTED_MEDIA_TYPE);
     }
 
     const path = await upload(contentType, readable);
@@ -34,6 +34,6 @@ export default async (req: AuthorizedRequest, res: Response) => {
       return;
     }
 
-    res.status(500).send({ message: 'Internal server error.', e });
+    res.status(500).send({ message: 'Internal server error.' });
   }
 };
