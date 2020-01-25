@@ -24,7 +24,7 @@ export default () => async (req: AuthorizedRequest, res: Response, next: NextFun
   const token = authorization.slice(7);
 
   try {
-    req.jwt = JWT.verify(token, String(JWT_SECRET)) as JWTRecord;
+    req.jwt = <JWTRecord>JWT.verify(token, String(JWT_SECRET));
 
     const user = await getByUuid(req.jwt.uuid);
     if (!user) {

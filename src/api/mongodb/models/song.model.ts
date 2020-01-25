@@ -38,8 +38,8 @@ schema.pre('save', function save() {
 
 schema.set('toJSON', {
   transform: (doc, ret) => {
-    const { _id, ...data } = ret;
-    return { ...data, uuid: _id };
+    const { _id: uuid, ...data } = ret;
+    return { uuid, ...data };
   },
 });
 

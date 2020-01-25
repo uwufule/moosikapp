@@ -31,9 +31,9 @@ const schema = new Schema({
 schema.set('toJSON', {
   virtuals: true,
   transform: (doc, ret) => {
-    const { _id, ...data } = ret;
+    const { _id: uuid, ...data } = ret;
 
-    return { ...data, uuid: _id };
+    return { uuid, ...data };
   },
 });
 

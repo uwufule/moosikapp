@@ -27,7 +27,7 @@ export interface GenericParams {
   [key: string]: any;
 }
 
-export async function getSongs(skip = 0, limit = 100): Promise<Array<GeneralSongInfo>> {
+export async function getSongs(skip = 0, limit = 100): Promise<GeneralSongInfo[]> {
   const projection = {
     uuid: 1,
     author: 1,
@@ -61,7 +61,7 @@ export async function findSongs(
   queryString: string,
   skip = 0,
   limit = 100,
-): Promise<Array<GeneralSongInfo>> {
+): Promise<GeneralSongInfo[]> {
   const query = {
     $or: [
       {
@@ -96,7 +96,7 @@ export async function getFavoriteSongs(
   userId: string,
   skip = 0,
   limit = 100,
-): Promise<Array<GeneralSongInfo>> {
+): Promise<GeneralSongInfo[]> {
   const query = {
     likes: userId,
   };
