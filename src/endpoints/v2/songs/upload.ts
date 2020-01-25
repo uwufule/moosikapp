@@ -14,12 +14,7 @@ export default async (req: AuthorizedRequest, res: Response) => {
   readable.push(null);
 
   try {
-    const { 'content-type': contentType } = req.headers;
-    if (!contentType || contentType !== 'audio/mpeg') {
-      throw new APIError(415, messages.UNSUPPORTED_MEDIA_TYPE);
-    }
-
-    const path = await upload(contentType, readable);
+    const path = await upload('audio/mpeg', readable);
     const uuid = await Songs.saveSong({ uploadedBy: req.jwt.uuid, path });
 
     res.status(201).send({ message: messages.UPLOAD_SUCCESSFULLY, uuid });
