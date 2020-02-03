@@ -1,4 +1,4 @@
-import { Application, Request, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import checkAuth from '../../middlewares/authorization';
 import checkPermissions from '../../middlewares/permissions';
@@ -15,78 +15,77 @@ import status from './status';
 
 import roles from '../../config/roles.json';
 
-const API_VERSION = 2;
-const API_BASE_URL = `/api/v${API_VERSION}`;
+export default () => {
+  const router = Router();
 
-export default (app: Application) => {
-  app.all(API_BASE_URL, (req: Request, res: Response) => {
-    res.status(200).send({ message: `There is APIv${API_VERSION} endpoint.` });
+  router.all('/', (req: Request, res: Response) => {
+    res.status(200).send({ message: 'There is APIv2 endpoint.' });
   });
 
   // login
-  app.post(`${API_BASE_URL}/login`, [
+  router.post('/login', [
     validateAccept(),
-    validateContentType('application/json'),
+    validateContentType('routerlication/json'),
     login(),
   ]);
 
   // refresh token using refreshToken
-  app.get(`${API_BASE_URL}/login/refresh`, [
+  router.get('/login/refresh', [
     validateAccept(),
     refresh(),
   ]);
 
   // logout
-  app.post(`${API_BASE_URL}/logout`, [
+  router.post('/logout', [
     validateAccept(),
     checkAuth(),
     logout(),
   ]);
 
   // register
-  app.post(`${API_BASE_URL}/register`, [
+  router.post('/register', [
     validateAccept(),
-    validateContentType('application/json'),
+    validateContentType('routerlication/json'),
     register(),
   ]);
 
   // forgot
-  app.post(`${API_BASE_URL}/forgot`, [
+  router.post('/forgot', [
     (req: Request, res: Response) => {
       res.status(501).send();
     },
   ]);
 
   // get user with provided username
-  app.get(`${API_BASE_URL}/users/:username`, [
+  router.get('/users/:username', [
     validateAccept(),
     checkAuth(),
     users(),
   ]);
 
   // get songs
-  app.get(`${API_BASE_URL}/songs`, [
+  router.get('/songs', [
     validateAccept(),
     checkAuth(),
     Songs.getSongs(),
   ]);
 
   // find song
-  app.get(`${API_BASE_URL}/songs/find`, [
+  router.get('/songs/find', [
     validateAccept(),
     checkAuth(),
     Songs.findSongs(),
   ]);
 
   // get song by id
-  app.get(`${API_BASE_URL}/songs/:songId`, [
+  router.get('/songs/:songId', [
     validateAccept(),
     checkAuth(),
     Songs.getByUuid(),
   ]);
 
   // upload song
-  app.post(`${API_BASE_URL}/songs`, [
+  router.post('/songs', [
     validateAccept(),
     validateContentType('audio/mpeg'),
     checkAuth(),
@@ -94,16 +93,16 @@ export default (app: Application) => {
   ]);
 
   // update song
-  app.patch(`${API_BASE_URL}/songs/:songId`, [
+  router.patch('/songs/:songId', [
     validateAccept(),
-    validateContentType(['application/json', 'multipart/form-data']),
+    validateContentType(['routerlication/json', 'multipart/form-data']),
     checkAuth(),
     multer().single('cover'),
     Songs.updateSong(),
   ]);
 
   // delete song
-  app.delete(`${API_BASE_URL}/songs/:songId`, [
+  router.delete('/songs/:songId', [
     validateAccept(),
     checkAuth(),
     checkPermissions(roles.moderator),
@@ -111,29 +110,31 @@ export default (app: Application) => {
   ]);
 
   // get favorites songs
-  app.get(`${API_BASE_URL}/favorites`, [
+  router.get('/favorites', [
     validateAccept(),
     checkAuth(),
     Favorites.getFavoriteSongs(),
   ]);
 
   // add song to favorites
-  app.post(`${API_BASE_URL}/favorites/:songId`, [
+  router.post('/favorites/:songId', [
     validateAccept(),
     checkAuth(),
     Favorites.addSongToFavorite(),
   ]);
 
   // remove song from favorites
-  app.delete(`${API_BASE_URL}/favorites/:songId`, [
+  router.delete('/favorites/:songId', [
     validateAccept(),
     checkAuth(),
     Favorites.removeSongFromFavorite(),
   ]);
 
   // status
-  app.get(`${API_BASE_URL}/status`, [
+  router.get('/status', [
     validateAccept(),
     status(),
   ]);
+
+  return router;
 };

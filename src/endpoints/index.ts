@@ -1,11 +1,15 @@
-import { Application, Request, Response } from 'express';
-import withAPIv2 from './v2';
+import { Router, Request, Response } from 'express';
+import v2 from './v2';
 
-export default (app: Application) => {
-  withAPIv2(app);
+export default () => {
+  const router = Router();
+
+  router.use('/v2', v2());
 
   // 404 not found
-  app.all('/api/*', (req: Request, res: Response) => {
+  router.all('*', (req: Request, res: Response) => {
     res.status(404).send({ message: 'The resource you are trying to request does not exist.' });
   });
+
+  return router;
 };

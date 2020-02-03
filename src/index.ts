@@ -3,9 +3,9 @@ import Express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import BodyParser from 'body-parser';
-import errorHandler from './middlewares/errorHandler';
 import mongoDB from './api/mongodb';
-import withApiEndpoints from './endpoints';
+import api from './endpoints';
+import errorHandler from './middlewares/errorHandler';
 
 import { MAX_FILE_SIZE } from './config/constants.json';
 
@@ -23,7 +23,7 @@ app.use(Express.static(Path.resolve('static')));
 app.use(BodyParser.json());
 app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
 
-withApiEndpoints(app);
+app.use('/api', api());
 
 app.use(errorHandler());
 
