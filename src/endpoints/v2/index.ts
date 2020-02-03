@@ -25,7 +25,7 @@ export default () => {
   // login
   router.post('/login', [
     validateAccept(),
-    validateContentType('routerlication/json'),
+    validateContentType('application/json'),
     login(),
   ]);
 
@@ -45,7 +45,7 @@ export default () => {
   // register
   router.post('/register', [
     validateAccept(),
-    validateContentType('routerlication/json'),
+    validateContentType('application/json'),
     register(),
   ]);
 
@@ -95,7 +95,7 @@ export default () => {
   // update song
   router.patch('/songs/:songId', [
     validateAccept(),
-    validateContentType(['routerlication/json', 'multipart/form-data']),
+    validateContentType(['application/json', 'multipart/form-data']),
     checkAuth(),
     multer().single('cover'),
     Songs.updateSong(),
