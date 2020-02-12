@@ -2,8 +2,7 @@ import { Request, Response, RequestHandler } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 import HttpErrors from 'http-errors';
-import { getByUuid } from '../../../api/mongodb/users';
-import { contains, update, RefreshTokenPayload } from '../../../api/mongodb/tokens';
+import { getUserByUuid } from '../../../api/mongodb/users';
 import { createTokenChain } from '.';
 
 import messages from './messages.json';

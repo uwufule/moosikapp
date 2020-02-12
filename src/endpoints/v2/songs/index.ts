@@ -76,7 +76,7 @@ export const getByUuid = (): RequestHandler => (
       path, uploadedBy, likes, ...songData
     } = song;
 
-    const user = await Users.getByUuid(uploadedBy);
+    const user = await Users.getUserByUuid(uploadedBy);
 
     res.status(200).send({
       message: messages.song.SUCCESS,

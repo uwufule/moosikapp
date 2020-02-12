@@ -37,10 +37,10 @@ export async function getUser(username: string): Promise<PublicUserInfo | null> 
   return user?.toJSON();
 }
 
-export async function getByUuid(uuid: string): Promise<PrivateUserInfo | null> {
+export const getUserByUuid = async (uuid: string): Promise<PrivateUserInfo | null> => {
   const user = await UserModel.findById(uuid);
   return user?.toJSON();
-}
+};
 
 export async function findByUsernameOrEmail(queryString: string): Promise<PrivateUserInfo | null> {
   const query = {

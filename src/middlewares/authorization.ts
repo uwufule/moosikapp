@@ -3,7 +3,7 @@ import {
 } from 'express';
 import HttpErrors from 'http-errors';
 import JWT from 'jsonwebtoken';
-import { getByUuid } from '../api/mongodb/users';
+import { getUserByUuid } from '../api/mongodb/users';
 
 const { JWT_SECRET } = process.env;
 
@@ -31,7 +31,7 @@ export default (): RequestHandler => (
       throw new HttpErrors.Forbidden('Not authorized.');
     }
 
-    const user = await getByUuid(req.jwt.uuid);
+    const user = await getUserByUuid(req.jwt.uuid);
     if (!user) {
       throw new HttpErrors.Unauthorized('Invalid authorization.');
     }
