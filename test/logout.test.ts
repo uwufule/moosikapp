@@ -2,15 +2,17 @@ import request from 'supertest';
 import bcrypt from 'bcryptjs';
 
 import app from '../src/index';
-import UserModel from '../src/api/mongodb/models/user.model';
+import UserModel from '../src/mongodb/models/user.model';
 
-before(async () => {
+beforeEach(async () => {
   await UserModel.deleteOne({ username: 'testuser4' });
 
-  const salt = await bcrypt.genSalt();
-  const password = await bcrypt.hash('supersecretpassword', salt);
-
-  const user = new UserModel({ username: 'testuser4', email: 'testuser4@domain.com', password });
+  const password = await bcrypt.hash('supersecretpassword', 10);
+  const user = new UserModel({
+    username: 'testuser4',
+    email: 'testuser4@domain.com',
+    password,
+  });
   await user.save();
 });
 

@@ -1,10 +1,12 @@
 import request from 'supertest';
 import { expect } from 'chai';
 
-import UserModel from '../src/api/mongodb/models/user.model';
+import UserModel from '../src/mongodb/models/user.model';
 import app from '../src/index';
 
-before(async () => {
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+beforeEach(async () => {
   await UserModel.deleteOne({ username: 'testuser1' });
 });
 
@@ -22,7 +24,7 @@ describe('registration', () => {
       .expect('Content-Type', /application\/json/)
       .end((req, res) => {
         expect(res.body.message).to.eq('You have successfully created a new account.');
-        expect(res.body.uuid).to.be.a('string');
+        expect(res.body.uuid).to.match(UUID_REGEX);
 
         done();
       });

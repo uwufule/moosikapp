@@ -3,25 +3,21 @@ import { expect } from 'chai';
 import bcrypt from 'bcryptjs';
 
 import app from '../src/index';
-import UserModel from '../src/api/mongodb/models/user.model';
+import UserModel from '../src/mongodb/models/user.model';
 
-const userData = {
-  uuid: null,
-  username: 'testuser3',
-  email: 'testuser3@damain.com',
-  role: 1,
-  createdAt: Date.now(),
-};
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const ISODATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
 
-before(async () => {
+beforeEach(async () => {
   await UserModel.deleteOne({ username: 'testuser3' });
 
-  const salt = await bcrypt.genSalt();
-  const password = await bcrypt.hash('supersecretpassword', salt);
-
-  const user = new UserModel({ ...userData, password });
-  const { _id } = await user.save();
-  userData.uuid = _id;
+  const password = await bcrypt.hash('supersecretpassword', 10);
+  const user = new UserModel({
+    username: 'testuser3',
+    email: 'testuser3@domain.com',
+    password,
+  });
+  await user.save();
 });
 
 describe('users', () => {
@@ -42,10 +38,11 @@ describe('users', () => {
           .expect('Content-Type', /application\/json/)
           .end((req, res) => {
             expect(res.body.message).to.eq('Successfully retrieved user.');
-            expect(res.body.user).to.deep.include({
-              ...userData,
-              createdAt: new Date(userData.createdAt).toISOString(),
-            });
+            expect(res.body.user.uuid).to.match(UUID_REGEX);
+            expect(res.body.user.username).to.be.eq('testuser3');
+            expect(res.body.user.email).to.be.eq('testuser3@domain.com');
+            expect(res.body.user.role).to.be.eq(1);
+            expect(res.body.user.createdAt).to.match(ISODATE_REGEX);
 
             done();
           });
