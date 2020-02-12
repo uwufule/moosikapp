@@ -1,31 +1,31 @@
-import { Request, Response, NextFunction } from 'express';
+import {
+  Request, Response, NextFunction, RequestHandler,
+} from 'express';
+import HttpErrors from 'http-errors';
 
-export function validateAccept() {
-  return (req: Request, res: Response, next: NextFunction): void => {
+export const validateAccept = (): RequestHandler => (
+  (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers || req.headers.accept !== 'application/json') {
-      res.status(405).send({ message: 'Incorrect `Accept` header provided.' });
-      return;
+      throw new HttpErrors.MethodNotAllowed('Incorrect `Accept` header provided.');
     }
+
     next();
-  };
-}
+  }
+);
 
-export function validateContentType(contentType: string | Array<string>) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    const { 'content-type': requestContentType } = req.headers;
+export const validateContentType = (...contentType: string[]): RequestHandler => (
+  (req: Request, res: Response, next: NextFunction): void => {
+    const { 'content-type': reqContentType } = req.headers;
 
-    const isMatched = typeof contentType === 'string'
-      ? contentType === requestContentType
-      : contentType.reduce(
-        (accumulator, type) => accumulator || requestContentType?.includes(type),
-        false,
-      );
+    const isMatched = contentType.reduce(
+      (acc, type) => acc || reqContentType?.includes(type),
+      false,
+    );
 
     if (!isMatched) {
-      res.status(400).send({ message: 'Invalid body provided.' });
-      return;
+      throw new HttpErrors.BadRequest('Invalid body provided.');
     }
 
     next();
-  };
-}
+  }
+);

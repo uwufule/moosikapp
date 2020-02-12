@@ -1,7 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import JWT, { JsonWebTokenError } from 'jsonwebtoken';
+import {
+  Request, Response, NextFunction, RequestHandler,
+} from 'express';
+import HttpErrors from 'http-errors';
+import JWT from 'jsonwebtoken';
 import { getByUuid } from '../api/mongodb/users';
-import APIError from '../errors/APIError';
 
 const { JWT_SECRET } = process.env;
 
@@ -14,30 +16,26 @@ export interface AuthorizedRequest extends Request {
   jwt: JWTRecord;
 }
 
-export default () => async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith('Bearer')) {
-    next(new APIError(401, 'Invalid authorization.'));
-    return;
-  }
+export default (): RequestHandler => (
+  async (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+    const { authorization } = req.headers;
+    if (!authorization || !authorization.startsWith('Bearer')) {
+      throw new HttpErrors.Unauthorized('Invalid authorization.');
+    }
 
-  const token = authorization.slice(7);
+    const token = authorization.slice(7);
 
-  try {
-    req.jwt = <JWTRecord>JWT.verify(token, String(JWT_SECRET));
+    try {
+      req.jwt = <JWTRecord>JWT.verify(token, String(JWT_SECRET));
+    } catch (e) {
+      throw new HttpErrors.Forbidden('Not authorized.');
+    }
 
     const user = await getByUuid(req.jwt.uuid);
     if (!user) {
-      throw new APIError(401, 'Invalid authorization.');
+      throw new HttpErrors.Unauthorized('Invalid authorization.');
     }
 
     next();
-  } catch (e) {
-    if (e instanceof JsonWebTokenError) {
-      next(new APIError(403, 'Not authorized.'));
-      return;
-    }
-
-    next(e);
   }
-};
+);

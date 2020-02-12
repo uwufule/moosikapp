@@ -1,24 +1,15 @@
-import { Response } from 'express';
+import { Response, RequestHandler } from 'express';
+import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
-import * as TokenManager from '../../../api/mongodb/tokens';
-import APIError from '../../../errors/APIError';
+import { clear } from '../../../api/mongodb/tokens';
 
 import messages from './messages.json';
 
-export default () => async (req: AuthorizedRequest, res: Response) => {
-  try {
-    const n = await TokenManager.clear(req.jwt.uuid);
-    if (n === 0) {
-      throw new APIError(410, messages.logout.ALREADY_LOGGED_OUT);
-    }
-
-    res.status(200).send({ message: messages.logout.SUCCESS });
-  } catch (e) {
-    if (e instanceof APIError) {
-      res.status(e.statusCode).send({ message: e.message });
-      return;
-    }
-
-    res.status(500).send({ message: 'Internal server error.' });
+export default (): RequestHandler => async (req: AuthorizedRequest, res: Response) => {
+  const n = await clear(req.jwt.uuid);
+  if (n === 0) {
+    throw new HttpErrors.Gone(messages.logout.ALREADY_LOGGED_OUT);
   }
+
+  res.status(200).send({ message: messages.logout.SUCCESS });
 };

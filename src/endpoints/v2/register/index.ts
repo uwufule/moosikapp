@@ -1,9 +1,8 @@
-import { Request, Response } from 'express';
-import { MongoError } from 'mongodb';
+import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
+import HttpErrors from 'http-errors';
 import { createUser } from '../../../api/mongodb/users';
-import APIError from '../../../errors/APIError';
 
 import {
   INVALID_USERNAME,
@@ -34,33 +33,21 @@ const validationSchema = Joi.object({
     .error(new Error(INVALID_PASSWORD)),
 });
 
-export default () => async (req: Request, res: Response) => {
-  try {
-    const { error, value } = validationSchema.validate(req.body);
-    if (error) {
-      throw new APIError(400, error.message);
-    }
-
-    const salt = await Bcrypt.genSalt();
-    const password = await Bcrypt.hash(value.password, salt);
-
-    const uuid = await createUser({ ...value, password });
-    res.status(201).send({ message: SUCCESS, uuid });
-  } catch (e) {
-    if (e instanceof APIError) {
-      res.status(e.statusCode).send({ message: e.message });
-      return;
-    }
-
-    if (e instanceof MongoError) {
-      switch (e.code) {
-        case 11000:
-          res.status(400).send({ message: ACCOUNT_ALREADY_EXISTS });
-          return;
-        default:
-      }
-    }
-
-    res.status(500).send({ message: 'Internal server error.' });
+export default (): RequestHandler => async (req: Request, res: Response) => {
+  const { error, value } = validationSchema.validate(req.body);
+  if (error) {
+    throw new HttpErrors.BadRequest(error.message);
   }
+
+  const salt = await Bcrypt.genSalt();
+  const password = await Bcrypt.hash(value.password, salt);
+
+  let uuid;
+  try {
+    uuid = await createUser({ ...value, password });
+  } catch (e) {
+    throw new HttpErrors.BadRequest(ACCOUNT_ALREADY_EXISTS);
+  }
+
+  res.status(201).send({ message: SUCCESS, uuid });
 };

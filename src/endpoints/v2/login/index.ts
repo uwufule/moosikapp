@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
 import Crypto from 'crypto';
+import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
 import JWT from 'jsonwebtoken';
+import HttpErrors from 'http-errors';
 import { findByUsernameOrEmail, PrivateUserInfo } from '../../../api/mongodb/users';
 import { insert } from '../../../api/mongodb/tokens';
-import APIError from '../../../errors/APIError';
 
 import messages from './messages.json';
 
@@ -25,7 +25,7 @@ const validationSchema = Joi.object({
     .error(new Error(messages.login.INVALID_PASSWORD)),
 });
 
-export function getTokenChain(user: PrivateUserInfo, hex: string): TokenChain {
+export const createTokenChain = (user: PrivateUserInfo, hex: string): TokenChain => {
   const token = JWT.sign({
     uuid: user.uuid,
     role: user.role,
@@ -37,43 +37,34 @@ export function getTokenChain(user: PrivateUserInfo, hex: string): TokenChain {
   }, String(JWT_SECRET), { expiresIn: '60d' });
 
   return { token, refreshToken };
-}
+};
 
-async function login(user: PrivateUserInfo, password: string): Promise<TokenChain> {
+const login = async (user: PrivateUserInfo, password: string): Promise<TokenChain> => {
   const comparsionResult = await Bcrypt.compare(password, user.password);
   if (!comparsionResult) {
-    throw new APIError(401, messages.login.INVALID_AUTHORIZATION);
+    throw new HttpErrors.Unauthorized(messages.login.INVALID_AUTHORIZATION);
   }
 
   const hex = Crypto.randomBytes(12).toString('hex');
-  const tokenChain = getTokenChain(user, hex);
+  const tokenChain = createTokenChain(user, hex);
 
   await insert({ userId: user.uuid, hex });
 
   return tokenChain;
-}
+};
 
-export default () => async (req: Request, res: Response) => {
-  try {
-    const { error, value } = validationSchema.validate(req.body);
-    if (error) {
-      throw new APIError(400, error.message);
-    }
-
-    const user = await findByUsernameOrEmail(value.username);
-    if (!user) {
-      throw new APIError(403, messages.login.ACCOUNT_DOESNT_EXISTS);
-    }
-
-    const tokenChain = await login(user, value.password);
-
-    res.status(200).send({ message: messages.login.SUCCESS, ...tokenChain });
-  } catch (e) {
-    if (e instanceof APIError) {
-      res.status(e.statusCode).send({ message: e.message });
-      return;
-    }
-
-    res.status(500).send({ message: 'Internal server error.' });
+export default (): RequestHandler => async (req: Request, res: Response) => {
+  const { error, value } = validationSchema.validate(req.body);
+  if (error) {
+    throw new HttpErrors.BadRequest(error.message);
   }
+
+  const user = await findByUsernameOrEmail(value.username);
+  if (!user) {
+    throw new HttpErrors.Forbidden(messages.login.ACCOUNT_DOESNT_EXISTS);
+  }
+
+  const tokenChain = await login(user, value.password);
+
+  res.status(200).send({ message: messages.login.SUCCESS, ...tokenChain });
 };

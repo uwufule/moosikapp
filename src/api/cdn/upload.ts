@@ -1,16 +1,10 @@
 import { Readable } from 'stream';
 import Crypto from 'crypto';
-import JWT from 'jsonwebtoken';
+import HttpErrors from 'http-errors';
 import request, { CoreOptions } from 'request';
+import JWT from 'jsonwebtoken';
 
 const { JWT_SECRET, CDN_SERVER = '' } = process.env;
-
-export class UploadError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'UploadError';
-  }
-}
 
 export default async (contentType: string, stream: Readable): Promise<string> => {
   const hex = Crypto.randomBytes(6).toString('hex');
@@ -37,7 +31,7 @@ export default async (contentType: string, stream: Readable): Promise<string> =>
             break;
           }
           default:
-            reject(new UploadError(uploadMsg));
+            reject(new HttpErrors[uploadResult.statusCode](uploadMsg));
         }
       }),
     );

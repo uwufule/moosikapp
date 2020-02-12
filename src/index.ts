@@ -5,7 +5,7 @@ import cors from 'cors';
 import BodyParser from 'body-parser';
 import mongoDB from './api/mongodb';
 import api from './endpoints';
-import errorHandler from './middlewares/errorHandler';
+import asyncErrorHandler from './middlewares/asyncErrorHandler';
 
 import { MAX_FILE_SIZE } from './config/constants.json';
 
@@ -25,7 +25,7 @@ app.use(BodyParser.raw({ type: 'audio/mpeg', limit: MAX_FILE_SIZE }));
 
 app.use('/api', api());
 
-app.use(errorHandler());
+app.use(asyncErrorHandler);
 
 app.listen(Number(PORT));
 
