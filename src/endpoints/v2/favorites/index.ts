@@ -58,7 +58,7 @@ export const getFavoriteSongs = (): RequestHandler => (
 
 export const addSongToFavorite = (): RequestHandler => (
   async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getByUuid(req.params.songId);
+    const song = await Songs.getSongByUuid(req.params.songId);
     if (!song) {
       throw new HttpErrors.NotFound(messages.NO_SONG_FOUND);
     }
@@ -71,7 +71,7 @@ export const addSongToFavorite = (): RequestHandler => (
 
 export const removeSongFromFavorite = (): RequestHandler => (
   async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getByUuid(req.params.songId);
+    const song = await Songs.getSongByUuid(req.params.songId);
     if (!song) {
       throw new HttpErrors.NotFound(messages.NO_SONG_FOUND);
     }

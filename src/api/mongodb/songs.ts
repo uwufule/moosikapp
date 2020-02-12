@@ -41,7 +41,7 @@ export async function getSongs(skip = 0, limit = 100): Promise<GeneralSongInfo[]
   return songs.map((song) => song.toJSON());
 }
 
-export async function getByUuid(uuid: string): Promise<FullSongInfo | null> {
+export const getSongByUuid = async (uuid: string): Promise<FullSongInfo | null> => {
   const projection = {
     uuid: 1,
     author: 1,
@@ -55,7 +55,7 @@ export async function getByUuid(uuid: string): Promise<FullSongInfo | null> {
 
   const song = await SongModel.findOne({ _id: uuid }, projection);
   return song?.toJSON();
-}
+};
 
 export async function findSongs(
   queryString: string,

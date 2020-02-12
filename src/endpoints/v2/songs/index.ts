@@ -67,7 +67,7 @@ export const getSongs = (): RequestHandler => (
 
 export const getByUuid = (): RequestHandler => (
   async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getByUuid(req.params.songId);
+    const song = await Songs.getSongByUuid(req.params.songId);
     if (!song) {
       throw new HttpErrors.NotFound(messages.song.NOT_FOUND);
     }
@@ -142,7 +142,7 @@ export const updateSong = (): RequestHandler => update;
 
 export const deleteSong = (): RequestHandler => (
   async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getByUuid(req.params.songId);
+    const song = await Songs.getSongByUuid(req.params.songId);
     if (!song) {
       throw new HttpErrors.NotFound(messages.song.NOT_FOUND);
     }

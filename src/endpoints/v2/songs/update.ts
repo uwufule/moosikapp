@@ -3,7 +3,7 @@ import { Response, Request } from 'express';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
-import { getByUuid, updateSong } from '../../../api/mongodb/songs';
+import { getSongByUuid, updateSong } from '../../../api/mongodb/songs';
 import upload from '../../../api/cdn/upload';
 
 import roles from '../../../config/roles.json';
@@ -82,7 +82,7 @@ const fromFormData = async (req: Request): Promise<IUpdatedFields> => {
 };
 
 export default async (req: AuthorizedRequest, res: Response) => {
-  const song = await getByUuid(req.params.songId);
+  const song = await getSongByUuid(req.params.songId);
   if (!song) {
     throw new HttpErrors.NotFound(messages.song.NOT_FOUND);
   }
