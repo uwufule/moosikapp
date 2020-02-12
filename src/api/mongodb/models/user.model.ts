@@ -29,10 +29,8 @@ const schema = new Schema({
 }, { id: false, versionKey: false, timestamps: true });
 
 schema.set('toJSON', {
-  virtuals: true,
   transform: (doc, ret) => {
     const { _id: uuid, ...data } = ret;
-
     return { uuid, ...data };
   },
 });
