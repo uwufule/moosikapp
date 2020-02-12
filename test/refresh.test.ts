@@ -53,7 +53,7 @@ describe('refresh token', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .expect('Content-Type', /application\/json/)
-      .expect({ message: 'Invalid refresh token.' }, done);
+      .expect({ message: 'Invalid refresh token provided.' }, done);
   });
 
   it('should return Status-Code 400 and correct body if refresh token expired', (done) => {
