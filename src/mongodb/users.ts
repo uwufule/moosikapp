@@ -7,7 +7,7 @@ interface IUser {
   role?: number;
 }
 
-export interface PublicUserInfo {
+export interface PublicUserData {
   uuid: string;
   username: string;
   email: string;
@@ -15,7 +15,7 @@ export interface PublicUserInfo {
   createdAt: Date;
 }
 
-export interface PrivateUserInfo extends PublicUserInfo {
+export interface PrivateUserData extends PublicUserData {
   password: string;
   updatedAt: Date;
 }
@@ -24,7 +24,7 @@ export interface GenericParams {
   [key: string]: any;
 }
 
-export const getUser = async (username: string): Promise<PublicUserInfo | null> => {
+export const getUser = async (username: string): Promise<PublicUserData | null> => {
   const projection = {
     uuid: 1,
     username: 1,
@@ -37,13 +37,13 @@ export const getUser = async (username: string): Promise<PublicUserInfo | null> 
   return user?.toJSON();
 };
 
-export const getUserByUuid = async (uuid: string): Promise<PrivateUserInfo | null> => {
+export const getUserByUuid = async (uuid: string): Promise<PrivateUserData | null> => {
   const user = await UserModel.findById(uuid);
   return user?.toJSON();
 };
 
 export const findByUsernameOrEmail = (
-  async (queryString: string): Promise<PrivateUserInfo | null> => {
+  async (queryString: string): Promise<PrivateUserData | null> => {
     const query = {
       $or: [
         {

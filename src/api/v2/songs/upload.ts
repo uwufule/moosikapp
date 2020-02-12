@@ -2,8 +2,8 @@ import { Readable } from 'stream';
 import { Response } from 'express';
 import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
-import * as Songs from '../../../api/mongodb/songs';
-import upload from '../../../api/cdn/upload';
+import * as Songs from '../../../mongodb/songs';
+import upload from '../../../utils/uploadToCDN';
 
 import messages from './messages.json';
 

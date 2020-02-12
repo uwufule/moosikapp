@@ -3,8 +3,8 @@ import { Response, Request } from 'express';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
-import { getSongByUuid, updateSong } from '../../../api/mongodb/songs';
-import upload from '../../../api/cdn/upload';
+import { getSongByUuid, updateSong } from '../../../mongodb/songs';
+import upload from '../../../utils/uploadToCDN';
 
 import roles from '../../../config/roles.json';
 

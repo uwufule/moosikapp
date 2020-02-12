@@ -4,8 +4,8 @@ import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
 import upload from './upload';
 import update from './update';
-import * as Songs from '../../../api/mongodb/songs';
-import * as Users from '../../../api/mongodb/users';
+import * as Songs from '../../../mongodb/songs';
+import * as Users from '../../../mongodb/users';
 
 import scopes from '../../../config/scopes.json';
 import roles from '../../../config/roles.json';
@@ -83,7 +83,7 @@ export const getByUuid = (): RequestHandler => (
       song: {
         ...songData,
         url: `${CDN_SERVER}${path}`,
-        uploadedBy: user?.username || 'deactivated user',
+        uploadedBy: user?.username || 'deleted user',
         favorite: likes.includes(req.jwt.uuid),
         edit: uploadedBy === req.jwt.uuid,
       },

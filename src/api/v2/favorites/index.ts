@@ -2,7 +2,7 @@ import { Response, RequestHandler } from 'express';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
-import * as Songs from '../../../api/mongodb/songs';
+import * as Songs from '../../../mongodb/songs';
 
 import scopes from '../../../config/scopes.json';
 import roles from '../../../config/roles.json';

@@ -1,6 +1,6 @@
 import { Request, Response, RequestHandler } from 'express';
 import HttpErrors from 'http-errors';
-import { getUser } from '../../../api/mongodb/users';
+import { getUser } from '../../../mongodb/users';
 
 import { NOT_FOUND, SUCCESS } from './messages.json';
 

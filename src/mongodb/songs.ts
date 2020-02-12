@@ -9,7 +9,7 @@ interface ISong {
   likes?: Array<string>;
 }
 
-export interface GeneralSongInfo {
+export interface GeneralSongData {
   uuid: string;
   author: string;
   title: string;
@@ -18,7 +18,7 @@ export interface GeneralSongInfo {
   uploadedBy: string;
 }
 
-export interface FullSongInfo extends GeneralSongInfo {
+export interface DetailedSongData extends GeneralSongData {
   path: string;
   createdAt: Date;
 }
@@ -27,7 +27,7 @@ export interface GenericParams {
   [key: string]: any;
 }
 
-export const getSongs = async (skip = 0, limit = 100): Promise<GeneralSongInfo[]> => {
+export const getSongs = async (skip = 0, limit = 100): Promise<GeneralSongData[]> => {
   const projection = {
     uuid: 1,
     author: 1,
@@ -41,7 +41,7 @@ export const getSongs = async (skip = 0, limit = 100): Promise<GeneralSongInfo[]
   return songs.map((song) => song.toJSON());
 };
 
-export const getSongByUuid = async (uuid: string): Promise<FullSongInfo | null> => {
+export const getSongByUuid = async (uuid: string): Promise<DetailedSongData | null> => {
   const projection = {
     uuid: 1,
     author: 1,
@@ -58,7 +58,7 @@ export const getSongByUuid = async (uuid: string): Promise<FullSongInfo | null> 
 };
 
 export const findSongs = (
-  async (queryString: string, skip = 0, limit = 100): Promise<GeneralSongInfo[]> => {
+  async (queryString: string, skip = 0, limit = 100): Promise<GeneralSongData[]> => {
     const query = {
       $or: [
         {
@@ -91,7 +91,7 @@ export const findSongs = (
 );
 
 export const getFavoriteSongs = (
-  async (userId: string, skip = 0, limit = 100): Promise<GeneralSongInfo[]> => {
+  async (userId: string, skip = 0, limit = 100): Promise<GeneralSongData[]> => {
     const query = {
       likes: userId,
     };

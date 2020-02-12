@@ -2,9 +2,9 @@ import { Request, Response, RequestHandler } from 'express';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 import HttpErrors from 'http-errors';
-import { getUserByUuid } from '../../../api/mongodb/users';
-import { isTokenExists, updateToken, RefreshTokenPayload } from '../../../api/mongodb/tokens';
-import { createTokenChain } from '.';
+import { getUserByUuid } from '../../../mongodb/users';
+import { isTokenExists, updateToken, RefreshTokenPayload } from '../../../mongodb/tokens';
+import createTokenChain from '../../../utils/createTokenChain';
 
 import messages from './messages.json';
 

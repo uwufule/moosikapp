@@ -1,8 +1,8 @@
 import { Readable } from 'stream';
 import Crypto from 'crypto';
-import HttpErrors from 'http-errors';
-import request, { CoreOptions } from 'request';
 import JWT from 'jsonwebtoken';
+import request, { CoreOptions } from 'request';
+import HttpErrors from 'http-errors';
 
 const { JWT_SECRET, CDN_SERVER = '' } = process.env;
 

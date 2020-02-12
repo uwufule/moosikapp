@@ -2,19 +2,12 @@ import Crypto from 'crypto';
 import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
-import JWT from 'jsonwebtoken';
 import HttpErrors from 'http-errors';
-import { findByUsernameOrEmail, PrivateUserInfo } from '../../../api/mongodb/users';
-import { addToken } from '../../../api/mongodb/tokens';
+import { findByUsernameOrEmail, PrivateUserData } from '../../../mongodb/users';
+import { addToken } from '../../../mongodb/tokens';
+import createTokenChain, { TokenChain } from '../../../utils/createTokenChain';
 
 import messages from './messages.json';
-
-interface TokenChain {
-  token: string;
-  refreshToken: string;
-}
-
-const { JWT_SECRET } = process.env;
 
 const validationSchema = Joi.object({
   username: Joi.string()
@@ -25,21 +18,7 @@ const validationSchema = Joi.object({
     .error(new Error(messages.login.INVALID_PASSWORD)),
 });
 
-export const createTokenChain = (user: PrivateUserInfo, hex: string): TokenChain => {
-  const token = JWT.sign({
-    uuid: user.uuid,
-    role: user.role,
-  }, String(JWT_SECRET), { expiresIn: '30m' });
-
-  const refreshToken = JWT.sign({
-    userId: user.uuid,
-    hex,
-  }, String(JWT_SECRET), { expiresIn: '60d' });
-
-  return { token, refreshToken };
-};
-
-const login = async (user: PrivateUserInfo, password: string): Promise<TokenChain> => {
+const login = async (user: PrivateUserData, password: string): Promise<TokenChain> => {
   const comparsionResult = await Bcrypt.compare(password, user.password);
   if (!comparsionResult) {
     throw new HttpErrors.Unauthorized(messages.login.INVALID_AUTHORIZATION);

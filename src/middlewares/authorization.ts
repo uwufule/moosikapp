@@ -3,17 +3,17 @@ import {
 } from 'express';
 import HttpErrors from 'http-errors';
 import JWT from 'jsonwebtoken';
-import { getUserByUuid } from '../api/mongodb/users';
+import { getUserByUuid } from '../mongodb/users';
 
 const { JWT_SECRET } = process.env;
 
-interface JWTRecord {
+interface AccessToken {
   uuid: string;
   role: number;
 }
 
 export interface AuthorizedRequest extends Request {
-  jwt: JWTRecord;
+  jwt: AccessToken;
 }
 
 export default (): RequestHandler => (
@@ -26,7 +26,7 @@ export default (): RequestHandler => (
     const token = authorization.slice(7);
 
     try {
-      req.jwt = <JWTRecord>JWT.verify(token, String(JWT_SECRET));
+      req.jwt = <AccessToken>JWT.verify(token, String(JWT_SECRET));
     } catch (e) {
       throw new HttpErrors.Forbidden('Not authorized.');
     }

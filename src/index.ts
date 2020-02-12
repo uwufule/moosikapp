@@ -3,8 +3,8 @@ import Express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import BodyParser from 'body-parser';
-import mongoDB from './api/mongodb';
-import api from './endpoints';
+import mongoDB from './mongodb';
+import api from './api';
 import asyncErrorHandler from './middlewares/asyncErrorHandler';
 
 import { MAX_FILE_SIZE } from './config/constants.json';
