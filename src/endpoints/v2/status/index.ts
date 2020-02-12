@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
+import reqeust from 'request-promise';
 
-export default () => async (req: Request, res: Response) => {
-  try {
-    res.status(501).send();
-  } catch (e) {
-    res.status(500).send({ message: 'Internal server error.' });
-  }
+const { CDN_SERVER = '' } = process.env;
+
+export default (): RequestHandler => async (req: Request, res: Response) => {
+  const status = await reqeust(`${CDN_SERVER}/status.json`);
+  res.status(200).send(status);
 };
