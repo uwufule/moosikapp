@@ -27,7 +27,7 @@ export interface GenericParams {
   [key: string]: any;
 }
 
-export async function getSongs(skip = 0, limit = 100): Promise<GeneralSongInfo[]> {
+export const getSongs = async (skip = 0, limit = 100): Promise<GeneralSongInfo[]> => {
   const projection = {
     uuid: 1,
     author: 1,
@@ -39,7 +39,7 @@ export async function getSongs(skip = 0, limit = 100): Promise<GeneralSongInfo[]
 
   const songs = await SongModel.find({}, projection).skip(skip).limit(limit);
   return songs.map((song) => song.toJSON());
-}
+};
 
 export const getSongByUuid = async (uuid: string): Promise<FullSongInfo | null> => {
   const projection = {
@@ -57,74 +57,70 @@ export const getSongByUuid = async (uuid: string): Promise<FullSongInfo | null> 
   return song?.toJSON();
 };
 
-export async function findSongs(
-  queryString: string,
-  skip = 0,
-  limit = 100,
-): Promise<GeneralSongInfo[]> {
-  const query = {
-    $or: [
-      {
-        author: {
-          $regex: queryString,
-          $options: 'i',
+export const findSongs = (
+  async (queryString: string, skip = 0, limit = 100): Promise<GeneralSongInfo[]> => {
+    const query = {
+      $or: [
+        {
+          author: {
+            $regex: queryString,
+            $options: 'i',
+          },
         },
-      },
-      {
-        title: {
-          $regex: queryString,
-          $options: 'i',
+        {
+          title: {
+            $regex: queryString,
+            $options: 'i',
+          },
         },
-      },
-    ],
-  };
+      ],
+    };
 
-  const projection = {
-    uuid: 1,
-    author: 1,
-    title: 1,
-    cover: 1,
-    likes: 1,
-    uploadedBy: 1,
-  };
+    const projection = {
+      uuid: 1,
+      author: 1,
+      title: 1,
+      cover: 1,
+      likes: 1,
+      uploadedBy: 1,
+    };
 
-  const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
-  return songs.map((song) => song.toJSON());
-}
+    const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
+    return songs.map((song) => song.toJSON());
+  }
+);
 
-export async function getFavoriteSongs(
-  userId: string,
-  skip = 0,
-  limit = 100,
-): Promise<GeneralSongInfo[]> {
-  const query = {
-    likes: userId,
-  };
+export const getFavoriteSongs = (
+  async (userId: string, skip = 0, limit = 100): Promise<GeneralSongInfo[]> => {
+    const query = {
+      likes: userId,
+    };
 
-  const projection = {
-    uuid: 1,
-    author: 1,
-    title: 1,
-    cover: 1,
-    likes: 1,
-    uploadedBy: 1,
-  };
+    const projection = {
+      uuid: 1,
+      author: 1,
+      title: 1,
+      cover: 1,
+      likes: 1,
+      uploadedBy: 1,
+    };
 
-  const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
-  return songs.map((song) => song.toJSON());
-}
+    const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
+    return songs.map((song) => song.toJSON());
+  }
+);
 
-export async function saveSong(data: ISong): Promise<string> {
+export const saveSong = async (data: ISong): Promise<string> => {
   const { _id: uuid } = await (new SongModel(data)).save();
   return uuid;
-}
+};
 
-export async function updateSong(uuid: string, data: GenericParams): Promise<boolean> {
+export const updateSong = async (uuid: string, data: GenericParams): Promise<boolean> => {
   const res = await SongModel.updateOne({ _id: uuid }, data);
   return res.n === 1;
-}
+};
 
-export async function deleteSong(uuid: string): Promise<boolean> {
+export const deleteSong = async (uuid: string): Promise<boolean> => {
   const res = await SongModel.deleteOne({ _id: uuid });
   return res.n === 1;
-}
+};

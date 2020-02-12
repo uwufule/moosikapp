@@ -24,7 +24,7 @@ export interface GenericParams {
   [key: string]: any;
 }
 
-export async function getUser(username: string): Promise<PublicUserInfo | null> {
+export const getUser = async (username: string): Promise<PublicUserInfo | null> => {
   const projection = {
     uuid: 1,
     username: 1,
@@ -35,39 +35,41 @@ export async function getUser(username: string): Promise<PublicUserInfo | null> 
 
   const user = await UserModel.findOne({ username }, projection);
   return user?.toJSON();
-}
+};
 
 export const getUserByUuid = async (uuid: string): Promise<PrivateUserInfo | null> => {
   const user = await UserModel.findById(uuid);
   return user?.toJSON();
 };
 
-export async function findByUsernameOrEmail(queryString: string): Promise<PrivateUserInfo | null> {
-  const query = {
-    $or: [
-      {
-        username: queryString,
-      }, {
-        email: queryString,
-      },
-    ],
-  };
+export const findByUsernameOrEmail = (
+  async (queryString: string): Promise<PrivateUserInfo | null> => {
+    const query = {
+      $or: [
+        {
+          username: queryString,
+        }, {
+          email: queryString,
+        },
+      ],
+    };
 
-  const user = await UserModel.findOne(query);
-  return user?.toJSON();
-}
+    const user = await UserModel.findOne(query);
+    return user?.toJSON();
+  }
+);
 
-export async function createUser(data: IUser): Promise<string> {
+export const createUser = async (data: IUser): Promise<string> => {
   const { _id: uuid } = await (new UserModel(data)).save();
   return uuid;
-}
+};
 
-export async function updateUser(uuid: string, data: GenericParams): Promise<boolean> {
+export const updateUser = async (uuid: string, data: GenericParams): Promise<boolean> => {
   const res = await UserModel.updateOne({ _id: uuid }, data);
   return res.n === 1;
-}
+};
 
-export async function deleteUser(uuid: string): Promise<boolean> {
+export const deleteUser = async (uuid: string): Promise<boolean> => {
   const res = await UserModel.deleteOne({ _id: uuid });
   return res.n === 1;
-}
+};
