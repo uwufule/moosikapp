@@ -5,7 +5,7 @@ import Joi from '@hapi/joi';
 import JWT from 'jsonwebtoken';
 import HttpErrors from 'http-errors';
 import { findByUsernameOrEmail, PrivateUserInfo } from '../../../api/mongodb/users';
-import { insert } from '../../../api/mongodb/tokens';
+import { addToken } from '../../../api/mongodb/tokens';
 
 import messages from './messages.json';
 
@@ -48,7 +48,7 @@ const login = async (user: PrivateUserInfo, password: string): Promise<TokenChai
   const hex = Crypto.randomBytes(12).toString('hex');
   const tokenChain = createTokenChain(user, hex);
 
-  await insert({ userId: user.uuid, hex });
+  await addToken({ userId: user.uuid, hex });
 
   return tokenChain;
 };
