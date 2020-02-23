@@ -1,4 +1,4 @@
-import { Response, RequestHandler } from 'express';
+import { RequestHandler, Response } from 'express';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
@@ -32,14 +32,15 @@ export const getFavoriteSongs = (): RequestHandler => (
         .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
     });
 
-    const { error, value } = validationSchema.validate(req.body);
+    const { error, value } = validationSchema.validate(req.query);
+
     if (error) {
       throw new HttpErrors.BadRequest(error.message);
     }
 
     const songList = await Songs.getFavoriteSongs(req.jwt.uuid, value.skip, value.limit);
     if (!songList.length) {
-      throw new HttpErrors.NotFound(messages.NO_FAVORITES_FOUND);
+      throw new HttpErrors.NotFound(messages.NOT_FOUND);
     }
 
     const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
@@ -60,12 +61,12 @@ export const addSongToFavorite = (): RequestHandler => (
   async (req: AuthorizedRequest, res: Response) => {
     const song = await Songs.getSongByUuid(req.params.songId);
     if (!song) {
-      throw new HttpErrors.NotFound(messages.NO_SONG_FOUND);
+      throw new HttpErrors.NotFound(messages.SONG_NOT_FOUND);
     }
 
     await Songs.updateSong(req.params.songId, { $addToSet: { likes: req.jwt.uuid } });
 
-    res.status(200).send({ message: messages.SUCCESSFULLY_ADDED, uuid: req.params.songId });
+    res.status(200).send({ message: messages.ADDED, uuid: req.params.songId });
   }
 );
 
@@ -73,7 +74,7 @@ export const removeSongFromFavorite = (): RequestHandler => (
   async (req: AuthorizedRequest, res: Response) => {
     const song = await Songs.getSongByUuid(req.params.songId);
     if (!song) {
-      throw new HttpErrors.NotFound(messages.NO_SONG_FOUND);
+      throw new HttpErrors.NotFound(messages.SONG_NOT_FOUND);
     }
 
     if (!song.likes.includes(req.jwt.uuid)) {

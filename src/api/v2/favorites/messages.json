@@ -4,9 +4,9 @@
     "LIMIT": "Invalid query parameter `limit` provided.",
     "SCOPE": "Invalid query parameter `scope` provided."
   },
-  "NO_FAVORITES_FOUND": "No favorite songs found.",
   "SUCCESS": "Successfully retrieved favorite songs.",
-  "NO_SONG_FOUND": "No song found.",
-  "SUCCESSFULLY_ADDED": "Successfully added song to favorites.",
+  "NOT_FOUND": "No favorite songs found.",
+  "SONG_NOT_FOUND": "No song found.",
+  "ADDED": "Successfully added song to favorites.",
   "NO_FAVORITE": "No favorite."
 }
