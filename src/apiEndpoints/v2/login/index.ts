@@ -5,7 +5,7 @@ import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
 import { findByUsernameOrEmail, PrivateUserData } from '../../../mongodb/users';
 import { addToken } from '../../../mongodb/tokens';
-import createTokenChain, { TokenChain } from '../../../utils/createTokenChain';
+import createTokenChain, { TokenChain } from '../../../utils/tokenChain';
 
 import messages from './messages.json';
 

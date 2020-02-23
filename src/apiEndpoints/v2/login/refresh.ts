@@ -4,7 +4,7 @@ import JWT from 'jsonwebtoken';
 import HttpErrors from 'http-errors';
 import { getUserByUuid } from '../../../mongodb/users';
 import { isTokenExists, updateToken, RefreshTokenPayload } from '../../../mongodb/tokens';
-import createTokenChain from '../../../utils/createTokenChain';
+import createTokenChain from '../../../utils/tokenChain';
 
 import messages from './messages.json';
 
