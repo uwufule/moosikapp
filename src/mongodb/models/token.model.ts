@@ -13,6 +13,7 @@ const schema = new Schema({
   hex: {
     type: String,
     required: true,
+    unique: true,
   },
 }, { versionKey: false });
 
