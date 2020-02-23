@@ -1,23 +1,21 @@
 import request from 'supertest';
 import { expect } from 'chai';
-import bcrypt from 'bcryptjs';
+import Bcrypt from 'bcryptjs';
 
 import app from '../src/index';
 import UserModel from '../src/mongodb/models/user.model';
 
-beforeEach(async () => {
-  await UserModel.deleteOne({ username: 'testuser2' });
-
-  const password = await bcrypt.hash('supersecretpassword', 10);
-  const user = new UserModel({
-    username: 'testuser2',
-    email: 'testuser2@domain.com',
-    password,
-  });
-  await user.save();
-});
-
 describe('login', () => {
+  beforeEach(async () => {
+    await UserModel.deleteOne({ username: 'testuser2' });
+
+    await (new UserModel({
+      username: 'testuser2',
+      email: 'testuser2@domain.com',
+      password: await Bcrypt.hash('supersecretpassword', 10),
+    })).save();
+  });
+
   it('should return Status-Code 200 and correct body if user logged in', (done) => {
     request(app)
       .post('/api/v2/login')
@@ -28,7 +26,7 @@ describe('login', () => {
       })
       .expect(200)
       .expect('Content-Type', /application\/json/)
-      .end((req, res) => {
+      .end((err, res) => {
         expect(res.body.message).to.eq('Successfully logged in.');
         expect(res.body.token).to.be.a('string');
         expect(res.body.refreshToken).to.be.a('string');
@@ -40,10 +38,6 @@ describe('login', () => {
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', (done) => {
     request(app)
       .post('/api/v2/login')
-      .send({
-        username: 'testuser2',
-        password: 'supersecretpassword',
-      })
       .expect(405)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Incorrect `Accept` header provided.' }, done);
@@ -53,7 +47,7 @@ describe('login', () => {
     request(app)
       .post('/api/v2/login')
       .set('Accept', 'application/json')
-      .send('')
+      .send('string-instead-json')
       .expect(400)
       .expect('Content-Type', /application\/json/)
       .expect({ message: 'Invalid body provided.' }, done);
@@ -88,7 +82,7 @@ describe('login', () => {
       .post('/api/v2/login')
       .set('Accept', 'application/json')
       .send({
-        username: 'nonexistent account data',
+        username: 'nonexistent-testuser',
         password: 'supersecretpassword',
       })
       .expect(403)

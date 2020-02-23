@@ -7,7 +7,7 @@ import app from '../src/index';
 beforeEach(async () => {
 });
 
-describe('songs', () => {
+describe.skip('songs', () => {
   describe('uploading', () => {
     it.skip('should return Status-Code 201 and correct body if song successfully uploaded', (done) => {
       FS.readFile('./test/dataset/song.mp3', (err, song) => {
