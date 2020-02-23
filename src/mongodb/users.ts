@@ -34,7 +34,7 @@ export const getUser = async (username: string): Promise<PublicUserData | null> 
   };
 
   const user = await UserModel.findOne({ username }, projection);
-  return user?.toJSON();
+  return user?.toJSON() || null;
 };
 
 export const getUserByUuid = async (uuid: string): Promise<PrivateUserData | null> => {

@@ -54,7 +54,7 @@ export const getSongByUuid = async (uuid: string): Promise<DetailedSongData | nu
   };
 
   const song = await SongModel.findOne({ _id: uuid }, projection);
-  return song?.toJSON();
+  return song?.toJSON() || null;
 };
 
 export const findSongs = (
