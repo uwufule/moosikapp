@@ -1,5 +1,5 @@
 import {
-  Request, Response, NextFunction, RequestHandler,
+  RequestHandler, Request, Response, NextFunction,
 } from 'express';
 import HttpErrors from 'http-errors';
 
@@ -13,12 +13,12 @@ export const validateAccept = (): RequestHandler => (
   }
 );
 
-export const validateContentType = (...contentType: string[]): RequestHandler => (
+export const validateContentType = (...contentTypes: string[]): RequestHandler => (
   (req: Request, res: Response, next: NextFunction): void => {
-    const { 'content-type': reqContentType } = req.headers;
+    const { 'content-type': contentType } = req.headers;
 
-    const isMatched = contentType.reduce(
-      (acc, type) => acc || reqContentType?.includes(type),
+    const isMatched = contentTypes.reduce(
+      (acc, type) => acc || contentType?.includes(type),
       false,
     );
 

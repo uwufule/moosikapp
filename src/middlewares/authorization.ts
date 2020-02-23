@@ -1,5 +1,5 @@
 import {
-  Request, Response, NextFunction, RequestHandler,
+  RequestHandler, Request, Response, NextFunction,
 } from 'express';
 import HttpErrors from 'http-errors';
 import JWT from 'jsonwebtoken';
