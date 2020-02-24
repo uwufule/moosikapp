@@ -13,14 +13,13 @@
     "NOT_FOUND": "No song found.",
     "SUCCESS": "Successfully retrieved song."
   },
-  "ACCESS_DENY": "Forbitten.",
+  "ACCESS_DENIED": "Forbitten.",
   "INVALID_BODY_PARAMETER": {
     "AUTHOR": "Invalid body parameter `author` provided.",
     "TITLE": "Invalid body parameter `title` provided.",
     "COVER": "Invalid body parameter `cover` provided."
   },
-  "UPLOAD_SUCCESSFULLY": "You have successfully uploaded a new song.",
+  "UPLOAD_SUCCESS": "You have successfully uploaded a new song.",
   "UPLOAD_ERROR": "Error while uploading.",
-  "UNSUPPORTED_MEDIA_TYPE": "Your audio file has to be in MP3 format.",
-  "UPDATE_SUCCESSFULLY": "Successfully updated song."
+  "UPDATE_SUCCESS": "Successfully updated song."
 }

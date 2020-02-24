@@ -148,7 +148,7 @@ export const deleteSong = (): RequestHandler => (
     }
 
     if ((song.uploadedBy !== req.jwt.uuid) && (req.jwt.role < roles.moderator)) {
-      throw new HttpErrors.Forbidden(messages.ACCESS_DENY);
+      throw new HttpErrors.Forbidden(messages.ACCESS_DENIED);
     }
 
     await Songs.deleteSong(req.params.songId);
