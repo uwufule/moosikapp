@@ -37,7 +37,7 @@ export const getSongs = (): RequestHandler => (
         .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
     });
 
-    const { error, value } = validationSchema.validate(req.body);
+    const { error, value } = validationSchema.validate(req.query);
     if (error) {
       throw new HttpErrors.BadRequest(error.message);
     }
@@ -108,7 +108,7 @@ export const findSongs = (): RequestHandler => (
         .error(new Error(messages.INVALID_QUERY_PARAMETER.QUERY)),
     });
 
-    const { error, value } = validationSchema.validate(req.body);
+    const { error, value } = validationSchema.validate(req.query);
     if (error) {
       throw new HttpErrors.BadRequest(error.message);
     }
