@@ -8,9 +8,9 @@ import SongModel from '../src/mongodb/models/song.model';
 
 const { JWT_SECRET } = process.env;
 
-describe('favorites', () => {
-  const token = JWT.sign({ uuid: 'testuser6-uuid', role: 1 }, String(JWT_SECRET));
+let token: string;
 
+describe('favorites', () => {
   beforeEach(async () => {
     await (new UserModel({
       _id: 'testuser6-uuid',
@@ -25,6 +25,8 @@ describe('favorites', () => {
       path: '/path/to/file',
       likes: ['testuser6-uuid'],
     })).save();
+
+    token = JWT.sign({ uuid: 'testuser6-uuid', role: 1 }, String(JWT_SECRET));
   });
 
   afterEach(async () => {

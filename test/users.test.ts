@@ -7,9 +7,9 @@ import UserModel from '../src/mongodb/models/user.model';
 
 const { JWT_SECRET } = process.env;
 
-describe('users', () => {
-  const token = JWT.sign({ uuid: 'testuser3-uuid', role: 1 }, String(JWT_SECRET));
+let token: string;
 
+describe('users', () => {
   beforeEach(async () => {
     await (new UserModel({
       _id: 'testuser3-uuid',
@@ -17,6 +17,8 @@ describe('users', () => {
       email: 'testuser3@domain.tld',
       password: 'supersecretpassword',
     })).save();
+
+    token = JWT.sign({ uuid: 'testuser3-uuid', role: 1 }, String(JWT_SECRET));
   });
 
   afterEach(async () => {

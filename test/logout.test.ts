@@ -8,9 +8,9 @@ import TokenModel from '../src/mongodb/models/token.model';
 
 const { JWT_SECRET } = process.env;
 
-describe('logout', () => {
-  const token = JWT.sign({ uuid: 'testuser4-uuid' }, String(JWT_SECRET));
+let token: string;
 
+describe('logout', () => {
   beforeEach(async () => {
     await (new UserModel({
       _id: 'testuser4-uuid',
@@ -23,6 +23,8 @@ describe('logout', () => {
       userId: 'testuser4-uuid',
       hex: Crypto.randomBytes(6).toString('hex'),
     })).save();
+
+    token = JWT.sign({ uuid: 'testuser4-uuid' }, String(JWT_SECRET));
   });
 
   afterEach(async () => {

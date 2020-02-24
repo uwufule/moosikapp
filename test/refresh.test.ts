@@ -9,9 +9,9 @@ import TokenModel from '../src/mongodb/models/token.model';
 
 const { JWT_SECRET } = process.env;
 
-describe('refresh token', () => {
-  let refreshToken: string;
+let refreshToken: string;
 
+describe('refresh token', () => {
   beforeEach(async () => {
     await (new UserModel({
       _id: 'testuser5-uuid',
