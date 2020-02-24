@@ -14,8 +14,9 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "webpack",
-    "dev": "nodemon --exec node -r dotenv/config -r ts-node/register src/index.ts",
-    "test": "nodemon --watch . --ext ts --exec \"mocha -r dotenv/config -r ts-node/register test/**/*.test.ts --timeout 30000\""
+    "dev:start": "nodemon --exec node -r dotenv/config -r ts-node/register src/index.ts",
+    "test": "mocha -r dotenv/config -r ts-node/register test/**/*.test.ts --timeout 30000",
+    "dev:test": "nodemon --watch . --ext ts --exec \"yarn test\""
   },
   "private": true,
   "bugs": {
