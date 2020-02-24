@@ -13,16 +13,12 @@ describe('refresh token', () => {
   let refreshToken: string;
 
   beforeEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser5' });
-
     await (new UserModel({
       _id: 'testuser5-uuid',
       username: 'testuser5',
-      email: 'testuser5@domain.com',
+      email: 'testuser5@domain.tld',
       password: 'supersecretpassword',
     })).save();
-
-    await TokenModel.deleteMany({ userId: 'testuser5-uuid' });
 
     const refreshTokenPayload = {
       userId: 'testuser5-uuid',
@@ -32,6 +28,12 @@ describe('refresh token', () => {
     await (new TokenModel(refreshTokenPayload)).save();
 
     refreshToken = JWT.sign(refreshTokenPayload, String(JWT_SECRET));
+  });
+
+  afterEach(async () => {
+    await UserModel.deleteOne({ username: 'testuser5' });
+
+    await TokenModel.deleteMany({ userId: 'testuser5-uuid' });
   });
 
   it('should return Status-Code 200 and correct body if tokens successfully refreshed', async () => {

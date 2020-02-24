@@ -12,8 +12,6 @@ describe('favorites', () => {
   const token = JWT.sign({ uuid: 'testuser6-uuid', role: 1 }, String(JWT_SECRET));
 
   beforeEach(async () => {
-    await UserModel.deleteOne({ _id: 'testuser6-uuid' });
-
     await (new UserModel({
       _id: 'testuser6-uuid',
       username: 'testuser6',
@@ -21,14 +19,18 @@ describe('favorites', () => {
       password: 'supersecretpassword',
     })).save();
 
-    await SongModel.deleteOne({ _id: 'testsong1-uuid' });
-
     await (new SongModel({
       _id: 'testsong1-uuid',
       uploadedBy: 'testuser6-uuid',
       path: '/path/to/file',
       likes: ['testuser6-uuid'],
     })).save();
+  });
+
+  afterEach(async () => {
+    await UserModel.deleteOne({ _id: 'testuser6-uuid' });
+
+    await SongModel.deleteOne({ _id: 'testsong1-uuid' });
   });
 
   describe('retrieve', () => {

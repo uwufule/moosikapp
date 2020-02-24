@@ -7,13 +7,15 @@ import UserModel from '../src/mongodb/models/user.model';
 
 describe('login', () => {
   beforeEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser2' });
-
     await (new UserModel({
       username: 'testuser2',
       email: 'testuser2@domain.com',
       password: await Bcrypt.hash('supersecretpassword', 10),
     })).save();
+  });
+
+  afterEach(async () => {
+    await UserModel.deleteOne({ username: 'testuser2' });
   });
 
   it('should return Status-Code 200 and correct body if user logged in', (done) => {

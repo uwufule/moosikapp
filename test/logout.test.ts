@@ -12,21 +12,23 @@ describe('logout', () => {
   const token = JWT.sign({ uuid: 'testuser4-uuid' }, String(JWT_SECRET));
 
   beforeEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser4' });
-
     await (new UserModel({
       _id: 'testuser4-uuid',
       username: 'testuser4',
-      email: 'testuser4@domain.com',
+      email: 'testuser4@domain.tld',
       password: 'supersecretpassword',
     })).save();
-
-    await TokenModel.deleteMany({ userId: 'testuser4-uuid' });
 
     await (new TokenModel({
       userId: 'testuser4-uuid',
       hex: Crypto.randomBytes(6).toString('hex'),
     })).save();
+  });
+
+  afterEach(async () => {
+    await UserModel.deleteOne({ username: 'testuser4' });
+
+    await TokenModel.deleteMany({ userId: 'testuser4-uuid' });
   });
 
   it('should return Status-Code 200 and correct body if user logged out', (done) => {

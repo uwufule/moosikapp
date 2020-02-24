@@ -11,14 +11,16 @@ describe('users', () => {
   const token = JWT.sign({ uuid: 'testuser3-uuid', role: 1 }, String(JWT_SECRET));
 
   beforeEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser3' });
-
     await (new UserModel({
       _id: 'testuser3-uuid',
       username: 'testuser3',
-      email: 'testuser3@domain.com',
+      email: 'testuser3@domain.tld',
       password: 'supersecretpassword',
     })).save();
+  });
+
+  afterEach(async () => {
+    await UserModel.deleteOne({ username: 'testuser3' });
   });
 
   it('should return Status-Code 200 and correct body if user founded', async () => {
