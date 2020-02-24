@@ -105,12 +105,11 @@ describe('registration', () => {
     const res = await request(app)
       .post('/api/v2/register')
       .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({
+      .send({
         username: 'testuser1',
         email: 'testuser1@domain.com',
         password: 'supersecretpassword',
-      }));
+      });
 
     expect(res.status).to.eq(400);
     expect(res.header['content-type']).to.match(/application\/json/);
