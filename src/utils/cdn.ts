@@ -2,14 +2,22 @@ import { Readable } from 'stream';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 import request, { CoreOptions } from 'request';
+import FileType from 'file-type';
 import HttpErrors from 'http-errors';
 
 const { JWT_SECRET, CDN_SERVER = '' } = process.env;
 
 export default async (contentType: string, stream: Readable): Promise<string> => {
-  const hex = Crypto.randomBytes(6).toString('hex');
-  const target = JWT.sign({ hex }, String(JWT_SECRET), { expiresIn: 1800 });
-  const targetUri = `${CDN_SERVER}/upload-target/${target}`;
+  const readable = await FileType.stream(stream);
+
+  if (readable.fileType?.mime !== contentType) {
+    throw new HttpErrors.BadRequest('Provided header `Content-Type` and file type does not match.');
+  }
+
+  const uploadTarget = JWT.sign({
+    hex: Crypto.randomBytes(6).toString('hex'),
+  }, String(JWT_SECRET), { expiresIn: 1800 });
+  const targetUri = `${CDN_SERVER}/upload-target/${uploadTarget}`;
 
   const requestOptions: CoreOptions = {
     headers: {
