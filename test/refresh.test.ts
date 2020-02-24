@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/index';
+import app from '../src/app';
 import UserModel from '../src/mongodb/models/user.model';
 import TokenModel from '../src/mongodb/models/token.model';
 

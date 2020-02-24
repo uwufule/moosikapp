@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { expect } from 'chai';
 
+import app from '../src/app';
 import UserModel from '../src/mongodb/models/user.model';
-import app from '../src/index';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 

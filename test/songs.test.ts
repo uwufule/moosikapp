@@ -2,7 +2,7 @@ import request from 'supertest';
 import { expect } from 'chai';
 import FS from 'fs';
 
-import app from '../src/index';
+import app from '../src/app';
 
 describe.skip('songs', () => {
   beforeEach(async () => {
