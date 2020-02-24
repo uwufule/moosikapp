@@ -25,6 +25,11 @@ export default (error: MaybeHttpError, req: Request, res: Response, next: NextFu
   }
 
   if (error.statusCode && error.message) {
+    if (error.name === 'PayloadTooLargeError') {
+      res.status(error.statusCode).send({ message: 'Request entity too large.' });
+      return;
+    }
+
     res.status(error.statusCode).send({ message: error.message });
     return;
   }
