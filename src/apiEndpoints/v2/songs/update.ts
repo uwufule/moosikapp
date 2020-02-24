@@ -1,4 +1,3 @@
-import { Readable } from 'stream';
 import { Response, Request } from 'express';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
@@ -73,11 +72,6 @@ const fromFormData = async (req: Request): Promise<IUpdatedFields> => {
 
   const path = await upload(req.file.mimetype, req.file.buffer);
 
-  readable.push(req.file.buffer);
-  readable.push(null);
-
-  const path = await upload(req.file.mimetype, readable);
-
   return { ...songData, cover: `${CDN_SERVER}${path}` };
 };
 
@@ -91,12 +85,12 @@ export default async (req: AuthorizedRequest, res: Response) => {
     throw new HttpErrors.Forbidden(messages.ACCESS_DENIED);
   }
 
-  let message;
+  let updatedFields;
   if (req.headers['content-type'] === 'application/json') {
-    message = await fromJson(req);
+    updatedFields = await fromJson(req);
   } else {
-    message = await fromFormData(req);
+    updatedFields = await fromFormData(req);
   }
 
-  res.status(200).send({ message });
+  res.status(200).send({ message: messages.UPDATE_SUCCESS, song: updatedFields });
 };
