@@ -42,11 +42,7 @@ describe('users', () => {
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
     const res = await request(app)
       .get('/api/v2/users/testuser3')
-      .auth('access token', { type: 'bearer' })
-      .send({
-        username: 'testuser3',
-        password: 'supersecretpassword',
-      });
+      .auth('access token', { type: 'bearer' });
 
     expect(res.status).to.eq(405);
     expect(res.header['content-type']).to.match(/application\/json/);
