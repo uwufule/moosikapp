@@ -71,7 +71,7 @@ const fromFormData = async (req: Request): Promise<IUpdatedFields> => {
     throw new HttpErrors.BadRequest(error.message);
   }
 
-  const readable = new Readable();
+  const path = await upload(req.file.mimetype, req.file.buffer);
 
   readable.push(req.file.buffer);
   readable.push(null);

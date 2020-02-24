@@ -8,16 +8,11 @@ import upload from '../../../utils/cdn';
 import messages from './messages.json';
 
 export default async (req: AuthorizedRequest, res: Response) => {
-  const readable = new Readable();
-
-  if (!(req.body instanceof Buffer)) {
+  if (!Buffer.isBuffer(req.body)) {
     throw new HttpErrors.BadRequest(messages.UPLOAD_ERROR);
   }
 
-  readable.push(req.body);
-  readable.push(null);
-
-  const path = await upload('audio/mpeg', readable);
+  const path = await upload('audio/mpeg', req.body);
   const uuid = await Songs.saveSong({ uploadedBy: req.jwt.uuid, path });
 
   res.status(201).send({ message: messages.UPLOAD_SUCCESSFULLY, uuid });

@@ -7,10 +7,10 @@ import HttpErrors from 'http-errors';
 
 const { JWT_SECRET, CDN_SERVER = '' } = process.env;
 
-export default async (contentType: string, stream: Readable): Promise<string> => {
-  const readable = await FileType.stream(stream);
+export default async (contentType: string, buffer: Buffer): Promise<string> => {
+  const fileType = await FileType.fromBuffer(buffer);
 
-  if (readable.fileType?.mime !== contentType) {
+  if (fileType?.mime !== contentType) {
     throw new HttpErrors.BadRequest('Provided header `Content-Type` and file type does not match.');
   }
 
@@ -24,6 +24,10 @@ export default async (contentType: string, stream: Readable): Promise<string> =>
       'content-type': contentType,
     },
   };
+
+  const stream = new Readable();
+  stream.push(buffer);
+  stream.push(null);
 
   return new Promise((resolve, reject) => {
     stream.pipe(
