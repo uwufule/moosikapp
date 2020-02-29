@@ -5,13 +5,15 @@ module.exports = {
     node: true,
   },
   extends: [
+    'eslint:recommended',
     'plugin:json/recommended',
     'plugin:react/recommended',
-    'airbnb-typescript/base',
+    'airbnb-typescript',
   ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
+    React: 'writable',
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -26,5 +28,19 @@ module.exports = {
   ],
   rules: {
     'no-bitwise': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'jsx-a11y/anchor-is-valid': ['error', {
+      'components': [
+        'Link',
+      ],
+      'specialLink': [
+        'hrefLeft',
+        'hrefRight',
+      ],
+      'aspects': [
+        'invalidHref',
+        'preferButton',
+      ],
+    }],
   },
 };
