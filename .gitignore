@@ -1,19 +1,17 @@
 # build
 dist/
+.next/
 
-# modules
+# dependencies
 node_modules/
 yarn.lock
 
-# env variables
+# environment config
 .env
 
-# static
-static/
-
-# log files
+# logging
 *.log
 
-# misc
+# miscellaneous
 .DS_Store
 .vscode/
