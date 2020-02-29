@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const webpackNodeExternals = require('webpack-node-externals');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -22,6 +23,9 @@ module.exports = {
         test: /\.ts$/,
         use: {
           loader: 'ts-loader',
+          options: {
+            configFile: 'tsconfig.server.json',
+          },
         },
       },
     ],
@@ -32,8 +36,8 @@ module.exports = {
   externals: [
     webpackNodeExternals(),
   ],
-  devtool: isProd ? false : 'source-map',
   plugins: [
+    new CleanWebpackPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
   ],
   optimization: {
