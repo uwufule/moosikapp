@@ -1,12 +1,25 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "noImplicitAny": true,
+    "strictNullChecks": true
   },
   "include": [
     "src/**/*.ts"
