@@ -4,8 +4,5 @@
     "noEmit": false,
     "module": "commonjs",
     "outDir": "dist"
-  },
-  "include": [
-    "src"
-  ]
+  }
 }
