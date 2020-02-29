@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/app';
-import UserModel from '../src/mongodb/models/user.model';
-import TokenModel from '../src/mongodb/models/token.model';
+import app from '../src/server';
+import UserModel from '../src/server/mongodb/models/user.model';
+import TokenModel from '../src/server/mongodb/models/token.model';
 
 const { JWT_SECRET } = process.env;
 

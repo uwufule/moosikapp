@@ -4,9 +4,9 @@ import FS from 'fs';
 import { promisify } from 'util';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/app';
-import UserModel from '../src/mongodb/models/user.model';
-import SongModel from '../src/mongodb/models/song.model';
+import app from '../src/server';
+import UserModel from '../src/server/mongodb/models/user.model';
+import SongModel from '../src/server/mongodb/models/song.model';
 
 const readFile = promisify(FS.readFile);
 

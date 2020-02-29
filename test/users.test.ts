@@ -2,8 +2,8 @@ import request from 'supertest';
 import { expect } from 'chai';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/app';
-import UserModel from '../src/mongodb/models/user.model';
+import app from '../src/server';
+import UserModel from '../src/server/mongodb/models/user.model';
 
 const { JWT_SECRET } = process.env;
 
