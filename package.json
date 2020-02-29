@@ -1,6 +1,6 @@
 {
   "name": "moosikapp",
-  "version": "4.3.92",
+  "version": "4.3.94",
   "description": "MoosikApp backend.",
   "author": "Uwufule",
   "license": "MIT",
@@ -12,7 +12,7 @@
   "homepage": "https://github.com/uwufule/moosikapp#readme",
   "keywords": [],
   "scripts": {
-    "start": "NODE_ENV=production dist/server.js",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
     "build": "webpack && next build",
     "dev": "nodemon",
     "test": "cross-env TS_NODE_PROJECT=tsconfig.server.json mocha -r dotenv/config -r ts-node/register test/**/*.test.ts --timeout 30000",
