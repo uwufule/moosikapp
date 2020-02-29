@@ -1,5 +1,17 @@
-import app from './app';
+import next from 'next';
+import { Request, Response } from 'express';
+import app from './server';
 
-const { PORT } = process.env;
+const { NODE_ENV, PORT } = process.env;
 
-app.listen(Number(PORT));
+const nextApp = next({ dev: NODE_ENV !== 'production' });
+const handler = nextApp.getRequestHandler();
+
+nextApp.prepare()
+  .then(() => {
+    app.get('*', (req: Request, res: Response) => {
+      handler(req, res);
+    });
+
+    app.listen(Number(PORT));
+  });
