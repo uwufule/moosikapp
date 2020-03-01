@@ -1,13 +1,13 @@
 import { AppContext } from 'next/app';
-import { FC } from 'react';
+import { NextPage } from 'next';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import withRedux from 'next-redux-wrapper';
 
-import makeStore from '../redux/store';
+import createStore from '../redux/store';
 
 interface AppProps {
-  Component: FC<{ statusCode?: number }>;
+  Component: NextPage<{ statusCode?: number }>;
   pageProps: {
     statusCode?: number;
   },
@@ -30,4 +30,4 @@ App.getInitialProps = async ({ Component, ctx }: AppContext) => {
   return { pageProps };
 };
 
-export default withRedux(makeStore)(App);
+export default withRedux(createStore)(App);
