@@ -2,14 +2,14 @@
   "name": "moosikapp",
   "version": "4.3.94",
   "description": "MoosikApp backend.",
-  "author": "Uwufule",
+  "author": "unlakki",
   "license": "MIT",
   "main": "src/server.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uwufule/moosikapp.git"
+    "url": "git+https://github.com/unlakki/moosikapp.git"
   },
-  "homepage": "https://github.com/uwufule/moosikapp#readme",
+  "homepage": "https://github.com/unlakki/moosikapp#readme",
   "keywords": [],
   "scripts": {
     "start": "cross-env NODE_ENV=production node dist/server.js",
