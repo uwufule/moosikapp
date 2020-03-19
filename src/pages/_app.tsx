@@ -1,13 +1,16 @@
+import { FC } from 'react';
 import { AppContext } from 'next/app';
-import { NextPage } from 'next';
+import Head from 'next/head';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import withRedux from 'next-redux-wrapper';
 
+import Layout from '../components/Layout';
+
 import createStore from '../redux/store';
 
 interface AppProps {
-  Component: NextPage<{ statusCode?: number }>;
+  Component: FC<{ statusCode?: number }>;
   pageProps: {
     statusCode?: number;
   },
@@ -16,9 +19,12 @@ interface AppProps {
 
 const App = ({ Component, pageProps, store }: AppProps) => (
   <Provider store={store}>
-    <div>
+    <Head>
+      <title>Moosik</title>
+    </Head>
+    <Layout>
       <Component statusCode={pageProps?.statusCode} />
-    </div>
+    </Layout>
   </Provider>
 );
 
