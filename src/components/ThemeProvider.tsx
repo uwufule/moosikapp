@@ -1,12 +1,14 @@
 import { ThemeProvider, ThemedStyledProps } from 'styled-components';
 import theme from '../theme';
 
-interface ThemeProviderProps {
+export type ThemeProps<P = {}> = ThemedStyledProps<P, typeof theme>;
+
+interface AppThemeProviderProps {
   children: JSX.Element[];
 }
 
-export type ThemeProps<P = {}> = ThemedStyledProps<P, typeof theme>;
-
-export default ({ children }: ThemeProviderProps) => (
+const AppThemeProvider = ({ children }: AppThemeProviderProps) => (
   <ThemeProvider theme={theme}>{children}</ThemeProvider>
 );
+
+export default AppThemeProvider;
