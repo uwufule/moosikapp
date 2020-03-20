@@ -1,4 +1,13 @@
+# build
 dist/
 .next/
+
+# config
 webpack.config.js
+
+# type definitions
 **/*.d.ts
+
+# miscellaneous
+**/*.webp
+**/*.jpg
