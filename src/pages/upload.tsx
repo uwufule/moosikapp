@@ -1,11 +1,7 @@
-import Link from 'next/link';
+import UploadForm from '../components/UploadForm';
 
 const Upload = () => (
-  <div>
-    <Link href="/">
-      <a>Main</a>
-    </Link>
-  </div>
+  <UploadForm />
 );
 
 export default Upload;
