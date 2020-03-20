@@ -3,13 +3,7 @@ import { useState } from 'react';
 import Form, {
   TextField, Link, Button, TextFieldType,
 } from '../components/Form';
-
-const Center = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-`;
+import CenteringComponent from '../components/CenteringComponent';
 
 const Footer = styled.div`
   display: flex;
@@ -43,25 +37,17 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   return (
-    <Center>
+    <CenteringComponent>
       <Form
         title="Login"
         handler={() => {}}
       >
-        <TextField
-          id="3d3c8400-2066-43db-97f4-cec0de372a31"
-          type={TextFieldType.text}
-          required
-          caption="Username"
-          handler={setUsername}
-        />
-        <TextField
-          id="e83a7542-fa81-47c8-b94c-de354522852b"
-          type={TextFieldType.password}
-          required
-          caption="Password"
-          handler={setPassword}
-        />
+        <TextField type={TextFieldType.text} required handler={setUsername}>
+          Username
+        </TextField>
+        <TextField type={TextFieldType.password} required handler={setPassword}>
+          Password
+        </TextField>
         <Footer>
           <Link to="/forgot">Forgot your password?</Link>
           <div>
@@ -70,7 +56,7 @@ const Login = () => {
           </div>
         </Footer>
       </Form>
-    </Center>
+    </CenteringComponent>
   );
 };
 

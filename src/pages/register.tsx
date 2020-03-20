@@ -3,13 +3,7 @@ import { useState } from 'react';
 import Form, {
   TextField, Link, Button, TextFieldType,
 } from '../components/Form';
-
-const Center = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-`;
+import CenteringComponent from '../components/CenteringComponent';
 
 const Footer = styled.div`
   display: flex;
@@ -32,45 +26,29 @@ const Register = () => {
   const [retryPassword, SetRetryPassword] = useState('');
 
   return (
-    <Center>
+    <CenteringComponent>
       <Form
         title="Register"
         handler={() => {}}
       >
-        <TextField
-          id="98808f14-0697-40b5-9985-a4aa40a618e1"
-          type={TextFieldType.text}
-          required
-          caption="Username"
-          handler={setUsername}
-        />
-        <TextField
-          id="ad129357-dfaa-4028-9fa1-e65167c15691"
-          type={TextFieldType.email}
-          required
-          caption="Email"
-          handler={setEmail}
-        />
-        <TextField
-          id="69359da4-f745-4290-b6dd-0e51e803ffb8"
-          type={TextFieldType.password}
-          required
-          caption="Password"
-          handler={setPassword}
-        />
-        <TextField
-          id="71736e8e-a74a-4c00-85a6-513ee421d379"
-          type={TextFieldType.password}
-          required
-          caption="Re-type password"
-          handler={SetRetryPassword}
-        />
+        <TextField type={TextFieldType.text} required handler={setUsername}>
+          Username
+        </TextField>
+        <TextField type={TextFieldType.email} required handler={setEmail}>
+          Email
+        </TextField>
+        <TextField type={TextFieldType.password} required handler={setPassword}>
+          Password
+        </TextField>
+        <TextField type={TextFieldType.password} required handler={SetRetryPassword}>
+          Re-type password
+        </TextField>
         <Footer>
           <Link to="/login">Already have account?</Link>
           <RegisterButton caption="Register" />
         </Footer>
       </Form>
-    </Center>
+    </CenteringComponent>
   );
 };
 

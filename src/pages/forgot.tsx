@@ -3,14 +3,8 @@ import { useState } from 'react';
 import Form, {
   TextField, Button, TextFieldType,
 } from '../components/Form';
+import CenteringComponent from '../components/CenteringComponent';
 import { ThemeProps } from '../components/ThemeProvider';
-
-const Center = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-`;
 
 const Text = styled.div`
   margin-bottom: 10px;
@@ -36,7 +30,7 @@ const Forgot = () => {
   const [email, setEmail] = useState('');
 
   return (
-    <Center>
+    <CenteringComponent>
       <Form
         title="Forgot"
         handler={() => {}}
@@ -45,18 +39,14 @@ const Forgot = () => {
           <p>To request a new password please enter your account email in the box below.</p>
           <p>We will send you an email with further instructions</p>
         </Text>
-        <TextField
-          id="7d5ba82e-0e87-44ae-8541-bcb9a460d347"
-          type={TextFieldType.text}
-          required
-          caption="Email"
-          handler={setEmail}
-        />
+        <TextField type={TextFieldType.text} required handler={setEmail}>
+          Email
+        </TextField>
         <Footer>
           <Button caption="Request Password Change" />
         </Footer>
       </Form>
-    </Center>
+    </CenteringComponent>
   );
 };
 
