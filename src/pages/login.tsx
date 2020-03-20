@@ -30,6 +30,14 @@ const Footer = styled.div`
   }
 `;
 
+const LoginButton = styled(Button)`
+  margin-left: 8px;
+
+  @media (max-width: 450px) {
+    margin-left: 0;
+  }
+`;
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -58,7 +66,7 @@ const Login = () => {
           <Link to="/forgot">Forgot your password?</Link>
           <div>
             <Link to="/register">Need an account?</Link>
-            <Button style={{ marginLeft: '8px' }} caption="Login" />
+            <LoginButton caption="Login" />
           </div>
         </Footer>
       </Form>

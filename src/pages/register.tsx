@@ -17,6 +17,14 @@ const Footer = styled.div`
   justify-content: flex-end;
 `;
 
+const RegisterButton = styled(Button)`
+  margin-left: 8px;
+
+  @media (max-width: 450px) {
+    margin-left: 0;
+  }
+`;
+
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -59,7 +67,7 @@ const Register = () => {
         />
         <Footer>
           <Link to="/login">Already have account?</Link>
-          <Button style={{ marginLeft: '8px' }} caption="Register" />
+          <RegisterButton caption="Register" />
         </Footer>
       </Form>
     </Center>
