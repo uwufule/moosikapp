@@ -16,6 +16,14 @@ const GlobalStyle = createGlobalStyle`
   #__next {
     height: inherit;
   }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  input, textarea, button {
+    -webkit-appearance: none;
+  }
 `;
 
 export default GlobalStyle;
