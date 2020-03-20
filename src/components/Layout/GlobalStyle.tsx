@@ -15,6 +15,7 @@ const GlobalStyle = createGlobalStyle`
 
   #__next {
     height: inherit;
+    position: relative;
   }
 
   * {
