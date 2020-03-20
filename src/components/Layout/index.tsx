@@ -3,11 +3,15 @@ import styled from 'styled-components';
 import ThemeProvider from '../ThemeProvider';
 import BackgroundImage from '../BackgroundImage';
 import Header from '../Header';
+import Sidebar from '../Sidebar';
+import Modal from '../Modal';
+import Player from '../Player';
 import GlobalStyle from './GlobalStyle';
 
 const Main = styled.main`
   display: flex;
   min-height: 100%;
+  position: relative;
 `;
 
 const Content = styled.div`
@@ -26,15 +30,15 @@ interface LayoutProps {
 export default ({ children }: LayoutProps) => (
   <ThemeProvider>
     <GlobalStyle />
-    {/* <Sidebar /> */}
+    <Sidebar />
     <Main>
       <BackgroundImage />
       <Content>
         <Header />
         {children}
       </Content>
-      {/* <Player /> */}
+      <Player />
     </Main>
-    {/* <Modal /> */}
+    <Modal />
   </ThemeProvider>
 );
