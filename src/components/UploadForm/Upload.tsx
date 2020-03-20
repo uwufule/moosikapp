@@ -5,6 +5,8 @@ import { ThemeProps } from '../ThemeProvider';
 import FileDropArea from './FileDropArea';
 import UploadProgress from './UploadProgress';
 
+import hash from '../../utils/hash';
+
 const Wrapper = styled.div`
   margin-top: 24px;
   background: ${(props: ThemeProps) => props.theme.colors.light};
@@ -28,7 +30,7 @@ const Upload = () => {
       ) : (
         <UploadList>
           {files.map((file) => (
-            <UploadProgress key={`${file.lastModified}-${file.name}`} file={file} />
+            <UploadProgress key={hash(file.name)} file={file} />
           ))}
         </UploadList>
       )}
