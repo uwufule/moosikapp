@@ -43,7 +43,7 @@ interface TextFieldProps {
   handler: (value: string) => void;
 }
 
-export default ({
+const TextField = ({
   id, type, required = false, caption, handler,
 }: TextFieldProps) => (
   <Label htmlFor={id}>
@@ -56,3 +56,5 @@ export default ({
     />
   </Label>
 );
+
+export default TextField;

@@ -2,7 +2,7 @@ import { FormEvent } from 'react';
 import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
 
-const Form = styled.form`
+const FormComponent = styled.form`
   width: 100%;
   max-width: 600px;
 `;
@@ -27,8 +27,8 @@ interface FormProps {
   handler: (event: FormEvent<HTMLFormElement>) => void;
 }
 
-export default ({ title, children, handler }: FormProps) => (
-  <Form
+const Form = ({ title, children, handler }: FormProps) => (
+  <FormComponent
     onSubmit={(event) => {
       event.preventDefault();
       handler(event);
@@ -38,5 +38,7 @@ export default ({ title, children, handler }: FormProps) => (
     <FormBody>
       {children}
     </FormBody>
-  </Form>
+  </FormComponent>
 );
+
+export default Form;

@@ -17,15 +17,17 @@ const StyledLink = styled.a`
   }
 `;
 
-interface LinkProps {
+interface FormLinkProps {
   children: JSX.Element | JSX.Element[] | string;
   to: string;
 }
 
-export default ({ to, children }: LinkProps) => (
+const FormLink = ({ to, children }: FormLinkProps) => (
   <Link href={to}>
     <StyledLink>
       {children}
     </StyledLink>
   </Link>
 );
+
+export default FormLink;

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import NextLink from 'next/link';
 import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
 
@@ -22,10 +22,12 @@ const StyledLink = styled.a`
   }
 `;
 
-export default ({ to, children }: StyledLinkProps) => (
-  <Link href={to}>
+const Link = ({ to, children }: StyledLinkProps) => (
+  <NextLink href={to}>
     <StyledLink>
       {children}
     </StyledLink>
-  </Link>
+  </NextLink>
 );
+
+export default Link;

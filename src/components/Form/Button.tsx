@@ -1,4 +1,3 @@
-import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
 
@@ -21,11 +20,13 @@ const Button = styled.input.attrs({ type: 'submit' })`
   }
 `;
 
-interface ButtonProps {
+interface FormButtonProps {
   caption: string;
-  style?: CSSProperties;
+  className?: string;
 }
 
-export default ({ caption, style = {} }: ButtonProps) => (
-  <Button style={style} value={caption} />
+const FormButton = ({ caption, className }: FormButtonProps) => (
+  <Button className={className} value={caption} />
 );
+
+export default FormButton;

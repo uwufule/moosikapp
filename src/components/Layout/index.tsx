@@ -27,7 +27,7 @@ interface LayoutProps {
   children: JSX.Element;
 }
 
-export default ({ children }: LayoutProps) => (
+const Layout = ({ children }: LayoutProps) => (
   <ThemeProvider>
     <GlobalStyle />
     <Sidebar />
@@ -42,3 +42,5 @@ export default ({ children }: LayoutProps) => (
     <Modal />
   </ThemeProvider>
 );
+
+export default Layout;
