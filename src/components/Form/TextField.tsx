@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
 
+import hash from '../../utils/hash';
+
 const Label = styled.label`
   margin-bottom: 10px;
 
@@ -36,25 +38,28 @@ export enum TextFieldType {
 }
 
 interface TextFieldProps {
-  id: string;
+  children: string;
   type: TextFieldType;
   required?: boolean;
-  caption: string;
   handler: (value: string) => void;
 }
 
 const TextField = ({
-  id, type, required = false, caption, handler,
-}: TextFieldProps) => (
-  <Label htmlFor={id}>
-    <Input
-      id={id}
-      type={type}
-      required={required}
-      placeholder={caption}
-      onChange={(event) => handler(event.target.value)}
-    />
-  </Label>
-);
+  children, type, required = false, handler,
+}: TextFieldProps) => {
+  const id = hash(children);
+
+  return (
+    <Label htmlFor={id} aria-label={children}>
+      <Input
+        id={id}
+        type={type}
+        required={required}
+        placeholder={children}
+        onChange={(event) => handler(event.target.value)}
+      />
+    </Label>
+  );
+};
 
 export default TextField;

@@ -2,6 +2,8 @@ import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
 
+import hash from '../../utils/hash';
+
 const ButtonWrapper = styled.label`
   position: relative;
   padding: 8px 16px;
@@ -30,7 +32,7 @@ const Input = styled.input.attrs({ type: 'file' })`
 `;
 
 interface FileSelectButtonProps {
-  children: JSX.Element | JSX.Element[] | string;
+  children: string;
   accept: string;
   multiple: boolean;
   handler: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -38,16 +40,20 @@ interface FileSelectButtonProps {
 
 const FileSelectButton = ({
   children, accept, multiple, handler,
-}: FileSelectButtonProps) => (
-  <ButtonWrapper htmlFor="6d44fc9e-797a-4018-8747-840853a9841e">
-    <span>{children}</span>
-    <Input
-      id="6d44fc9e-797a-4018-8747-840853a9841e"
-      accept={accept}
-      multiple={multiple}
-      onChange={handler}
-    />
-  </ButtonWrapper>
-);
+}: FileSelectButtonProps) => {
+  const id = hash(children);
+
+  return (
+    <ButtonWrapper htmlFor={id}>
+      <span>{children}</span>
+      <Input
+        id={id}
+        accept={accept}
+        multiple={multiple}
+        onChange={handler}
+      />
+    </ButtonWrapper>
+  );
+};
 
 export default FileSelectButton;
