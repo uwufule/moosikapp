@@ -3,16 +3,9 @@ import { ThemeProps } from '../ThemeProvider';
 
 import hash from '../../utils/hash';
 
-const Label = styled.label`
-  margin-bottom: 10px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
 const Input = styled.input`
   width: 100%;
+  margin: 0;
   padding: 4px 5px;
   font-size: 16px;
   font-weight: 400;
@@ -39,26 +32,28 @@ export enum TextFieldType {
 
 interface TextFieldProps {
   children: string;
+  className?: string;
   type: TextFieldType;
   required?: boolean;
   handler: (value: string) => void;
 }
 
 const TextField = ({
-  children, type, required = false, handler,
+  children, className, type, required = false, handler,
 }: TextFieldProps) => {
   const id = hash(children);
 
   return (
-    <Label htmlFor={id} aria-label={children}>
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+    <label htmlFor={id} className={className} aria-label={children}>
       <Input
         id={id}
+        placeholder={children}
         type={type}
         required={required}
-        placeholder={children}
         onChange={(event) => handler(event.target.value)}
       />
-    </Label>
+    </label>
   );
 };
 
