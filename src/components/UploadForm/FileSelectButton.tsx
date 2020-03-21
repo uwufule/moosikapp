@@ -1,7 +1,6 @@
 import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
-
 import hash from '../../utils/hash';
 
 const ButtonWrapper = styled.label`

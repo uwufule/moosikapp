@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { ThemeProps } from './ThemeProvider';
-
 import hash from '../utils/hash';
 
 const Wrapper = styled.div`

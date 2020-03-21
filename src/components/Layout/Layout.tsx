@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 import ThemeProvider from '../ThemeProvider';
 import BackgroundImage from '../BackgroundImage';
 import Header from '../Header';
@@ -24,13 +23,13 @@ const Content = styled.div`
 `;
 
 interface LayoutProps {
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 }
 
 const Layout = ({ children }: LayoutProps) => (
   <ThemeProvider>
     <GlobalStyle />
-    <Sidebar />
+    {false && <Sidebar />}
     <Main>
       <BackgroundImage />
       <Content>
@@ -39,7 +38,7 @@ const Layout = ({ children }: LayoutProps) => (
       </Content>
       <Player />
     </Main>
-    <Modal />
+    {false && <Modal />}
   </ThemeProvider>
 );
 

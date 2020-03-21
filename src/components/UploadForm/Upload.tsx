@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
-
 import FileDropArea from './FileDropArea';
 import UploadProgress from './UploadProgress';
 
