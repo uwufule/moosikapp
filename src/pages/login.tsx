@@ -5,6 +5,14 @@ import Form, {
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 
+const StyledTextField = styled(TextField)`
+  margin-bottom: 10px;
+
+&:last-child {
+  margin-bottom: 0;
+}
+`;
+
 const Footer = styled.div`
   display: flex;
   align-items: center;
@@ -24,7 +32,7 @@ const Footer = styled.div`
   }
 `;
 
-const LoginButton = styled(Button)`
+const StyledButton = styled(Button)`
   margin-left: 8px;
 
   @media (max-width: 450px) {
@@ -42,17 +50,17 @@ const Login = () => {
         title="Login"
         handler={() => {}}
       >
-        <TextField type={TextFieldType.text} required handler={setUsername}>
+        <StyledTextField type={TextFieldType.text} required handler={setUsername}>
           Username
-        </TextField>
-        <TextField type={TextFieldType.password} required handler={setPassword}>
+        </StyledTextField>
+        <StyledTextField type={TextFieldType.password} required handler={setPassword}>
           Password
-        </TextField>
+        </StyledTextField>
         <Footer>
           <Link to="/forgot">Forgot your password?</Link>
           <div>
             <Link to="/register">Need an account?</Link>
-            <LoginButton caption="Login" />
+            <StyledButton>Login</StyledButton>
           </div>
         </Footer>
       </Form>

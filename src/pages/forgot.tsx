@@ -1,10 +1,16 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import Form, {
-  TextField, Button, TextFieldType,
-} from '../components/Form';
+import Form, { TextField, Button, TextFieldType } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 import { ThemeProps } from '../components/ThemeProvider';
+
+const StyledTextField = styled(TextField)`
+  margin-bottom: 10px;
+
+&:last-child {
+  margin-bottom: 0;
+}
+`;
 
 const Text = styled.div`
   margin-bottom: 10px;
@@ -39,11 +45,11 @@ const Forgot = () => {
           <p>To request a new password please enter your account email in the box below.</p>
           <p>We will send you an email with further instructions</p>
         </Text>
-        <TextField type={TextFieldType.text} required handler={setEmail}>
+        <StyledTextField type={TextFieldType.text} required handler={setEmail}>
           Email
-        </TextField>
+        </StyledTextField>
         <Footer>
-          <Button caption="Request Password Change" />
+          <Button>Request Password Change</Button>
         </Footer>
       </Form>
     </CenteringComponent>

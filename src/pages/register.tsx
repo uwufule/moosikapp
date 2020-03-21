@@ -5,13 +5,21 @@ import Form, {
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 
+const StyledTextField = styled(TextField)`
+  margin-bottom: 10px;
+
+&:last-child {
+  margin-bottom: 0;
+}
+`;
+
 const Footer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 `;
 
-const RegisterButton = styled(Button)`
+const StyledButton = styled(Button)`
   margin-left: 8px;
 
   @media (max-width: 450px) {
@@ -31,21 +39,21 @@ const Register = () => {
         title="Register"
         handler={() => {}}
       >
-        <TextField type={TextFieldType.text} required handler={setUsername}>
+        <StyledTextField type={TextFieldType.text} required handler={setUsername}>
           Username
-        </TextField>
-        <TextField type={TextFieldType.email} required handler={setEmail}>
+        </StyledTextField>
+        <StyledTextField type={TextFieldType.email} required handler={setEmail}>
           Email
-        </TextField>
-        <TextField type={TextFieldType.password} required handler={setPassword}>
+        </StyledTextField>
+        <StyledTextField type={TextFieldType.password} required handler={setPassword}>
           Password
-        </TextField>
-        <TextField type={TextFieldType.password} required handler={SetRetryPassword}>
+        </StyledTextField>
+        <StyledTextField type={TextFieldType.password} required handler={SetRetryPassword}>
           Re-type password
-        </TextField>
+        </StyledTextField>
         <Footer>
           <Link to="/login">Already have account?</Link>
-          <RegisterButton caption="Register" />
+          <StyledButton>Register</StyledButton>
         </Footer>
       </Form>
     </CenteringComponent>
