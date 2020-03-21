@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Logo from './Logo';
-import Link from './Link';
 import Nav from './Nav';
+import { Link } from '../BaseNav';
 
 const HeaderComponent = styled.header`
   display: flex;
@@ -22,7 +22,11 @@ const Header = () => (
       <Nav />
     </Group>
     <Group>
-      <Link to="/login">Login</Link>
+      {false ? (
+        <Link to="?logout">Logout</Link>
+      ) : (
+        <Link to="/login">Login</Link>
+      )}
     </Group>
   </HeaderComponent>
 );
