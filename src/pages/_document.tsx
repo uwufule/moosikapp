@@ -40,7 +40,7 @@ export default class AppDocument extends Document {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="application-name" content="Moosik" />
           <meta name="keywords" content="moosikapp, moosik, music, anime" />
-          <meta name="description" content="" />
+          <meta name="description" content="Cool music app." />
           <link href="/favicon.ico" rel="icon" />
           <link rel="apple-touch-icon" sizes="256x256" href="/apple-touch-icon.png" />
           <link rel="manifest" href="/manifest.json" />
