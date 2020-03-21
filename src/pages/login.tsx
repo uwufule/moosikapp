@@ -51,7 +51,7 @@ const Login = () => {
         handler={() => {}}
       >
         <StyledTextField type={TextFieldType.text} required handler={setUsername}>
-          Username
+          Username / Email
         </StyledTextField>
         <StyledTextField type={TextFieldType.password} required handler={setPassword}>
           Password
