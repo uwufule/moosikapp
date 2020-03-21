@@ -4,8 +4,8 @@ import jpg from './images/bg.jpg';
 import webp from './images/bg.webp';
 
 const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   position: fixed;
   overflow: hidden;
   user-select: none;
@@ -13,12 +13,12 @@ const Wrapper = styled.div`
 `;
 
 const Image = styled.img`
-  min-width: calc(100% + 20px);
-  min-height: calc(100% + 20px);
+  min-width: calc(100% + 60px);
+  min-height: calc(100% + 60px);
   position: absolute;
-  left: -10px;
-  top: -10px;
-  filter: blur(5px) brightness(.75);
+  left: -30px;
+  top: -30px;
+  filter: blur(15px) brightness(.55);
   pointer-events: none;
 `;
 
