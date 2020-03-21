@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 import TextField, { TextFieldType } from '../Form/TextField';
 import Button from '../Form/Button';
@@ -18,7 +18,7 @@ const Form = styled.form`
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  box-shadow: ${(props: ThemeProps) => props.theme.shadow};
+  box-shadow: ${(props: Theme) => props.theme.shadow};
 `;
 
 interface SearchFormProps {

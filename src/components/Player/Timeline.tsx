@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import moment from 'moment';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
   display: flex;
@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 const Time = styled.span`
   font-size: 14px;
   line-height: 16px;
-  color: ${(props: ThemeProps) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.dark};
 `;
 
 const PropgressWrapper = styled.div`
@@ -28,10 +28,10 @@ const PropgressWrapper = styled.div`
 const ProgressBar = styled.div`
   width: 100%;
   height: 2px;
-  background: ${(props: ThemeProps) => props.theme.colors.gray};
+  background: ${(props: Theme) => props.theme.colors.gray};
 `;
 
-type ProgressActiveProps = ThemeProps<{ percent: number }>;
+type ProgressActiveProps = Theme<{ percent: number }>;
 
 const ProgressActive = styled.div<ProgressActiveProps>`
   width: ${(props: ProgressActiveProps) => (

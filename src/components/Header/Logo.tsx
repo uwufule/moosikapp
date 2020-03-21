@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const Svg = styled.svg`
   width: 48px;
   height: 48px;
-  fill: ${(props: ThemeProps) => props.theme.colors.light};
-  transition: fill ${(props: ThemeProps) => props.theme.transition};
+  fill: ${(props: Theme) => props.theme.colors.light};
+  transition: fill ${(props: Theme) => props.theme.transition};
 
   &:hover {
-    fill: ${(props: ThemeProps) => props.theme.colors.red};
+    fill: ${(props: Theme) => props.theme.colors.red};
   }
 `;
 

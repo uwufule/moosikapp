@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { ThemeProps } from './ThemeProvider';
 import hash from '../utils/hash';
+import { Theme } from './ThemeProvider';
 
 const Wrapper = styled.div`
   margin-top: 24px;
@@ -11,8 +11,8 @@ const Title = styled.h1`
   font-size: 32px;
   font-weight: 600;
   line-height: 1.5;
-  color: ${(props: ThemeProps) => props.theme.colors.light};
-  text-shadow: ${(props: ThemeProps) => props.theme.shadow};
+  color: ${(props: Theme) => props.theme.colors.light};
+  text-shadow: ${(props: Theme) => props.theme.shadow};
 `;
 
 const Message = styled.div`
@@ -20,8 +20,8 @@ const Message = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  color: ${(props: ThemeProps) => props.theme.colors.light};
-  text-shadow: ${(props: ThemeProps) => props.theme.shadow};
+  color: ${(props: Theme) => props.theme.colors.light};
+  text-shadow: ${(props: Theme) => props.theme.shadow};
 
   & > p {
     margin: 0;

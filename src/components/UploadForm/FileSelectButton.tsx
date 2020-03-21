@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
 import hash from '../../utils/hash';
+import { Theme } from '../ThemeProvider';
 
 const ButtonWrapper = styled.label`
   position: relative;
@@ -10,17 +10,17 @@ const ButtonWrapper = styled.label`
   font-weight: 400;
   
   text-align: center;
-  color: ${(props: ThemeProps) => props.theme.colors.light};
-  background: ${(props: ThemeProps) => props.theme.colors.red};
+  color: ${(props: Theme) => props.theme.colors.light};
+  background: ${(props: Theme) => props.theme.colors.red};
   cursor: pointer;
-  transition: background-color ${(props: ThemeProps) => props.theme.transition};
+  transition: background-color ${(props: Theme) => props.theme.transition};
 
   & > span {
     line-height: 32px;
   }
 
   &:hover {
-    background: ${(props: ThemeProps) => props.theme.colors.darkRed};
+    background: ${(props: Theme) => props.theme.colors.darkRed};
   }
 `;
 

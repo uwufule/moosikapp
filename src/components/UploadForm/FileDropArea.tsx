@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
 import FileSelectButton from './FileSelectButton';
+import { Theme } from '../ThemeProvider';
 
-type DropAreaProps = ThemeProps<{ isDrop: boolean }>;
+type DropAreaProps = Theme<{ isDrop: boolean }>;
 
 const DropArea = styled.div<DropAreaProps>`
   display: flex;
@@ -24,13 +24,13 @@ const Title = styled.h1`
   font-weight: 400;
   line-height: 1.5;
   text-align: center;
-  color: ${(props: ThemeProps) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.dark};
 `;
 
 const Note = styled.div`
   margin-top: 16px;
   text-align: center;
-  color: ${(props: ThemeProps) => props.theme.colors.darkGray};
+  color: ${(props: Theme) => props.theme.colors.darkGray};
 
   & > p {
     margin: 0;

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Form, { TextField, Button, TextFieldType } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
-import { ThemeProps } from '../components/ThemeProvider';
+import { Theme } from '../components/ThemeProvider';
 
 const StyledTextField = styled(TextField)`
   margin-bottom: 10px;
@@ -18,8 +18,8 @@ const Text = styled.div`
   font-weight: 400;
   line-height: 1.5;
   text-align: center;
-  color: ${(props: ThemeProps) => props.theme.colors.lightGray};
-  text-shadow: ${(props: ThemeProps) => props.theme.shadow};
+  color: ${(props: Theme) => props.theme.colors.lightGray};
+  text-shadow: ${(props: Theme) => props.theme.shadow};
   
   &>p {
     margin: 0;

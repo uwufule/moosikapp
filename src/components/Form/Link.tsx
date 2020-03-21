@@ -1,19 +1,19 @@
 import Link from 'next/link';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const StyledLink = styled.a`
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
-  color: ${(props: ThemeProps) => props.theme.colors.light};
+  color: ${(props: Theme) => props.theme.colors.light};
   text-decoration: none;
   cursor: pointer;
-  text-shadow: ${(props: ThemeProps) => props.theme.shadow};
-  transition: color ${(props: ThemeProps) => props.theme.transition};
+  text-shadow: ${(props: Theme) => props.theme.shadow};
+  transition: color ${(props: Theme) => props.theme.transition};
 
   &:hover {
-    color: ${(props: ThemeProps) => props.theme.colors.red};
+    color: ${(props: Theme) => props.theme.colors.red};
   }
 `;
 

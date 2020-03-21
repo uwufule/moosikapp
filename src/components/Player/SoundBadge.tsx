@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const Container = styled.div`
   display: flex;
@@ -7,7 +7,7 @@ const Container = styled.div`
   margin-left: 10px;
 `;
 
-type SongCoverProps = ThemeProps<{ coverUrl?: string }>;
+type SongCoverProps = Theme<{ coverUrl?: string }>;
 
 const SongCover = styled.div<SongCoverProps>`
   width: 32px;
@@ -37,13 +37,13 @@ const Truncate = styled.span`
 const SongTitle = styled(Truncate)`
   font-size: 14px;
   line-height: 17px;
-  color: ${(props: ThemeProps) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.dark};
 `;
 
 const SongAuthor = styled(Truncate)`
   font-size: 12px;
   line-height: 15px;
-  color: ${(props: ThemeProps) => props.theme.colors.darkGray};
+  color: ${(props: Theme) => props.theme.colors.darkGray};
 `;
 
 interface SoundBadgeProps {

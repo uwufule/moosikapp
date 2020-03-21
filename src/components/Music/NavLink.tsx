@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { Link } from '../BaseNav';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
-type StyledLinkProps = ThemeProps<{ active: boolean }>;
+type StyledLinkProps = Theme<{ active: boolean }>;
 
 const StyledLink = styled(Link)<StyledLinkProps>`
   margin-left: 6px;

@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const FormComponent = styled.form`
   width: 100%;
@@ -12,8 +12,8 @@ const Title = styled.h1`
   font-size: 32px;
   font-weight: 600;
   line-height: 1.5;
-  color: ${(props: ThemeProps) => props.theme.colors.light};
-  text-shadow: ${(props: ThemeProps) => props.theme.shadow};
+  color: ${(props: Theme) => props.theme.colors.light};
+  text-shadow: ${(props: Theme) => props.theme.shadow};
 `;
 
 const FormBody = styled.div`

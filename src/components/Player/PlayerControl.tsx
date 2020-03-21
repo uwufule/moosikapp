@@ -1,8 +1,8 @@
 import { MouseEvent } from 'react';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
-type ButtonProps = ThemeProps<{ active: boolean }>;
+type ButtonProps = Theme<{ active: boolean }>;
 
 const Button = styled.button.attrs({ type: 'button' })<ButtonProps>`
   width: 24px;

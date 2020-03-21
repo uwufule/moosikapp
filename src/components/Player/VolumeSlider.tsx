@@ -4,7 +4,7 @@ import { Transition } from 'react-transition-group';
 import {
   TransitionStatus, ENTERING, ENTERED, EXITING, EXITED,
 } from 'react-transition-group/Transition';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
   width: 24px;
@@ -13,12 +13,12 @@ const Wrapper = styled.div`
   bottom: 36px;
   right: 0;
   padding: 8px;
-  background: ${(props: ThemeProps) => props.theme.colors.light};
-  box-shadow: 0 0 2px ${(props: ThemeProps) => props.theme.colors.dark};
+  background: ${(props: Theme) => props.theme.colors.light};
+  box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.dark};
   z-index: 1;
 `;
 
-type AnimationProps = ThemeProps<{ state: TransitionStatus }>;
+type AnimationProps = Theme<{ state: TransitionStatus }>;
 
 const translateYFunc = (state: TransitionStatus): number => {
   switch (state) {
@@ -71,18 +71,18 @@ const VolumeBar = styled.div`
   height: 100%;
   position: absolute;
   bottom: 0;
-  background: ${(props: ThemeProps) => props.theme.colors.gray};
+  background: ${(props: Theme) => props.theme.colors.gray};
 `;
 
-type VolumeBarProps = ThemeProps<{ percent: number }>;
+type VolumeBarProps = Theme<{ percent: number }>;
 
 const VolumeActiveBar = styled.div<VolumeBarProps>`
   width: 2px;
   height: ${(props: VolumeBarProps) => props.percent}%;
   position: absolute;
   bottom: 0;
-  background: ${(props: ThemeProps) => props.theme.colors.red};
-  transition: height ${(props: ThemeProps) => props.theme.transition};
+  background: ${(props: Theme) => props.theme.colors.red};
+  transition: height ${(props: Theme) => props.theme.transition};
 `;
 
 const VolumeSliderHandle = styled.div<VolumeBarProps>`
@@ -91,7 +91,7 @@ const VolumeSliderHandle = styled.div<VolumeBarProps>`
   position: absolute;
   bottom: ${(props: VolumeBarProps) => 92 * (props.percent / 100)}%;
   border-radius: 100%;
-  background: ${(props: ThemeProps) => props.theme.colors.red};
+  background: ${(props: Theme) => props.theme.colors.red};
 `;
 
 interface VolumeSliderProps {

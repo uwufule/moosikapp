@@ -1,16 +1,16 @@
 import { createGlobalStyle } from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const GlobalStyle = createGlobalStyle`
   html {
     height: 100%;
-    font-family: ${(props: ThemeProps) => props.theme.font};
+    font-family: ${(props: Theme) => props.theme.font};
   }
 
   body {
     height: inherit;
     margin: 0;
-    background: ${(props: ThemeProps) => props.theme.colors.dark};
+    background: ${(props: Theme) => props.theme.colors.dark};
   }
 
   #__next {

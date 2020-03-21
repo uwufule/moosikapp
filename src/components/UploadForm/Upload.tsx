@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { ThemeProps } from '../ThemeProvider';
 import FileDropArea from './FileDropArea';
 import UploadProgress from './UploadProgress';
+import { Theme } from '../ThemeProvider';
 
 import hash from '../../utils/hash';
 
 const Wrapper = styled.div`
   margin-top: 24px;
-  background: ${(props: ThemeProps) => props.theme.colors.light};
-  box-shadow: ${(props: ThemeProps) => props.theme.shadow};
+  background: ${(props: Theme) => props.theme.colors.light};
+  box-shadow: ${(props: Theme) => props.theme.shadow};
 `;
 
 const UploadList = styled.div``;

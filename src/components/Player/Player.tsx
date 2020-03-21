@@ -4,14 +4,14 @@ import Control from './PlayerControl';
 import Timeline from './Timeline';
 import VolumeSlider from './VolumeSlider';
 import SoundBadge from './SoundBadge';
-import { ThemeProps } from '../ThemeProvider';
+import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
   width: 100%;
   position: absolute;
   bottom: 0;
-  background: ${(props: ThemeProps) => props.theme.colors.light};
-  box-shadow: 0 0 2px ${(props: ThemeProps) => props.theme.colors.dark};
+  background: ${(props: Theme) => props.theme.colors.light};
+  box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.dark};
   z-index: 1;
 `;
 
