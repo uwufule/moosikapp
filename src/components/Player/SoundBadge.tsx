@@ -5,6 +5,12 @@ const Container = styled.div`
   display: flex;
   width: 256px;
   margin-left: 10px;
+
+  @media (max-width: 960px) {
+    & {
+      display: none;
+    }
+  }
 `;
 
 type SongCoverProps = Theme<{ coverUrl?: string }>;
