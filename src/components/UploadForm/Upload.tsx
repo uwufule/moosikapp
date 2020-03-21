@@ -2,9 +2,8 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import FileDropArea from './FileDropArea';
 import UploadProgress from './UploadProgress';
-import { Theme } from '../ThemeProvider';
-
 import hash from '../../utils/hash';
+import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
   margin-top: 24px;
