@@ -18,7 +18,7 @@ const StyledLink = styled.a`
 `;
 
 interface FormLinkProps {
-  children: JSX.Element | JSX.Element[] | string;
+  children: string;
   to: string;
 }
 
