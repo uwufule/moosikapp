@@ -49,7 +49,7 @@ const Register = () => {
           Password
         </StyledTextField>
         <StyledTextField type={TextFieldType.password} required handler={SetRetryPassword}>
-          Re-type password
+          Password again
         </StyledTextField>
         <Footer>
           <Link to="/login">Already have account?</Link>
