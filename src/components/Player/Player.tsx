@@ -28,7 +28,7 @@ const PlayerContainer = styled.section`
     & {
       flex-direction: column;
       align-items: unset;
-      padding: 4px 0;
+      padding-top: 4px;
     }
   }
 `;
