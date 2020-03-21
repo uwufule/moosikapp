@@ -24,6 +24,7 @@ const Title = styled.h1`
   font-size: 24px;
   font-weight: 400;
   line-height: 1.5;
+  text-align: center;
   color: ${(props: ThemeProps) => props.theme.colors.dark};
 `;
 
