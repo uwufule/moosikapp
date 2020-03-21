@@ -7,6 +7,12 @@ const Wrapper = styled.div`
   align-items: center;
   margin: 0 10px;
   flex: 1;
+
+  @media (max-width: 480px) {
+    & {
+      padding: 12px 0;
+    }
+  }
 `;
 
 const Time = styled.span`
