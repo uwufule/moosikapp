@@ -1,20 +1,10 @@
-import Link from 'next/link';
+import { Nav, SongList } from '../../components/Music';
 
 const MusicIndex = () => (
-  <div>
-    <div>
-      <Link href="/music">
-        <a>All</a>
-      </Link>
-      <Link href="/music/likes">
-        <a>Likes</a>
-      </Link>
-      <Link href="/music/search">
-        <a>Search</a>
-      </Link>
-    </div>
-    <div>All</div>
-  </div>
+  <section>
+    <Nav />
+    <SongList songs={[]} />
+  </section>
 );
 
 export default MusicIndex;
