@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { ThemeProps } from '../ThemeProvider';
 
 const Button = styled.input.attrs({ type: 'submit' })`
+  margin: 0;
   padding: 5px 10px;
   font-size: 16px;
   font-weight: 400;
@@ -21,12 +22,12 @@ const Button = styled.input.attrs({ type: 'submit' })`
 `;
 
 interface FormButtonProps {
-  caption: string;
+  children: string;
   className?: string;
 }
 
-const FormButton = ({ caption, className }: FormButtonProps) => (
-  <Button className={className} value={caption} />
+const FormButton = ({ children, className }: FormButtonProps) => (
+  <Button className={className} value={children} />
 );
 
 export default FormButton;
