@@ -1,23 +1,23 @@
 import styled from 'styled-components';
-import Link from './Link';
+import BaseNav, { Link } from '../BaseNav';
 
-const NavComponent = styled.nav`
+const StyledNav = styled(BaseNav)`
+  margin-left: 12px;
+`;
+
+const StyledLink = styled(Link)`
   margin-left: 12px;
 
-  & > a {
-    margin-left: 12px;
-  }
-
-  & > a:first-child {
+  &:first-child {
     margin-left: 0;
   }
 `;
 
 const Nav = () => (
-  <NavComponent>
-    <Link to="/music">Music</Link>
-    <Link to="/upload">Upload</Link>
-  </NavComponent>
+  <StyledNav>
+    <StyledLink to="/music">Music</StyledLink>
+    <StyledLink to="/upload">Upload</StyledLink>
+  </StyledNav>
 );
 
 export default Nav;
