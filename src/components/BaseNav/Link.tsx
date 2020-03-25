@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react';
 import NextLink from 'next/link';
 import styled from 'styled-components';
 import { Theme } from '../ThemeProvider';
@@ -21,11 +22,21 @@ interface NavLinkProps {
   children: string;
   to: string;
   className?: string;
+  handler?: (event: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>) => void;
 }
 
-const NavLink = ({ to, children, className }: NavLinkProps) => (
+const NavLink = ({
+  to, children, className, handler,
+}: NavLinkProps) => (
   <NextLink href={to}>
-    <StyledLink className={className}>
+    <StyledLink
+      className={className}
+      onClick={(event) => {
+        if (typeof handler === 'function') {
+          handler(event);
+        }
+      }}
+    >
       {children}
     </StyledLink>
   </NextLink>
