@@ -16,15 +16,29 @@ const UploadList = styled.div``;
 const Upload = () => {
   const [files, setFiles] = useState<File[]>(null);
 
+  const prepareFiles = (fileList: FileList) => {
+    const fileArray = Array.from(fileList);
+
+    const invalidFiles = fileArray.reduce<File[]>((list, current) => {
+      if (current.type !== 'audio/mp3') {
+        list.push(current);
+      }
+
+      return list;
+    }, []);
+
+    if (invalidFiles.length > 0) {
+      // error message
+      return;
+    }
+
+    setFiles(fileArray);
+  };
+
   return (
     <Wrapper>
       {!files ? (
-        <FileDropArea
-          handler={(fileList) => {
-            // validation
-            setFiles(Array.from(fileList));
-          }}
-        />
+        <FileDropArea handler={prepareFiles} />
       ) : (
         <UploadList>
           {files.map((file) => (
