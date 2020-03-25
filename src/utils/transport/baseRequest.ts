@@ -9,9 +9,14 @@ export interface BaseRequestConfig {
   method?: Method;
   headers?: Headers;
   data?: any;
+  onUploadProgress?: (progress: number) => void;
 }
 
-const baseRequest = (url: string, { method, headers, data }: BaseRequestConfig) => axios(
+const baseRequest = (
+  url: string, {
+    method, headers, data, onUploadProgress,
+  }: BaseRequestConfig,
+) => axios(
   `${API_URL}${url}`,
   {
     method,
@@ -20,6 +25,11 @@ const baseRequest = (url: string, { method, headers, data }: BaseRequestConfig) 
       ...headers,
     },
     data,
+    onUploadProgress: (progress) => {
+      if (onUploadProgress && progress) {
+        onUploadProgress(progress.loaded / progress.total);
+      }
+    },
   },
 );
 
