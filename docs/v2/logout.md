@@ -1,7 +1,7 @@
 ## Отзыв refresh токенов (выход из системы)
 ```
 Route: /logout
-Method: GET
+Method: POST
 Headers: {
   Authorization: Bearer access-token
 }
