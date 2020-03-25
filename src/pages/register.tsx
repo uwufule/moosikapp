@@ -58,10 +58,15 @@ const Register = () => {
             return;
           }
 
-          const res = await registerNewAccount(username, email, password);
-          if (res) {
+          try {
+            await registerNewAccount(username, email, password);
+
             // message 'successfully registered new account. redirect to login page'
-            // regirect /login
+
+            router.push('/login');
+          } catch (e) {
+            // error message
+            console.log('error:', e.response.data);
           }
         }}
       >

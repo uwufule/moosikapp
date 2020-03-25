@@ -65,11 +65,15 @@ const Login = () => {
       <Form
         title="Login"
         handler={async () => {
-          const res = await login(username, password);
+          try {
+            const res = await login(username, password);
 
-          localStorage.setItem('refreshToken', res.refreshToken);
-          dispatch(setTokenChain(res.accessToken, res.refreshToken));
-          router.push('/');
+            localStorage.setItem('refreshToken', res.refreshToken);
+            dispatch(setTokenChain(res.accessToken, res.refreshToken));
+            router.push('/');
+          } catch (e) {
+            // error message (e.response.data)
+          }
         }}
       >
         <StyledTextInput type={TextInputType.text} required handler={setUsername}>

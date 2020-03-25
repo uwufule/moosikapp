@@ -27,10 +27,14 @@ const Header = () => {
   const logoutHandler = async (event: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>) => {
     event.preventDefault();
 
-    await logout(accessToken);
+    try {
+      await logout(accessToken);
 
-    dispatch(clearTokenChain());
-    localStorage.removeItem('refreshToken');
+      dispatch(clearTokenChain());
+      localStorage.removeItem('refreshToken');
+    } catch (e) {
+      // error message (e.response.data)
+    }
   };
 
   return (
