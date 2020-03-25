@@ -1,9 +1,21 @@
-interface IHashFunc {
-  (h: number, c: any, i: number, s: string): number;
+class Hash {
+  private int: number;
+
+  public update(data: string): Hash {
+    this.int = [].reduce.call(
+      data,
+      (hash: number, current: string) => (hash << 5) - hash + current.charCodeAt(0),
+      0,
+    );
+
+    return this;
+  }
+
+  public digest(radix: number): string {
+    return this.int.toString(radix);
+  }
 }
 
-const func: IHashFunc = (h, c, i, s) => (h << 5) - h + s.charCodeAt(i);
+const createHash = (): Hash => new Hash();
 
-const hash = (str: string): string => [].reduce.call(str, func, 0).toString(36);
-
-export default hash;
+export default createHash;
