@@ -17,10 +17,6 @@ enum Colors {
   darkGray = '#616161',
   light = '#f5f5f5',
   dark = '#212121',
-  success = '#4caf50',
-  info = '#0097a7',
-  warning = '#ffeb3b',
-  danger = '#f44336',
 }
 
 export default Colors;
