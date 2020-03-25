@@ -1,13 +1,11 @@
 import { FC } from 'react';
-import { AppContext } from 'next/app';
-import Head from 'next/head';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
+import { AppContext } from 'next/app';
+import Head from 'next/head';
 import withRedux from 'next-redux-wrapper';
-
-import Layout from '../components/Layout';
-
 import createStore from '../redux/store';
+import Layout from '../components/Layout';
 
 interface AppProps {
   Component: FC<{ statusCode?: number }>;
