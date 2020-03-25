@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import hash from '../../utils/hash';
+import createHash from '../../utils/hash';
 import { Theme } from '../ThemeProvider';
 
 const ButtonWrapper = styled.label`
@@ -40,7 +40,7 @@ interface FileSelectButtonProps {
 const FileSelectButton = ({
   children, accept, multiple, handler,
 }: FileSelectButtonProps) => {
-  const id = hash(children);
+  const id = createHash().update(children).digest(36);
 
   return (
     <ButtonWrapper htmlFor={id}>

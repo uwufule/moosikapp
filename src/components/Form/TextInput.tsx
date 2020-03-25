@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import createHash from '../../utils/hash';
 import { Theme } from '../ThemeProvider';
 
 const Input = styled.input`
@@ -39,6 +40,7 @@ interface TextInputProps {
 const TextInput = ({
   children, className, type, required = false, handler,
 }: TextInputProps) => {
+  const id = createHash().update(children).digest(36);
 
   return (
     // eslint-disable-next-line jsx-a11y/label-has-associated-control
