@@ -2,10 +2,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Theme } from '../ThemeProvider';
 
-import TextField, { TextFieldType } from '../Form/TextField';
+import { TextInput, TextInputType } from '../Form';
 import Button from '../Form/Button';
 
-const StyledTextField = styled(TextField)`
+const StyledTextInput = styled(TextInput)`
   flex: 1;
 `;
 
@@ -36,7 +36,7 @@ const SearchForm = ({ handler }: SearchFormProps) => {
           handler(query);
         }}
       >
-        <StyledTextField type={TextFieldType.text} handler={setQuery}>Search</StyledTextField>
+        <StyledTextInput type={TextInputType.text} handler={setQuery}>Search</StyledTextInput>
         <Button>Search</Button>
       </Form>
     </Wrapper>
