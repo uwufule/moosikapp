@@ -167,7 +167,7 @@ const Song = ({
           />
         </DefaultCover>
       )}
-      <PlayPauseButton>
+      <PlayPauseButton title="Play / Pause">
         <svg viewBox="0 0 24 24">
           <path
             d={(true)
@@ -183,7 +183,7 @@ const Song = ({
     </TitleAndAuthor>
     <Actions>
       {edit && (
-        <ActionButton>
+        <ActionButton title="Edit song">
           <ActionButtonIcon>
             <path
               d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9
@@ -192,7 +192,7 @@ const Song = ({
           </ActionButtonIcon>
         </ActionButton>
       )}
-      <ActionButton active={favorite}>
+      <ActionButton active={favorite} title={favorite ? 'Remove from favorite' : 'Add to favorite'}>
         <ActionButtonIcon>
           <path
             d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3
