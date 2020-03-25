@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import FileDropArea from './FileDropArea';
 import UploadProgress from './UploadProgress';
-import hash from '../../utils/hash';
+import createHash from '../../utils/hash';
 import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
@@ -28,7 +28,7 @@ const Upload = () => {
       ) : (
         <UploadList>
           {files.map((file) => (
-            <UploadProgress key={hash(file.name)} file={file} />
+            <UploadProgress key={createHash().update(file.name).digest(36)} file={file} />
           ))}
         </UploadList>
       )}
