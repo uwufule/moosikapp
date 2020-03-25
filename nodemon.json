@@ -1,5 +1,5 @@
 {
-  "watch": ["src/server"],
+  "watch": ["src/index.ts", "src/server"],
   "ext": "ts",
   "exec": "ts-node -P tsconfig.server.json -r dotenv/config src/index.ts"
 }
