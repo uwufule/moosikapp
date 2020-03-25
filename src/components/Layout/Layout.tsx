@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ThemeProvider from '../ThemeProvider';
 import BackgroundImage from '../BackgroundImage';
@@ -8,6 +8,7 @@ import Sidebar from '../Sidebar';
 import Modal from '../Modal';
 import Player from '../Player';
 import GlobalStyle from './GlobalStyle';
+import { RootState } from '../../redux/store';
 
 import refreshAccessToken from '../../utils/transport/refreshAccessToken';
 import { setTokenChain } from '../../redux/actions/login';
@@ -18,13 +19,23 @@ const Main = styled.main`
   position: relative;
 `;
 
-const Content = styled.div`
+interface ContentProps {
+  mustAddMarginBotton: boolean;
+}
+
+const Content = styled.div<ContentProps>`
   display: flex;
   flex-direction: column;
   width: 90%;
   max-width: 1200px;
   position: relative;
-  margin: 0 auto;
+  margin: 0 auto ${(props: ContentProps) => (props.mustAddMarginBotton ? 36 : 0)}px auto;
+
+  @media (max-width: 480px) {
+    & {
+      margin-bottom: ${(props: ContentProps) => (props.mustAddMarginBotton ? 80 : 0)}px;
+    }
+  }
 `;
 
 interface LayoutProps {
@@ -33,6 +44,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector<RootState, boolean>((state) => state.login.accessToken !== '');
 
   useEffect(() => {
     const asyncEffect = async () => {
@@ -41,9 +53,8 @@ const Layout = ({ children }: LayoutProps) => {
       if (refreshToken) {
         const res = await refreshAccessToken(refreshToken);
 
-        localStorage.setItem('refreshToken', res.refreshToken);
-        // set access and refresh token in redux store
         dispatch(setTokenChain(res.accessToken, res.refreshToken));
+        localStorage.setItem('refreshToken', res.refreshToken);
       }
     };
 
@@ -56,11 +67,11 @@ const Layout = ({ children }: LayoutProps) => {
       {false && <Sidebar />}
       <Main>
         <BackgroundImage />
-        <Content>
+        <Content mustAddMarginBotton={isLoggedIn}>
           <Header />
           {children}
         </Content>
-        <Player />
+        {isLoggedIn && <Player />}
       </Main>
       {false && <Modal />}
     </ThemeProvider>
