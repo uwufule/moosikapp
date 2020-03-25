@@ -1,23 +1,36 @@
-import { AnyAction } from 'redux';
-import LoginConstants from '../constants/login';
+import { Action, Reducer } from 'redux';
+import Constants from '../constants/login';
 
-export interface LoginAction extends AnyAction {
-  type: LoginConstants;
-  payload: any;
+export interface LoginState {
+  accessToken: string;
+  refreshToken: string;
 }
 
-const initialState = {
-  token: null,
-  refreshToken: null,
+export interface LoginAction extends Action {
+  type: Constants;
+  payload: {
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
+const initialState: LoginState = {
+  accessToken: '',
+  refreshToken: '',
 };
 
-export default (state = initialState, action: LoginAction) => {
+const loginReducer: Reducer<LoginState, LoginAction> = (
+  state = initialState,
+  action: LoginAction,
+) => {
   switch (action.type) {
-    case LoginConstants.SET_REFRESH_TOKEN:
+    case Constants.SET_TOKEN_CHAIN:
       return {
-        ...state, refreshToken: action.payload,
+        ...state, ...action.payload,
       };
     default:
       return state;
   }
 };
+
+export default loginReducer;

@@ -1,9 +1,13 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import Form, {
   TextInput, Link, Button, TextInputType,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
+import registerNewAccount from '../utils/transport/registerNewAccount';
+import { RootState } from '../redux/store';
 
 const StyledTextInput = styled(TextInput)`
   margin-bottom: 10px;
@@ -33,11 +37,33 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [retryPassword, SetRetryPassword] = useState('');
 
+  const router = useRouter();
+
+  const isLoggedIn = useSelector<RootState, boolean>((state) => state.login.accessToken !== '');
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push('/');
+    }
+  }, [isLoggedIn]);
+
   return (
     <CenteringComponent>
       <Form
         title="Register"
-        handler={() => {}}
+        handler={async () => {
+          // validation
+          if (password !== retryPassword) {
+            console.log('Passwords don\'t match.');
+            return;
+          }
+
+          const res = await registerNewAccount(username, email, password);
+          if (res) {
+            // message 'successfully registered new account. redirect to login page'
+            // regirect /login
+          }
+        }}
       >
         <StyledTextInput type={TextInputType.text} required handler={setUsername}>
           Username

@@ -1,9 +1,5 @@
 enum LoginConstants {
-  LOGIN,
-  SUCCESS,
-  ERROR,
-  LOGOUT,
-  SET_REFRESH_TOKEN,
+  SET_TOKEN_CHAIN = 'SET_TOKEN_CHAIN',
 }
 
 export default LoginConstants;
