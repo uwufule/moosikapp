@@ -56,7 +56,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push('/');
+      router.back();
     }
   }, [isLoggedIn]);
 
