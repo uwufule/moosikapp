@@ -1,12 +1,12 @@
 import Button from './Button';
 import Link from './Link';
-import TextField, { TextFieldType } from './TextField';
+import TextInput, { TextInputType } from './TextInput';
 
 export { default } from './Form';
 
 export {
   Button,
   Link,
-  TextField,
-  TextFieldType,
+  TextInput,
+  TextInputType,
 };

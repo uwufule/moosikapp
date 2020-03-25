@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import Form, {
-  TextField, Link, Button, TextFieldType,
+  TextInput, Link, Button, TextInputType,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 
-const StyledTextField = styled(TextField)`
+const StyledTextInput = styled(TextInput)`
   margin-bottom: 10px;
 
 &:last-child {
@@ -50,12 +50,12 @@ const Login = () => {
         title="Login"
         handler={() => {}}
       >
-        <StyledTextField type={TextFieldType.text} required handler={setUsername}>
+        <StyledTextInput type={TextInputType.text} required handler={setUsername}>
           Username / Email
-        </StyledTextField>
-        <StyledTextField type={TextFieldType.password} required handler={setPassword}>
+        </StyledTextInput>
+        <StyledTextInput type={TextInputType.password} required handler={setPassword}>
           Password
-        </StyledTextField>
+        </StyledTextInput>
         <Footer>
           <Link to="/forgot">Forgot your password?</Link>
           <div>

@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import Form, {
-  TextField, Link, Button, TextFieldType,
+  TextInput, Link, Button, TextInputType,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 
-const StyledTextField = styled(TextField)`
+const StyledTextInput = styled(TextInput)`
   margin-bottom: 10px;
 
 &:last-child {
@@ -39,18 +39,18 @@ const Register = () => {
         title="Register"
         handler={() => {}}
       >
-        <StyledTextField type={TextFieldType.text} required handler={setUsername}>
+        <StyledTextInput type={TextInputType.text} required handler={setUsername}>
           Username
-        </StyledTextField>
-        <StyledTextField type={TextFieldType.email} required handler={setEmail}>
+        </StyledTextInput>
+        <StyledTextInput type={TextInputType.email} required handler={setEmail}>
           Email
-        </StyledTextField>
-        <StyledTextField type={TextFieldType.password} required handler={setPassword}>
+        </StyledTextInput>
+        <StyledTextInput type={TextInputType.password} required handler={setPassword}>
           Password
-        </StyledTextField>
-        <StyledTextField type={TextFieldType.password} required handler={SetRetryPassword}>
+        </StyledTextInput>
+        <StyledTextInput type={TextInputType.password} required handler={SetRetryPassword}>
           Password again
-        </StyledTextField>
+        </StyledTextInput>
         <Footer>
           <Link to="/login">Already have account?</Link>
           <StyledButton>Register</StyledButton>

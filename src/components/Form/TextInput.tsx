@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import hash from '../../utils/hash';
 import { Theme } from '../ThemeProvider';
 
 const Input = styled.input`
@@ -22,25 +21,24 @@ const Input = styled.input`
   }
 `;
 
-export enum TextFieldType {
+export enum TextInputType {
   text = 'text',
   email = 'email',
   tel = 'tel',
   password = 'password',
 }
 
-interface TextFieldProps {
+interface TextInputProps {
   children: string;
   className?: string;
-  type: TextFieldType;
+  type: TextInputType;
   required?: boolean;
   handler: (value: string) => void;
 }
 
-const TextField = ({
+const TextInput = ({
   children, className, type, required = false, handler,
-}: TextFieldProps) => {
-  const id = hash(children);
+}: TextInputProps) => {
 
   return (
     // eslint-disable-next-line jsx-a11y/label-has-associated-control
@@ -56,4 +54,4 @@ const TextField = ({
   );
 };
 
-export default TextField;
+export default TextInput;
