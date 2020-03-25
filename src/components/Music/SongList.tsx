@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Song, { ISong } from './Song';
 import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
@@ -15,12 +16,22 @@ const Message = styled.span`
 `;
 
 interface SongListProps {
-  songs: any[];
+  songs: ISong[];
   searching?: boolean;
 }
 
 const SongList = ({ songs, searching = false }: SongListProps) => (
   <Wrapper>
+    {songs.map((song) => (
+      <Song
+        key={song.uuid}
+        author={song.author}
+        title={song.title}
+        cover={song.cover}
+        favorite={song.favorite}
+        edit={song.edit}
+      />
+    ))}
     {songs.length === 0 && (
       <Message>
         {searching
