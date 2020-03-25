@@ -88,7 +88,7 @@ const Actions = styled.div`
   display: flex;
 `;
 
-type ActionButtonProps = Theme<{ active: boolean }>;
+type ActionButtonProps = Theme<{ active?: boolean }>;
 
 const ActionButton = styled.button.attrs({ type: 'button' })<ActionButtonProps>`
   width: 20px;
@@ -183,7 +183,7 @@ const Song = ({
     </TitleAndAuthor>
     <Actions>
       {edit && (
-        <ActionButton active={false}>
+        <ActionButton>
           <ActionButtonIcon>
             <path
               d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9
@@ -192,17 +192,15 @@ const Song = ({
           </ActionButtonIcon>
         </ActionButton>
       )}
-      {favorite && (
-        <ActionButton active={false}>
-          <ActionButtonIcon>
-            <path
-              d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3
-                10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27
-                18.6,15.36 13.45,20.03L12,21.35Z"
-            />
-          </ActionButtonIcon>
-        </ActionButton>
-      )}
+      <ActionButton active={favorite}>
+        <ActionButtonIcon>
+          <path
+            d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3
+              10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27
+              18.6,15.36 13.45,20.03L12,21.35Z"
+          />
+        </ActionButtonIcon>
+      </ActionButton>
     </Actions>
   </Wrapper>
 );
