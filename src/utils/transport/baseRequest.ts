@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import lodash from 'lodash';
-import { API_URL } from './config/transport.json';
+import { API_URL } from './config.json';
 
 const baseRequest = (
   url: string,
