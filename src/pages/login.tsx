@@ -60,7 +60,7 @@ const Login = () => {
         handler={async () => {
           try {
             await authorization.authorize(username, password);
-            router.push(router.query.from.toString() || '/');
+            router.push(router.query?.from?.toString() || '/');
           } catch (e) {
             // error message (e.response.data)
           }

@@ -10,7 +10,7 @@ const useWithoutAuthorization = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push(router.query.from.toString() || '/');
+      router.push(router.query?.from?.toString() || '/');
     }
   }, [isLoggedIn]);
 };
