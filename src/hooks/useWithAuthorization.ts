@@ -10,7 +10,7 @@ const useWithAuthorization = () => {
 
   useEffect(() => {
     if (!accessToken) {
-      router.push('/login');
+      router.push(`/login?from=${router.asPath}`);
     }
   }, [accessToken]);
 };
