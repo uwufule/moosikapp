@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import useRequest from '../../hooks/useRequest';
+import useReleaseTokens from '../../hooks/useReleaseTokens';
 import { setTokenChain } from '../../redux/actions/login';
 import ThemeProvider from '../ThemeProvider';
 import BackgroundImage from '../BackgroundImage';
@@ -46,28 +46,21 @@ const Layout = ({ children }: LayoutProps) => {
     (state) => state.login.accessToken !== '',
   );
 
-  const request = useRequest();
-
   const dispatch = useDispatch();
+
+  const releaseTokens = useReleaseTokens();
 
   useEffect(() => {
     const asyncEffect = async () => {
       const refreshToken = localStorage.getItem('refreshToken');
-
-      if (refreshToken) {
-        const res = await request(
-          '/login/refresh',
-          {
-            method: 'GET',
-            params: {
-              refreshToken,
-            },
-          },
-        );
-
-        dispatch(setTokenChain(res.data.token, res.data.refreshToken));
-        localStorage.setItem('refreshToken', res.data.refreshToken);
+      if (!refreshToken) {
+        return;
       }
+
+      const res = await releaseTokens(refreshToken);
+
+      dispatch(setTokenChain(res.data.token, res.data.refreshToken));
+      localStorage.setItem('refreshToken', res.data.refreshToken);
     };
 
     asyncEffect();
