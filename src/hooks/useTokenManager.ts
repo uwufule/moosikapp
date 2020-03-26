@@ -2,7 +2,6 @@ import { useDispatch } from 'react-redux';
 import JWT from 'jsonwebtoken';
 import useRequest from './useRequest';
 import { setTokenChain } from '../redux/actions/login';
-import { RootState } from '../redux/store';
 
 interface AccessTokenRecord {
   uuid: string;
