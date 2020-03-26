@@ -1,14 +1,12 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import useWithoutAuthorization from '../hooks/useWithoutAuthorization';
+import useAuthorization from '../hooks/useAuthorization';
 import Form, {
   TextInput, Link, Button, TextInputType,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
-import login from '../utils/transport/login';
-import { setTokenChain } from '../redux/actions/login';
 
 const StyledTextInput = styled(TextInput)`
   margin-bottom: 10px;
@@ -51,7 +49,7 @@ const Login = () => {
 
   useWithoutAuthorization();
 
-  const dispatch = useDispatch();
+  const authorization = useAuthorization();
 
   const router = useRouter();
 
@@ -61,11 +59,8 @@ const Login = () => {
         title="Login"
         handler={async () => {
           try {
-            const res = await login(username, password);
-
-            localStorage.setItem('refreshToken', res.refreshToken);
-            dispatch(setTokenChain(res.accessToken, res.refreshToken));
-            router.back();
+            await authorization.authorize(username, password);
+            router.push(router.query.from.toString() || '/');
           } catch (e) {
             // error message (e.response.data)
           }
