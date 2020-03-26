@@ -1,13 +1,12 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
+import useWithoutAuthorization from '../hooks/useWithoutAuthorization';
 import Form, {
   TextInput, Link, Button, TextInputType,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 import registerNewAccount from '../utils/transport/registerNewAccount';
-import { RootState } from '../redux/store';
 
 const StyledTextInput = styled(TextInput)`
   margin-bottom: 10px;
@@ -37,15 +36,9 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [retryPassword, SetRetryPassword] = useState('');
 
+  useWithoutAuthorization();
+
   const router = useRouter();
-
-  const isLoggedIn = useSelector<RootState, boolean>((state) => state.login.accessToken !== '');
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push('/');
-    }
-  }, [isLoggedIn]);
 
   return (
     <CenteringComponent>

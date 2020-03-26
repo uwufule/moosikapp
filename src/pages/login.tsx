@@ -1,14 +1,14 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
+import useWithoutAuthorization from '../hooks/useWithoutAuthorization';
 import Form, {
   TextInput, Link, Button, TextInputType,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 import login from '../utils/transport/login';
 import { setTokenChain } from '../redux/actions/login';
-import { RootState } from '../redux/store';
 
 const StyledTextInput = styled(TextInput)`
   margin-bottom: 10px;
@@ -49,16 +49,11 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const router = useRouter();
+  useWithoutAuthorization();
 
-  const isLoggedIn = useSelector<RootState, boolean>((state) => state.login.accessToken !== '');
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.back();
-    }
-  }, [isLoggedIn]);
+  const router = useRouter();
 
   return (
     <CenteringComponent>
@@ -70,7 +65,7 @@ const Login = () => {
 
             localStorage.setItem('refreshToken', res.refreshToken);
             dispatch(setTokenChain(res.accessToken, res.refreshToken));
-            router.push('/');
+            router.back();
           } catch (e) {
             // error message (e.response.data)
           }
