@@ -19,7 +19,7 @@ const MusicLikes = () => {
 
         setSongs(res.data.songs);
       } catch (e) {
-        if (e.response.statusCode !== 404) {
+        if (e.response.status !== 404) {
           // error message
         }
 
