@@ -26,7 +26,7 @@ const useTokenManeger = () => {
     refreshToken: string,
   ): Promise<TokenPair | null> => {
     const record = <AccessTokenRecord>JWT.decode(accessToken);
-    if (record && (record.exp * 1000 - Date.now() < 29 * 60000 + 55000)) {
+    if (record && (record.exp * 1000 - Date.now() < 60000)) {
       const res = await request(
         '/login/refresh',
         {
