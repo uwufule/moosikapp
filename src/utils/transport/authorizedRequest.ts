@@ -1,22 +1,19 @@
-import baseRequest, { BaseRequestConfig } from './baseRequest';
+import { AxiosRequestConfig } from 'axios';
+import lodash from 'lodash';
+import baseRequest from './baseRequest';
 
 const authorizedRequest = (
   url: string,
   accessToken: string,
-  {
-    method,
-    headers,
-    data,
-  }: BaseRequestConfig,
+  config?: AxiosRequestConfig,
 ) => baseRequest(
   url,
   {
-    method,
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-      ...headers,
-    },
-    data,
+    ...lodash.merge(config, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    }),
   },
 );
 

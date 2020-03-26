@@ -1,35 +1,18 @@
-import axios, { Method } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
+import lodash from 'lodash';
 import { API_URL } from './config/transport.json';
 
-export interface Headers {
-  [header: string]: string;
-}
-
-export interface BaseRequestConfig {
-  method?: Method;
-  headers?: Headers;
-  data?: any;
-  onUploadProgress?: (progress: number) => void;
-}
-
 const baseRequest = (
-  url: string, {
-    method, headers, data, onUploadProgress,
-  }: BaseRequestConfig,
+  url: string,
+  config?: AxiosRequestConfig,
 ) => axios(
   `${API_URL}${url}`,
   {
-    method,
-    headers: {
-      accept: 'application/json',
-      ...headers,
-    },
-    data,
-    onUploadProgress: (progress) => {
-      if (onUploadProgress && progress) {
-        onUploadProgress(progress.loaded / progress.total);
-      }
-    },
+    ...lodash.merge(config, {
+      headers: {
+        accept: 'application/json',
+      },
+    }),
   },
 );
 
