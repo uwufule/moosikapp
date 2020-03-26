@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import useRequest from '../../hooks/useRequest';
+import { setTokenChain } from '../../redux/actions/login';
 import ThemeProvider from '../ThemeProvider';
 import BackgroundImage from '../BackgroundImage';
 import Header from '../Header';
@@ -9,9 +11,6 @@ import Modal from '../Modal';
 import Player from '../Player';
 import GlobalStyle from './GlobalStyle';
 import { RootState } from '../../redux/store';
-
-import refreshAccessToken from '../../utils/transport/refreshAccessToken';
-import { setTokenChain } from '../../redux/actions/login';
 
 const Main = styled.main`
   display: flex;
@@ -43,18 +42,31 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const isLoggedIn = useSelector<RootState, boolean>(
+    (state) => state.login.accessToken !== '',
+  );
+
+  const request = useRequest();
+
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector<RootState, boolean>((state) => state.login.accessToken !== '');
 
   useEffect(() => {
     const asyncEffect = async () => {
       const refreshToken = localStorage.getItem('refreshToken');
 
       if (refreshToken) {
-        const res = await refreshAccessToken(refreshToken);
+        const res = await request(
+          '/login/refresh',
+          {
+            method: 'GET',
+            params: {
+              refreshToken,
+            },
+          },
+        );
 
-        dispatch(setTokenChain(res.accessToken, res.refreshToken));
-        localStorage.setItem('refreshToken', res.refreshToken);
+        dispatch(setTokenChain(res.data.token, res.data.refreshToken));
+        localStorage.setItem('refreshToken', res.data.refreshToken);
       }
     };
 

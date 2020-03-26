@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useWithoutAuthorization from '../hooks/useWithoutAuthorization';
+import useRequest from '../hooks/useRequest';
 import Form, {
   TextInput, Link, Button, TextInputType,
 } from '../components/Form';
@@ -38,6 +39,8 @@ const Register = () => {
 
   useWithoutAuthorization();
 
+  const request = useRequest();
+
   const router = useRouter();
 
   return (
@@ -52,7 +55,15 @@ const Register = () => {
           }
 
           try {
-            await registerNewAccount(username, email, password);
+            await request(
+              '/register',
+              {
+                method: 'POST',
+                data: {
+                  username, email, password,
+                },
+              },
+            );
 
             // message 'successfully registered new account. redirect to login page'
 
