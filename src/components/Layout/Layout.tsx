@@ -41,7 +41,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [loaded, setLoaded] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   const isLoggedIn = useSelector<RootState, boolean>(
     (state) => state.login.accessToken !== '',
