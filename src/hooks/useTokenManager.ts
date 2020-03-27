@@ -20,7 +20,7 @@ const useTokenManeger = () => {
 
   const request = useRequest();
 
-  const checkIsAccessTokenExpired = (accessToken: string): boolean => {
+  const isAccessTokenExpired = (accessToken: string): boolean => {
     const record = <AccessTokenRecord>JWT.decode(accessToken);
     if (!record) {
       throw new Error('Unable to decode access token.');
@@ -50,7 +50,7 @@ const useTokenManeger = () => {
   };
 
   return {
-    checkIsAccessTokenExpired,
+    isAccessTokenExpired,
     releaseTokenPair,
   };
 };

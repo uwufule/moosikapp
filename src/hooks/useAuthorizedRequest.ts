@@ -14,7 +14,7 @@ const useAuthorizedRequest = () => {
   return async (url: string, config?: AxiosRequestConfig) => {
     const refreshToken = localStorage.getItem('refreshToken');
 
-    if (accessToken && refreshToken && tokenManager.checkIsAccessTokenExpired(accessToken)) {
+    if (accessToken && refreshToken && tokenManager.isAccessTokenExpired(accessToken)) {
       const tokenPair = await tokenManager.releaseTokenPair(refreshToken);
 
       accessToken = tokenPair.accessToken;
