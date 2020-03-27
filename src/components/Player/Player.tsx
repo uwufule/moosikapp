@@ -9,7 +9,7 @@ import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
   width: 100%;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   background: ${(props: Theme) => props.theme.colors.light};
   box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.dark};
