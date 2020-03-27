@@ -29,8 +29,6 @@ describe('songs', () => {
       password: 'supersecretpassword',
     })).save();
 
-    await SongModel.deleteMany({});
-
     token = JWT.sign({ uuid: 'testuser7-uuid', role: 1 }, String(JWT_SECRET));
 
     song = await readFile('test/dataset/song.mp3');
@@ -310,7 +308,7 @@ describe('songs', () => {
 
     it('should return Status-Code 200 and correct body if song list sucessfully retrieved', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .query({ query: 'Title' })
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
@@ -323,7 +321,7 @@ describe('songs', () => {
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .query({ query: 'Title' })
         .auth(token, { type: 'bearer' });
 
@@ -334,7 +332,7 @@ describe('songs', () => {
 
     it('should return Status-Code 403 and correct body if invalid token provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .set('Accept', 'application/json')
         .auth('invalid-access-token', { type: 'bearer' });
 
@@ -345,7 +343,7 @@ describe('songs', () => {
 
     it('should return Status-Code 404 and correct body if no song found', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .query({ query: 'Nonexistent' })
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
@@ -357,7 +355,7 @@ describe('songs', () => {
 
     it('should return Status-Code 400 and correct body if invalid no query parameter `query` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
 
@@ -368,7 +366,7 @@ describe('songs', () => {
 
     it('should return Status-Code 400 and correct body if invalid query parameter `skip` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .query({ query: 'Title' })
         .query({ skip: 'NaN' })
         .set('Accept', 'application/json')
@@ -381,7 +379,7 @@ describe('songs', () => {
 
     it('should return Status-Code 400 and correct body if invalid query parameter `limit` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .query({ query: 'Title' })
         .query({ limit: 'NaN' })
         .set('Accept', 'application/json')
@@ -394,7 +392,7 @@ describe('songs', () => {
 
     it('should return Status-Code 400 and correct body if invalid query parameter `scope` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/find')
+        .get('/api/v2/songs/search')
         .query({ query: 'Title' })
         .query({ scope: 'NaN' })
         .set('Accept', 'application/json')
