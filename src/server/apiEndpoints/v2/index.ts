@@ -72,8 +72,8 @@ export default () => {
     Songs.getSongs(),
   ));
 
-  // find song
-  router.get('/songs/find', withAsyncErrorHandler(
+  // song search
+  router.get('/songs/search', withAsyncErrorHandler(
     validateAccept(),
     checkAuth(),
     Songs.findSongs(),
