@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import useRequest from '../../hooks/useRequest';
-import { setTokenChain } from '../../redux/actions/login';
+import useTokenManager from '../../hooks/useTokenManager';
 import ThemeProvider from '../ThemeProvider';
 import BackgroundImage from '../BackgroundImage';
 import Header from '../Header';
@@ -47,9 +47,7 @@ const Layout = ({ children }: LayoutProps) => {
     (state) => state.login.accessToken !== '',
   );
 
-  const dispatch = useDispatch();
-
-  const request = useRequest();
+  const tokenManager = useTokenManager();
 
   useEffect(() => {
     setLoaded(false);
