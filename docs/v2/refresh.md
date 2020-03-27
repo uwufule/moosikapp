@@ -1,7 +1,7 @@
 ## Обновление access токена с помощью refresh токена
 ```
 Route: /login/refresh?refreshToken={refreshToken}
-Method: GET
+Method: POST
 ```
 
 #### Параметры запроса
