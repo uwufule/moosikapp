@@ -5,7 +5,7 @@ import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
 import { findByUsernameOrEmail, PrivateUserData } from '../../../mongodb/users';
 import { addToken } from '../../../mongodb/tokens';
-import createTokenChain, { TokenChain } from '../../../utils/tokenChain';
+import createTokenChain, { TokenPair } from '../../../utils/tokenPair';
 
 import messages from './messages.json';
 
@@ -18,7 +18,7 @@ const validationSchema = Joi.object({
     .error(new Error(messages.login.INVALID_PASSWORD)),
 });
 
-const login = async (user: PrivateUserData, password: string): Promise<TokenChain> => {
+const login = async (user: PrivateUserData, password: string): Promise<TokenPair> => {
   const comparsionResult = await Bcrypt.compare(password, user.password);
   if (!comparsionResult) {
     throw new HttpErrors.Unauthorized(messages.login.INVALID_AUTHORIZATION);

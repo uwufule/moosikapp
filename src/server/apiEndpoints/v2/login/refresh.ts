@@ -4,7 +4,7 @@ import JWT from 'jsonwebtoken';
 import HttpErrors from 'http-errors';
 import { getUserByUuid } from '../../../mongodb/users';
 import { isTokenExists, updateToken, RefreshTokenPayload } from '../../../mongodb/tokens';
-import createTokenChain from '../../../utils/tokenChain';
+import createTokenPair from '../../../utils/tokenPair';
 
 import messages from './messages.json';
 
@@ -34,9 +34,9 @@ export default (): RequestHandler => async (req: Request, res: Response) => {
   }
 
   const hex = Crypto.randomBytes(12).toString('hex');
-  const tokenChain = createTokenChain(user, hex);
+  const tokenPair = createTokenPair(user, hex);
 
   await updateToken(jwt.hex, hex);
 
-  res.status(200).send(tokenChain);
+  res.status(200).send(tokenPair);
 };

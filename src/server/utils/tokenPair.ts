@@ -3,12 +3,12 @@ import { PrivateUserData } from '../mongodb/users';
 
 const { JWT_SECRET } = process.env;
 
-export interface TokenChain {
+export interface TokenPair {
   token: string;
   refreshToken: string;
 }
 
-export default (user: PrivateUserData, hex: string): TokenChain => {
+export default (user: PrivateUserData, hex: string): TokenPair => {
   const token = JWT.sign({
     uuid: user.uuid,
     role: user.role,
