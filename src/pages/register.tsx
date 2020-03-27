@@ -7,7 +7,6 @@ import Form, {
   TextInput, Link, Button, TextInputType,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
-import registerNewAccount from '../utils/transport/registerNewAccount';
 
 const StyledTextInput = styled(TextInput)`
   margin-bottom: 10px;
@@ -48,9 +47,8 @@ const Register = () => {
       <Form
         title="Register"
         handler={async () => {
-          // validation
+          // validation ...
           if (password !== retryPassword) {
-            console.log('Passwords don\'t match.');
             return;
           }
 
@@ -69,8 +67,7 @@ const Register = () => {
 
             router.push('/login');
           } catch (e) {
-            // error message
-            console.log('error:', e.response.data);
+            // error message (e.response.data)
           }
         }}
       >
