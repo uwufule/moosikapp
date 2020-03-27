@@ -32,7 +32,7 @@ export default () => {
   ));
 
   // refresh
-  router.get('/login/refresh', withAsyncErrorHandler(
+  router.post('/login/refresh', withAsyncErrorHandler(
     validateAccept(),
     refresh(),
   ));

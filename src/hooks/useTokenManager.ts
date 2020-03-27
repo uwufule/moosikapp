@@ -33,7 +33,7 @@ const useTokenManeger = () => {
     const res = await request(
       '/login/refresh',
       {
-        method: 'GET',
+        method: 'POST',
         params: {
           refreshToken,
         },
