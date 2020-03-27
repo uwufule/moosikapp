@@ -20,36 +20,38 @@ const useTokenManeger = () => {
 
   const request = useRequest();
 
-  const releaseTokens = async (
-    accessToken: string,
-    refreshToken: string,
-  ): Promise<TokenPair | null> => {
+  const checkIsAccessTokenExpired = (accessToken: string): boolean => {
     const record = <AccessTokenRecord>JWT.decode(accessToken);
-    if (record && (record.exp * 1000 - Date.now() < 60000)) {
-      const res = await request(
-        '/login/refresh',
-        {
-          method: 'GET',
-          params: {
-            refreshToken,
-          },
-        },
-      );
-
-      dispatch(setTokenChain(res.data.token, res.data.refreshToken));
-      localStorage.setItem('refreshToken', res.data.refreshToken);
-
-      return {
-        accessToken: res.data.token,
-        refreshToken: res.data.refreshToken,
-      };
+    if (!record) {
+      throw new Error('Unable to decode access token.');
     }
 
-    return null;
+    return record.exp * 1000 - Date.now() < 60000;
+  };
+
+  const releaseTokenPair = async (refreshToken: string): Promise<TokenPair> => {
+    const res = await request(
+      '/login/refresh',
+      {
+        method: 'GET',
+        params: {
+          refreshToken,
+        },
+      },
+    );
+
+    dispatch(setTokenChain(res.data.token, res.data.refreshToken));
+    localStorage.setItem('refreshToken', res.data.refreshToken);
+
+    return {
+      accessToken: res.data.token,
+      refreshToken: res.data.refreshToken,
+    };
   };
 
   return {
-    releaseTokens,
+    checkIsAccessTokenExpired,
+    releaseTokenPair,
   };
 };
 

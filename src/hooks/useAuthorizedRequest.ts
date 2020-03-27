@@ -14,11 +14,10 @@ const useAuthorizedRequest = () => {
   return async (url: string, config?: AxiosRequestConfig) => {
     const refreshToken = localStorage.getItem('refreshToken');
 
-    if (accessToken && refreshToken) {
-      const tokens = await tokenManager.releaseTokens(accessToken, refreshToken);
-      if (tokens) {
-        accessToken = tokens.accessToken;
-      }
+    if (accessToken && refreshToken && tokenManager.checkIsAccessTokenExpired(accessToken)) {
+      const tokenPair = await tokenManager.releaseTokenPair(refreshToken);
+
+      accessToken = tokenPair.accessToken;
     }
 
     return authorizedRequest(url, accessToken, config);
