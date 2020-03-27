@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import useRequest from '../../hooks/useRequest';
 import { setTokenChain } from '../../redux/actions/login';
@@ -42,6 +41,8 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const [loaded, setLoaded] = useState(true);
+
   const isLoggedIn = useSelector<RootState, boolean>(
     (state) => state.login.accessToken !== '',
   );
@@ -51,24 +52,22 @@ const Layout = ({ children }: LayoutProps) => {
   const request = useRequest();
 
   useEffect(() => {
+    setLoaded(false);
+
     const asyncEffect = async () => {
       const refreshToken = localStorage.getItem('refreshToken');
       if (!refreshToken) {
+        setLoaded(true);
         return;
       }
 
-      const res = await request(
-        '/login/refresh',
-        {
-          method: 'GET',
-          params: {
-            refreshToken,
-          },
-        },
-      );
-
-      dispatch(setTokenChain(res.data.token, res.data.refreshToken));
-      localStorage.setItem('refreshToken', res.data.refreshToken);
+      try {
+        await tokenManager.releaseTokenPair(refreshToken);
+      } catch (e) {
+        // error message
+      } finally {
+        setLoaded(true);
+      }
     };
 
     asyncEffect();
@@ -82,7 +81,7 @@ const Layout = ({ children }: LayoutProps) => {
         <BackgroundImage />
         <Content mustAddMarginBottom={isLoggedIn}>
           <Header />
-          {children}
+          {loaded && children}
         </Content>
         {isLoggedIn && <Player />}
       </Main>
