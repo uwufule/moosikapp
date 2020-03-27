@@ -1,6 +1,5 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import thunkMiddleware from 'redux-thunk';
 
 import login, { LoginState, LoginAction } from './reducers/login';
 
@@ -15,10 +14,6 @@ export default () => (
     combineReducers({
       login,
     }),
-    composeWithDevTools(
-      applyMiddleware(
-        thunkMiddleware,
-      ),
-    ),
+    composeWithDevTools(),
   )
 );
