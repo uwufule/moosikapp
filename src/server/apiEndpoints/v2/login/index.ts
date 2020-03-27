@@ -1,11 +1,9 @@
-import Crypto from 'crypto';
 import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
 import { findByUsernameOrEmail, PrivateUserData } from '../../../mongodb/users';
-import { addToken } from '../../../mongodb/tokens';
-import createTokenChain, { TokenPair } from '../../../utils/tokenPair';
+import createTokenPair, { TokenPair } from '../../../utils/tokenPair';
 
 import messages from './messages.json';
 
@@ -24,12 +22,8 @@ const login = async (user: PrivateUserData, password: string): Promise<TokenPair
     throw new HttpErrors.Unauthorized(messages.login.INVALID_AUTHORIZATION);
   }
 
-  const hex = Crypto.randomBytes(12).toString('hex');
-  const tokenChain = createTokenChain(user, hex);
-
-  await addToken({ userId: user.uuid, hex });
-
-  return tokenChain;
+  const tokenPair = await createTokenPair(user);
+  return tokenPair;
 };
 
 export default (): RequestHandler => async (req: Request, res: Response) => {

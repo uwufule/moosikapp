@@ -1,10 +1,9 @@
 import request from 'supertest';
-import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 
 import app from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
-import TokenModel from '../src/server/mongodb/models/token.model';
+import RefreshTokenModel from '../src/server/mongodb/models/refreshToken.model';
 
 const { JWT_SECRET } = process.env;
 
@@ -12,17 +11,21 @@ let token: string;
 
 describe('logout', () => {
   beforeEach(async () => {
-    await (new UserModel({
-      _id: 'testuser4-uuid',
-      username: 'testuser4',
-      email: 'testuser4@domain.tld',
-      password: 'supersecretpassword',
-    })).save();
+    await (
+      new UserModel({
+        _id: 'testuser4-uuid',
+        username: 'testuser4',
+        email: 'testuser4@domain.tld',
+        password: 'supersecretpassword',
+      })
+    ).save();
 
-    await (new TokenModel({
-      userId: 'testuser4-uuid',
-      hex: Crypto.randomBytes(6).toString('hex'),
-    })).save();
+    await (
+      new RefreshTokenModel({
+        _id: 'refresh-token1-uuid',
+        userId: 'testuser4-uuid',
+      })
+    ).save();
 
     token = JWT.sign({ uuid: 'testuser4-uuid' }, String(JWT_SECRET));
   });
@@ -30,7 +33,7 @@ describe('logout', () => {
   afterEach(async () => {
     await UserModel.deleteOne({ username: 'testuser4' });
 
-    await TokenModel.deleteMany({ userId: 'testuser4-uuid' });
+    await RefreshTokenModel.deleteMany({ userId: 'testuser4-uuid' });
   });
 
   it('should return Status-Code 200 and correct body if user logged out', (done) => {

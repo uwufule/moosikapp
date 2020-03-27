@@ -1,13 +1,13 @@
 import { Response, RequestHandler } from 'express';
 import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../middlewares/authorization';
-import { revokeTokens } from '../../../mongodb/tokens';
+import { revokeRefreshTokens } from '../../../mongodb/refreshTokens';
 
 import messages from './messages.json';
 
 export default (): RequestHandler => async (req: AuthorizedRequest, res: Response) => {
-  const n = await revokeTokens(req.jwt.uuid);
-  if (n === 0) {
+  const isTokensRevoked = await revokeRefreshTokens(req.jwt.uuid);
+  if (!isTokensRevoked) {
     throw new HttpErrors.Gone(messages.logout.ALREADY_LOGGED_OUT);
   }
 

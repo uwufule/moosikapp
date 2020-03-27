@@ -1,4 +1,5 @@
 import JWT from 'jsonwebtoken';
+import { createRefreshToken } from '../mongodb/refreshTokens';
 import { PrivateUserData } from '../mongodb/users';
 
 const { JWT_SECRET } = process.env;
@@ -8,7 +9,9 @@ export interface TokenPair {
   refreshToken: string;
 }
 
-export default (user: PrivateUserData, hex: string): TokenPair => {
+export default async (user: PrivateUserData): Promise<TokenPair> => {
+  const refreshTokenId = await createRefreshToken(user.uuid);
+
   const token = JWT.sign({
     uuid: user.uuid,
     role: user.role,
@@ -16,7 +19,7 @@ export default (user: PrivateUserData, hex: string): TokenPair => {
 
   const refreshToken = JWT.sign({
     userId: user.uuid,
-    hex,
+    id: refreshTokenId,
   }, String(JWT_SECRET), { expiresIn: '60d' });
 
   return { token, refreshToken };

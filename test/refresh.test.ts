@@ -1,11 +1,10 @@
 import request from 'supertest';
 import { expect } from 'chai';
-import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
 
 import app from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
-import TokenModel from '../src/server/mongodb/models/token.model';
+import RefreshTokenModel from '../src/server/mongodb/models/refreshToken.model';
 
 const { JWT_SECRET } = process.env;
 
@@ -13,19 +12,21 @@ let refreshToken: string;
 
 describe('refresh token', () => {
   beforeEach(async () => {
-    await (new UserModel({
-      _id: 'testuser5-uuid',
-      username: 'testuser5',
-      email: 'testuser5@domain.tld',
-      password: 'supersecretpassword',
-    })).save();
+    await (
+      new UserModel({
+        _id: 'testuser5-uuid',
+        username: 'testuser5',
+        email: 'testuser5@domain.tld',
+        password: 'supersecretpassword',
+      })
+    ).save();
+
+    const { _id: id } = await (new RefreshTokenModel({ userId: 'testuser5-uuid' })).save();
 
     const refreshTokenPayload = {
       userId: 'testuser5-uuid',
-      hex: Crypto.randomBytes(6).toString('hex'),
+      id,
     };
-
-    await (new TokenModel(refreshTokenPayload)).save();
 
     refreshToken = JWT.sign(refreshTokenPayload, String(JWT_SECRET));
   });
@@ -33,7 +34,7 @@ describe('refresh token', () => {
   afterEach(async () => {
     await UserModel.deleteOne({ username: 'testuser5' });
 
-    await TokenModel.deleteMany({ userId: 'testuser5-uuid' });
+    await RefreshTokenModel.deleteMany({ userId: 'testuser5-uuid' });
   });
 
   it('should return Status-Code 200 and correct body if tokens successfully refreshed', async () => {

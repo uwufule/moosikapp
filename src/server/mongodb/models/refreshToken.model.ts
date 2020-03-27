@@ -10,11 +10,6 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  hex: {
-    type: String,
-    required: true,
-    unique: true,
-  },
 }, { versionKey: false });
 
 export default Mongoose.model('token', schema);
