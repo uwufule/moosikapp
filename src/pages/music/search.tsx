@@ -26,8 +26,8 @@ const MusicSearch = () => {
 
         setSongs(res.data.songs);
       } catch (e) {
-        if (e.response.status !== 404) {
-          // error message
+        if (e.response?.status !== 404) {
+          // error message (e.response.data)
         }
 
         setSongs([]);
