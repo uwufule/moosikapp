@@ -51,7 +51,6 @@ const opacityFunc = (state: TransitionStatus): number => {
 const Animation = styled(Wrapper)<AnimationProps>`
   transform: translateY(${(props: AnimationProps) => translateYFunc(props.state)}%);
   opacity: ${(props: AnimationProps) => opacityFunc(props.state)};
-
   transition: ${(props: AnimationProps) => props.theme.transition};
 `;
 
@@ -64,6 +63,7 @@ const Slider = styled.div`
   position: relative;
   outline: 0;
   cursor: pointer;
+  user-select: none;
 `;
 
 const VolumeBar = styled.div`
@@ -76,64 +76,78 @@ const VolumeBar = styled.div`
 
 type VolumeBarProps = Theme<{ percent: number }>;
 
-const VolumeActiveBar = styled.div<VolumeBarProps>`
+const VolumeBarActive = styled.div.attrs(
+  (props: VolumeBarProps) => ({ style: { height: `${props.percent}%` } }),
+)<VolumeBarProps>`
   width: 2px;
-  height: ${(props: VolumeBarProps) => props.percent}%;
+  min-height: 0px;
+  max-height: 100%;
   position: absolute;
   bottom: 0;
   background: ${(props: Theme) => props.theme.colors.red};
-  transition: height ${(props: Theme) => props.theme.transition};
 `;
 
-const VolumeSliderHandle = styled.div<VolumeBarProps>`
+const VolumeBarHandle = styled.div.attrs(
+  (props: VolumeBarProps) => ({ style: { bottom: `${92 * (props.percent / 100)}%` } }),
+)<VolumeBarProps>`
   width: 8px;
   height: 8px;
   position: absolute;
-  bottom: ${(props: VolumeBarProps) => 92 * (props.percent / 100)}%;
   border-radius: 100%;
-  background: ${(props: Theme) => props.theme.colors.red};
+  background: ${(props: VolumeBarProps) => props.theme.colors.red};
 `;
 
 interface VolumeSliderProps {
   show?: boolean;
   value: number;
-  handler: (value: number) => void;
+  handler: (volume: number) => void;
 }
 
 const VolumeSlider = ({ show = false, value, handler } : VolumeSliderProps) => {
-  const [volume, setVolume] = useState(value);
+  const [isLeftMouseButtonPressed, setIsLeftMouseButtonPressed] = useState(false);
 
-  const updateVolume = (newValue: number) => {
-    handler(newValue);
-    setVolume(newValue);
-  };
-
-  const percent = 100 * volume;
+  const percent = 100 * value;
 
   return (
-    <Transition
-      in={show}
-      mountOnEnter
-      unmountOnExit
-      timeout={200}
-    >
+    <Transition in={show} mountOnEnter unmountOnExit timeout={200}>
       {(state) => (
         <Animation state={state}>
           <Slider
             role="slider"
-            aria-valuemax={1}
             aria-valuemin={0}
+            aria-valuemax={1}
             aria-valuenow={value}
-            tabIndex={-1}
-            onKeyDown={null}
-            onClick={(event) => {
-              const el = event.currentTarget.getBoundingClientRect();
-              updateVolume(1 - (event.clientY - el.top) / el.height);
+            onMouseDown={(event) => {
+              if (event.button === 0) {
+                setIsLeftMouseButtonPressed(true);
+              }
+            }}
+            onMouseMove={(event) => {
+              if (isLeftMouseButtonPressed) {
+                const { top, height } = event.currentTarget.getBoundingClientRect();
+                handler(1 - (event.clientY - top) / height);
+              }
+            }}
+            onMouseUp={(event) => {
+              if (event.button === 0) {
+                const { top, height } = event.currentTarget.getBoundingClientRect();
+                handler(1 - (event.clientY - top) / height);
+
+                setIsLeftMouseButtonPressed(false);
+              }
+            }}
+            onMouseLeave={(event) => {
+              if (isLeftMouseButtonPressed) {
+                const { top, height } = event.currentTarget.getBoundingClientRect();
+                handler(1 - (event.clientY - top) / height);
+
+                setIsLeftMouseButtonPressed(false);
+              }
             }}
           >
             <VolumeBar />
-            <VolumeActiveBar percent={percent} />
-            <VolumeSliderHandle percent={percent} />
+            <VolumeBarActive percent={percent} />
+            <VolumeBarHandle percent={percent} />
           </Slider>
         </Animation>
       )}
