@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useAudio } from 'react-use';
 import isMobile from 'is-mobile';
 import Control from './PlayerControl';
 import Timeline from './Timeline';
@@ -55,6 +56,8 @@ const VolumeControlWrapper = styled.div`
 const Player = () => {
   const [isVolumeSliderVisible, setIsVolumeSliderVisible] = useState(false);
 
+  const [audio, state, controls, ref] = useAudio({ src: '', autoPlay: false });
+
   return (
     <Wrapper>
       <PlayerContainer>
@@ -62,15 +65,31 @@ const Player = () => {
           <Control caption="Prev" handler={() => {}}>
             <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
           </Control>
-          <Control caption="Play / Pause" handler={() => {}}>
-            {false
+          <Control
+            caption="Play / Pause"
+            handler={() => {
+              if (state.paused) {
+                controls.play();
+                return;
+              }
+
+              controls.pause();
+            }}
+          >
+            {state.paused
               ? <path d="M8,5.14V19.14L19,12.14L8,5.14Z" />
               : <path d="M14,19H18V5H14M6,19H10V5H6V19Z" />}
           </Control>
           <Control caption="Next" handler={() => {}}>
             <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
           </Control>
-          <Control caption="Repeat" handler={() => {}}>
+          <Control
+            caption="Repeat"
+            active={ref.current ? ref.current.loop : false}
+            handler={() => {
+              ref.current.loop = !ref.current.loop;
+            }}
+          >
             <path d="M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z" />
           </Control>
           <Control caption="Shuffle" handler={() => {}}>
@@ -81,13 +100,33 @@ const Player = () => {
             />
           </Control>
         </ControlsGroup>
-        <Timeline timePassed={1} duration={10} handler={() => {}} />
+        <Timeline timePassed={state.time} duration={state.duration} handler={controls.seek} />
         <VolumeControlWrapper
           onMouseEnter={() => setIsVolumeSliderVisible(true)}
           onMouseLeave={() => setIsVolumeSliderVisible(false)}
+          onWheel={(event) => {
+            let vol = state.volume - event.deltaY * (event.shiftKey ? 0.0001 : 0.0005);
+            if (vol > 1) {
+              vol = 1;
+            } else if (vol < 0) {
+              vol = 0;
+            }
+
+            controls.volume(vol);
+          }}
         >
-          <Control caption="Volume" handler={() => {}}>
-            {false
+          <Control
+            caption="Volume"
+            handler={() => {
+              if (state.muted) {
+                controls.unmute();
+                return;
+              }
+
+              controls.mute();
+            }}
+          >
+            {state.muted
               ? (
                 <path
                   d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,
@@ -106,10 +145,15 @@ const Player = () => {
               )}
           </Control>
           {!isMobile() && (
-            <VolumeSlider show={isVolumeSliderVisible} value={1} handler={() => {}} />
+            <VolumeSlider
+              show={isVolumeSliderVisible}
+              value={state.volume}
+              handler={controls.volume}
+            />
           )}
         </VolumeControlWrapper>
         <SoundBadge author="Song Author" title="Song Title" />
+        {audio}
       </PlayerContainer>
     </Wrapper>
   );
