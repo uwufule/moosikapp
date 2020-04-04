@@ -56,7 +56,12 @@ const VolumeControlWrapper = styled.div`
 const Player = () => {
   const [isVolumeSliderVisible, setIsVolumeSliderVisible] = useState(false);
 
-  const [audio, state, controls, ref] = useAudio({ src: '', autoPlay: false });
+  const [audio, state, controls, ref] = useAudio({
+    crossOrigin: 'anonymous',
+    preload: 'auto',
+    src: '',
+    autoPlay: false,
+  });
 
   return (
     <Wrapper>
@@ -105,7 +110,8 @@ const Player = () => {
           onMouseEnter={() => setIsVolumeSliderVisible(true)}
           onMouseLeave={() => setIsVolumeSliderVisible(false)}
           onWheel={(event) => {
-            let vol = state.volume - event.deltaY * (event.shiftKey ? 0.0001 : 0.0005);
+            const delta = event.deltaY / Math.abs(event.deltaY);
+            let vol = state.volume - delta * (event.shiftKey ? 0.01 : 0.05);
             if (vol > 1) {
               vol = 1;
             } else if (vol < 0) {
