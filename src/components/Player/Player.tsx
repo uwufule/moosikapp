@@ -105,7 +105,11 @@ const Player = () => {
             />
           </Control>
         </ControlsGroup>
-        <Timeline timePassed={state.time} duration={state.duration} handler={controls.seek} />
+        <Timeline
+          timePassed={state.time}
+          duration={Number.isFinite(state.duration) ? state.duration : 0}
+          handler={controls.seek}
+        />
         <VolumeControlWrapper
           onMouseEnter={() => setIsVolumeSliderVisible(true)}
           onMouseLeave={() => setIsVolumeSliderVisible(false)}
