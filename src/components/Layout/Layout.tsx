@@ -27,11 +27,11 @@ const Content = styled.div<ContentProps>`
   width: 90%;
   max-width: 1200px;
   position: relative;
-  margin: 0 auto ${(props: ContentProps) => (props.mustAddMarginBottom ? 36 : 0)}px auto;
+  margin: 0 auto ${(props: ContentProps) => (props.mustAddMarginBottom ? 48 : 0)}px auto;
 
   @media (max-width: 480px) {
     & {
-      margin-bottom: ${(props: ContentProps) => (props.mustAddMarginBottom ? 80 : 0)}px;
+      margin-bottom: ${(props: ContentProps) => (props.mustAddMarginBottom ? 92 : 0)}px;
     }
   }
 `;

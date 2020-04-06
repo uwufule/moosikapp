@@ -6,9 +6,9 @@ type ButtonProps = Theme<{ active: boolean }>;
 
 const Button = styled.button.attrs({ type: 'button' })<ButtonProps>`
   width: 24px;
-  height: 36px;
+  height: 48px;
   margin: 0;
-  padding: 6px 0;
+  padding: 12px 0;
   background: transparent;
   border: 0;
   outline: 0;
