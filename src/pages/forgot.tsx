@@ -19,8 +19,8 @@ const Text = styled.div`
   font-weight: 400;
   line-height: 1.5;
   text-align: center;
-  color: ${(props: Theme) => props.theme.colors.lightGray};
-  text-shadow: ${(props: Theme) => props.theme.shadow};
+  color: ${(props: Theme) => props.theme.colors.secondary};
+  text-shadow: ${(props: Theme) => props.theme.shadow.long};
   
   &>p {
     margin: 0;
