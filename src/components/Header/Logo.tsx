@@ -5,11 +5,11 @@ import { Theme } from '../ThemeProvider';
 const Svg = styled.svg`
   width: 48px;
   height: 48px;
-  fill: ${(props: Theme) => props.theme.colors.light};
+  fill: ${(props: Theme) => props.theme.colors.otherText};
   transition: fill ${(props: Theme) => props.theme.transition};
 
   &:hover {
-    fill: ${(props: Theme) => props.theme.colors.red};
+    fill: ${(props: Theme) => props.theme.colors.accent};
   }
 `;
 

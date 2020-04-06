@@ -12,7 +12,7 @@ const DropArea = styled.div<DropAreaProps>`
   margin: 24px 8px;
   padding: 24px;
   border: 2px dashed ${(props: DropAreaProps) => (
-    props.isDrop ? props.theme.colors.darkGray : 'transparent'
+    props.isDrop ? props.theme.colors.primary : 'transparent'
   )};
   outline: 0;
   transition: border-color ${(props: DropAreaProps) => props.theme.transition};
@@ -24,13 +24,13 @@ const Title = styled.h1`
   font-weight: 400;
   line-height: 1.5;
   text-align: center;
-  color: ${(props: Theme) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.primary};
 `;
 
 const Note = styled.div`
   margin-top: 16px;
   text-align: center;
-  color: ${(props: Theme) => props.theme.colors.darkGray};
+  color: ${(props: Theme) => props.theme.colors.secondary};
 
   & > p {
     margin: 0;

@@ -21,7 +21,7 @@ const SongCover = styled.div<SongCoverProps>`
   background: ${(props: SongCoverProps) => (
     props.coverUrl
       ? `url(${props.coverUrl}) center no-repeat`
-      : props.theme.colors.lightGray
+      : props.theme.colors.cover.background
   )};
   background-repeat: no-repeat;
 `;
@@ -43,13 +43,13 @@ const Truncate = styled.span`
 const SongTitle = styled(Truncate)`
   font-size: 14px;
   line-height: 17px;
-  color: ${(props: Theme) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.primary};
 `;
 
 const SongAuthor = styled(Truncate)`
   font-size: 12px;
   line-height: 15px;
-  color: ${(props: Theme) => props.theme.colors.darkGray};
+  color: ${(props: Theme) => props.theme.colors.secondary};
 `;
 
 interface SoundBadgeProps {

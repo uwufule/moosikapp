@@ -22,7 +22,7 @@ const Cover = styled.div<CoverProps>`
   background: ${(props: CoverProps) => (
     props.coverUrl
       ? `url(${props.coverUrl})`
-      : props.theme.colors.lightGray
+      : props.theme.colors.cover.background
   )} 50% no-repeat;
   background-size: cover;
 `;
@@ -30,7 +30,7 @@ const Cover = styled.div<CoverProps>`
 const DefaultCover = styled.svg.attrs({ viewBox: '0 0 24 24' })`
   width: 32px;
   height: 32px;
-  fill: ${(props: Theme) => props.theme.colors.darkGray};
+  fill: ${(props: Theme) => props.theme.colors.cover.foreground};
 `;
 
 const PlayPauseButton = styled.button`
@@ -42,8 +42,8 @@ const PlayPauseButton = styled.button`
   background: none;
   border: 0;
   outline: 0;
-  fill: ${(props: Theme) => props.theme.colors.light};
-  filter: drop-shadow(0 0 2px ${(props: Theme) => props.theme.colors.dark});
+  fill: ${(props: Theme) => props.theme.colors.otherText};
+  filter: drop-shadow(${(props: Theme) => props.theme.shadow.short});
   z-index: 1;
   cursor: pointer;
 
@@ -74,14 +74,14 @@ const Title = styled.span`
   font-size: 16px;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: ${(props: Theme) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.primary};
 `;
 
 const Author = styled.span`
   font-size: 14px;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: ${(props: Theme) => props.theme.colors.gray};
+  color: ${(props: Theme) => props.theme.colors.secondary};
 `;
 
 const Actions = styled.div`
@@ -100,8 +100,8 @@ const ActionButton = styled.button.attrs({ type: 'button' })<ActionButtonProps>`
   outline: 0;
   fill: ${(props: ActionButtonProps) => (
     props.active
-      ? props.theme.colors.red
-      : props.theme.colors.lightGray
+      ? props.theme.colors.accent
+      : props.theme.colors.secondary
   )};
   cursor: pointer;
 `;
@@ -129,11 +129,11 @@ const Wrapper = styled.div`
 
   @media (min-width: 960px) {
     & {
-      transition:  box-shadow ${(props: Theme) => props.theme.transition};
+      transition: all ${(props: Theme) => props.theme.transition};
     }
 
     &:hover {
-      box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.dark};
+      background: ${(props: Theme) => props.theme.colors.accentBackground};
     }
 
     &:hover ${PlayPauseButton} {

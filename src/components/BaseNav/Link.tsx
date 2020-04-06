@@ -7,14 +7,14 @@ const StyledLink = styled.a`
   font-size: 18px;
   line-height: 1.5;
   font-weight: 400;
-  color: ${(props: Theme) => props.theme.colors.light};
+  color: ${(props: Theme) => props.theme.colors.otherText};
   text-decoration: none;
   cursor: pointer;
-  text-shadow: ${(props: Theme) => props.theme.shadow};
+  text-shadow: ${(props: Theme) => props.theme.shadow.long};
   transition: color ${(props: Theme) => props.theme.transition};
 
   &:hover {
-    color: ${(props: Theme) => props.theme.colors.red};
+    color: ${(props: Theme) => props.theme.colors.accent};
   }
 `;
 

@@ -12,8 +12,8 @@ const Title = styled.h1`
   font-size: 32px;
   font-weight: 600;
   line-height: 1.5;
-  color: ${(props: Theme) => props.theme.colors.light};
-  text-shadow: ${(props: Theme) => props.theme.shadow};
+  color: ${(props: Theme) => props.theme.colors.otherText};
+  text-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
 const FormBody = styled.div`

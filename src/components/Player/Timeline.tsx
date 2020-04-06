@@ -19,7 +19,7 @@ const Wrapper = styled.div`
 const Time = styled.span`
   font-size: 14px;
   line-height: 16px;
-  color: ${(props: Theme) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.primary};
 `;
 
 const PropgressWrapper = styled.div`
@@ -37,7 +37,7 @@ const ProgressBar = styled.div`
   width: 100%;
   height: 2px;
   position: absolute;
-  background: ${(props: Theme) => props.theme.colors.gray};
+  background: ${(props: Theme) => props.theme.colors.secondary};
 `;
 
 type ProgressBarProps = Theme<{ percent: number }>;
@@ -49,7 +49,7 @@ const ProgressBarActive = styled.div.attrs(
   max-width: 100%;
   height: 2px;
   position: absolute;
-  background: ${(props: ProgressBarProps) => props.theme.colors.red};
+  background: ${(props: ProgressBarProps) => props.theme.colors.accent};
   transition: background-color ${(props: ProgressBarProps) => props.theme.transition};
 `;
 
@@ -61,7 +61,7 @@ const ProgressBarHandle = styled.div.attrs(
   position: absolute;
   margin: -3px -3px 0 0 ;
   border-radius: 100%;
-  background: ${(props: ProgressBarProps) => props.theme.colors.red};
+  background: ${(props: ProgressBarProps) => props.theme.colors.accent};
 `;
 
 interface TimelineProps {

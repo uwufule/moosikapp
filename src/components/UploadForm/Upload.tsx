@@ -7,8 +7,8 @@ import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
   margin-top: 24px;
-  background: ${(props: Theme) => props.theme.colors.light};
-  box-shadow: ${(props: Theme) => props.theme.shadow};
+  background: ${(props: Theme) => props.theme.colors.background};
+  box-shadow: ${(props: Theme) => props.theme.longShadow};
 `;
 
 const UploadList = styled.div``;

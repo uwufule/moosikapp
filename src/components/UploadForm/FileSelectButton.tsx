@@ -10,8 +10,8 @@ const ButtonWrapper = styled.label`
   font-weight: 400;
   
   text-align: center;
-  color: ${(props: Theme) => props.theme.colors.light};
-  background: ${(props: Theme) => props.theme.colors.red};
+  color: ${(props: Theme) => props.theme.colors.button.text};
+  background: ${(props: Theme) => props.theme.colors.button.background};
   cursor: pointer;
   transition: background-color ${(props: Theme) => props.theme.transition};
 
@@ -20,7 +20,7 @@ const ButtonWrapper = styled.label`
   }
 
   &:hover {
-    background: ${(props: Theme) => props.theme.colors.darkRed};
+    background: ${(props: Theme) => props.theme.colors.button.accent};
   }
 `;
 

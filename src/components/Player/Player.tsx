@@ -12,8 +12,8 @@ const Wrapper = styled.div`
   width: 100%;
   position: fixed;
   bottom: 0;
-  background: ${(props: Theme) => props.theme.colors.light};
-  box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.dark};
+  background: ${(props: Theme) => props.theme.colors.background};
+  box-shadow: ${(props: Theme) => props.theme.shadow.short};
   z-index: 1;
 `;
 
@@ -59,7 +59,7 @@ const Player = () => {
   const [audio, state, controls, ref] = useAudio({
     crossOrigin: 'anonymous',
     preload: 'auto',
-    src: '',
+    src: 'https://cdn.moosikapp.tk/0b2af59943101062ece23c38d3a8c5ad/Nightcore%20-%20Without%20Me%20(Illenium%20Remix).mp3',
     autoPlay: false,
   });
 

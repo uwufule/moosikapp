@@ -9,16 +9,16 @@ const Input = styled.input`
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
-  background: ${(props: Theme) => props.theme.colors.light};
-  color: ${(props: Theme) => props.theme.colors.dark};
-  border: 1px solid ${(props: Theme) => props.theme.colors.gray};
+  background: ${(props: Theme) => props.theme.colors.input.background};
+  color: ${(props: Theme) => props.theme.colors.input.text};
+  border: 1px solid ${(props: Theme) => props.theme.colors.input.border};
   border-radius: 0;
   outline: 0;
   transition: all ${(props: Theme) => props.theme.transition};
 
   &:focus {
-    border-color: ${(props: Theme) => props.theme.colors.red};
-    box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.red};
+    border-color: ${(props: Theme) => props.theme.colors.input.accent};
+    box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.input.accent};
   }
 `;
 

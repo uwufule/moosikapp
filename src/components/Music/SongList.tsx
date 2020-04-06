@@ -4,15 +4,15 @@ import { Theme } from '../ThemeProvider';
 
 const Wrapper = styled.div`
   padding: 8px;
-  background: ${(props: Theme) => props.theme.colors.light};
-  box-shadow: ${(props: Theme) => props.theme.shadow};
+  background: ${(props: Theme) => props.theme.colors.background};
+  box-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
 const Message = styled.span`
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  color: ${(props: Theme) => props.theme.colors.dark};
+  color: ${(props: Theme) => props.theme.colors.primary};
 `;
 
 interface SongListProps {

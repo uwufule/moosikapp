@@ -10,7 +10,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     height: inherit;
     margin: 0;
-    background: ${(props: Theme) => props.theme.colors.dark};
+    background: ${(props: Theme) => props.theme.colors.body.background};
   }
 
   #__next {

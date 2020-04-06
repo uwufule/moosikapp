@@ -18,7 +18,7 @@ const Form = styled.form`
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  box-shadow: ${(props: Theme) => props.theme.shadow};
+  box-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
 interface SearchFormProps {

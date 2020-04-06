@@ -41,7 +41,8 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [loaded, setLoaded] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isRequestCompleted, setIsRequestCompleted] = useState(false);
 
   const isLoggedIn = useSelector<RootState, boolean>(
     (state) => state.login.accessToken !== '',
@@ -50,12 +51,12 @@ const Layout = ({ children }: LayoutProps) => {
   const tokenManager = useTokenManager();
 
   useEffect(() => {
-    setLoaded(false);
+    setIsRequestCompleted(false);
 
     const asyncEffect = async () => {
       const refreshToken = localStorage.getItem('refreshToken');
       if (!refreshToken) {
-        setLoaded(true);
+        setIsRequestCompleted(true);
         return;
       }
 
@@ -64,22 +65,26 @@ const Layout = ({ children }: LayoutProps) => {
       } catch (e) {
         // error message
       } finally {
-        setLoaded(true);
+        setIsRequestCompleted(true);
       }
     };
 
     asyncEffect();
   }, []);
 
+  useEffect(() => {
+    setIsDarkMode(localStorage.getItem('isDarkMode') === 'true');
+  }, []);
+
   return (
-    <ThemeProvider>
+    <ThemeProvider isDarkMode={isDarkMode}>
       <GlobalStyle />
       {false && <Sidebar />}
       <Main>
         <BackgroundImage />
         <Content mustAddMarginBottom={isLoggedIn}>
           <Header />
-          {loaded && children}
+          {isRequestCompleted && children}
         </Content>
         {isLoggedIn && <Player />}
       </Main>

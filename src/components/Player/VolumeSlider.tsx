@@ -13,8 +13,8 @@ const Wrapper = styled.div`
   bottom: 36px;
   right: 0;
   padding: 8px;
-  background: ${(props: Theme) => props.theme.colors.light};
-  box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.dark};
+  background: ${(props: Theme) => props.theme.colors.background};
+  box-shadow: ${(props: Theme) => props.theme.shadow.short};
   z-index: 1;
 `;
 
@@ -71,7 +71,7 @@ const VolumeBar = styled.div`
   height: 100%;
   position: absolute;
   bottom: 0;
-  background: ${(props: Theme) => props.theme.colors.gray};
+  background: ${(props: Theme) => props.theme.colors.secondary};
 `;
 
 type VolumeBarProps = Theme<{ percent: number }>;
@@ -84,7 +84,7 @@ const VolumeBarActive = styled.div.attrs(
   max-height: 100%;
   position: absolute;
   bottom: 0;
-  background: ${(props: Theme) => props.theme.colors.red};
+  background: ${(props: Theme) => props.theme.colors.accent};
 `;
 
 const VolumeBarHandle = styled.div.attrs(
@@ -94,7 +94,7 @@ const VolumeBarHandle = styled.div.attrs(
   height: 8px;
   position: absolute;
   border-radius: 100%;
-  background: ${(props: VolumeBarProps) => props.theme.colors.red};
+  background: ${(props: VolumeBarProps) => props.theme.colors.accent};
 `;
 
 interface VolumeSliderProps {
