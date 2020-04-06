@@ -25,6 +25,7 @@ const SongList = ({ songs, searching = false }: SongListProps) => (
     {songs.map((song) => (
       <Song
         key={song.uuid}
+        uuid={song.uuid}
         author={song.author}
         title={song.title}
         cover={song.cover}
