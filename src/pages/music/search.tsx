@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import useWithAuthorization from '../../hooks/useWithAuthorization';
+import useRestriction from '../../hooks/useRestriction';
 import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
 import { Nav, SearchForm, SongList } from '../../components/Music';
 
@@ -8,7 +8,8 @@ const MusicSearch = () => {
   const [searching, setSearching] = useState(false);
   const [songs, setSongs] = useState([]);
 
-  useWithAuthorization();
+  const restriction = useRestriction();
+  restriction.allowOnlyAuthorizedUser();
 
   const request = useAuthorizedRequest();
 

@@ -1,8 +1,9 @@
-import useWithAuthorization from '../hooks/useWithAuthorization';
+import useRestriction from '../hooks/useRestriction';
 import UploadForm from '../components/UploadForm';
 
 const Upload = () => {
-  useWithAuthorization();
+  const restriction = useRestriction();
+  restriction.allowOnlyAuthorizedUser();
 
   return (
     <UploadForm />

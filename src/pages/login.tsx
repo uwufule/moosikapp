@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import useWithoutAuthorization from '../hooks/useWithoutAuthorization';
+import useRestriction from '../hooks/useRestriction';
 import useAuthorization from '../hooks/useAuthorization';
 import Form, {
   TextInput, Link, Button, TextInputType,
@@ -47,7 +47,8 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  useWithoutAuthorization();
+  const restriction = useRestriction();
+  restriction.disallowAuthorizedUser();
 
   const authorization = useAuthorization();
 

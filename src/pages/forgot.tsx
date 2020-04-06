@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import useWithoutAuthorization from '../hooks/useWithoutAuthorization';
+import useRestriction from '../hooks/useRestriction';
 import Form, { TextInput, Button, TextInputType } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 import { Theme } from '../components/ThemeProvider';
@@ -36,7 +36,8 @@ const Footer = styled.div`
 const Forgot = () => {
   const [email, setEmail] = useState('');
 
-  useWithoutAuthorization();
+  const restriction = useRestriction();
+  restriction.disallowAuthorizedUser();
 
   return (
     <CenteringComponent>

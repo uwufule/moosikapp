@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import useWithAuthorization from '../../hooks/useWithAuthorization';
+import useRestriction from '../../hooks/useRestriction';
 import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
 import { Nav, SongList } from '../../components/Music';
 
 const MusicLikes = () => {
   const [songs, setSongs] = useState([]);
 
-  useWithAuthorization();
+  const restriction = useRestriction();
+  restriction.allowOnlyAuthorizedUser();
 
   const request = useAuthorizedRequest();
 
