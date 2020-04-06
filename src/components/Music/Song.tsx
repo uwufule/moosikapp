@@ -185,7 +185,6 @@ const Song = ({
             }
 
             dispatch(setNowPlaying(songList?.findIndex((s) => s.uuid === uuid)));
-            dispatch(setPaused(false));
           }}
         >
           <svg viewBox="0 0 24 24">

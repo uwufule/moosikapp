@@ -101,8 +101,12 @@ const Player = () => {
         return;
       }
 
+      dispatch(setPaused(true));
+
       const res = await request(`/songs/${songData.uuid}`);
       dispatch(playSong(res.data.song));
+
+      dispatch(setPaused(false));
     };
 
     asyncAction();
