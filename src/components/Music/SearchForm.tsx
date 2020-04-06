@@ -36,7 +36,7 @@ const SearchForm = ({ handler }: SearchFormProps) => {
           handler(query);
         }}
       >
-        <StyledTextInput type={TextInputType.text} handler={setQuery}>Search</StyledTextInput>
+        <StyledTextInput type={TextInputType.text} handler={setQuery}>Search...</StyledTextInput>
         <Button>Search</Button>
       </Form>
     </Wrapper>
