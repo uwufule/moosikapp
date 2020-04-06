@@ -22,7 +22,7 @@ const colors = {
     background: '#cb5a52',
     accent: '#b1524c',
   },
-  shadow: '#27292d',
+  shadow: '#010101',
   body: {
     background: '#010101',
   },
