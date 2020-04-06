@@ -1,14 +1,9 @@
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Theme } from '../ThemeProvider';
-
-export interface ISong {
-  uuid: string;
-  author: string;
-  title: string;
-  cover: string;
-  favorite?: boolean;
-  edit?: boolean;
-}
+import { setPaused, setNowPlaying } from '../../redux/player/actions';
+import { RootState } from '../../redux/store';
+import { SongData, DetailedSongData } from '../../redux/player/types';
 
 type CoverProps = Theme<{ coverUrl: string }>;
 
@@ -147,6 +142,7 @@ const Wrapper = styled.div`
 `;
 
 interface SongProps {
+  uuid: string;
   author: string;
   title: string;
   cover: string;
@@ -155,54 +151,79 @@ interface SongProps {
 }
 
 const Song = ({
-  author, title, cover, favorite, edit,
-}: SongProps) => (
-  <Wrapper>
-    <Cover coverUrl={cover}>
-      {!cover && (
-        <DefaultCover>
-          <path
-            d="M12,3V12.26C11.5,12.09 11,12 10.5,12C8,12 6,14 6,16.5C6,19 8,21
-              10.5,21C13,21 15,19 15,16.5V6H19V3H12Z"
-          />
-        </DefaultCover>
-      )}
-      <PlayPauseButton title="Play / Pause">
-        <svg viewBox="0 0 24 24">
-          <path
-            d={(true)
-              ? 'M15,16H13V8H15M11,16H9V8H11M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z'
-              : 'M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z'}
-          />
-        </svg>
-      </PlayPauseButton>
-    </Cover>
-    <TitleAndAuthor>
-      <Title>{title}</Title>
-      <Author>{author}</Author>
-    </TitleAndAuthor>
-    <Actions>
-      {edit && (
-        <ActionButton title="Edit song">
+  uuid, author, title, cover, favorite, edit,
+}: SongProps) => {
+  const songList = useSelector<RootState, SongData[]>(
+    (state) => state.player.songList,
+  );
+  const currentSong = useSelector<RootState, DetailedSongData>(
+    (state) => state.player.currentSong,
+  );
+  const paused = useSelector<RootState, boolean>(
+    (state) => state.player.paused,
+  );
+
+  const dispatch = useDispatch();
+
+  return (
+    <Wrapper>
+      <Cover coverUrl={cover}>
+        {!cover && (
+          <DefaultCover>
+            <path
+              d="M12,3V12.26C11.5,12.09 11,12 10.5,12C8,12 6,14 6,16.5C6,19 8,21
+                10.5,21C13,21 15,19 15,16.5V6H19V3H12Z"
+            />
+          </DefaultCover>
+        )}
+        <PlayPauseButton
+          title="Play / Pause"
+          onClick={() => {
+            if (currentSong?.uuid === uuid) {
+              dispatch(setPaused(!paused));
+              return;
+            }
+
+            dispatch(setNowPlaying(songList?.findIndex((s) => s.uuid === uuid)));
+            dispatch(setPaused(false));
+          }}
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d={(!paused && currentSong?.uuid === uuid)
+                ? 'M15,16H13V8H15M11,16H9V8H11M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z'
+                : 'M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z'}
+            />
+          </svg>
+        </PlayPauseButton>
+      </Cover>
+      <TitleAndAuthor>
+        <Title>{title}</Title>
+        <Author>{author}</Author>
+      </TitleAndAuthor>
+      <Actions>
+        {edit && (
+          <ActionButton title="Edit song">
+            <ActionButtonIcon>
+              <path
+                d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9
+                  16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"
+              />
+            </ActionButtonIcon>
+          </ActionButton>
+        )}
+        <ActionButton active={favorite} title={favorite ? 'Remove from favorite' : 'Add to favorite'}>
           <ActionButtonIcon>
             <path
-              d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9
-                16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"
+              d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3
+                10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27
+                18.6,15.36 13.45,20.03L12,21.35Z"
             />
           </ActionButtonIcon>
         </ActionButton>
-      )}
-      <ActionButton active={favorite} title={favorite ? 'Remove from favorite' : 'Add to favorite'}>
-        <ActionButtonIcon>
-          <path
-            d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3
-              10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27
-              18.6,15.36 13.45,20.03L12,21.35Z"
-          />
-        </ActionButtonIcon>
-      </ActionButton>
-    </Actions>
-  </Wrapper>
-);
+      </Actions>
+    </Wrapper>
+  );
+};
 
 export default Song;

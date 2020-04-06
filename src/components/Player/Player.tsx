@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { useAudio } from 'react-use';
 import isMobile from 'is-mobile';
@@ -6,7 +7,11 @@ import Control from './PlayerControl';
 import Timeline from './Timeline';
 import VolumeSlider from './VolumeSlider';
 import SoundBadge from './SoundBadge';
+import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
 import { Theme } from '../ThemeProvider';
+import { RootState } from '../../redux/store';
+import { setPaused, setNowPlaying, playSong } from '../../redux/player/actions';
+import { DetailedSongData, SongData } from '../../redux/player/types';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -56,12 +61,52 @@ const VolumeControlWrapper = styled.div`
 const Player = () => {
   const [isVolumeSliderVisible, setIsVolumeSliderVisible] = useState(false);
 
-  const [audio, state, controls, ref] = useAudio({
+  const request = useAuthorizedRequest();
+
+  const dispatch = useDispatch();
+
+  const paused = useSelector<RootState, boolean>(
+    (state) => state.player.paused,
+  );
+  const songList = useSelector<RootState, SongData[]>(
+    (state) => state.player.songList,
+  );
+  const song = useSelector<RootState, DetailedSongData>(
+    (state) => state.player.currentSong,
+  );
+  const songIndex = useSelector<RootState, number>(
+    (state) => state.player.nowPlaying,
+  );
+
+  const [audio, playerState, playerControls, ref] = useAudio({
     crossOrigin: 'anonymous',
     preload: 'auto',
-    src: 'https://cdn.moosikapp.tk/0b2af59943101062ece23c38d3a8c5ad/Nightcore%20-%20Without%20Me%20(Illenium%20Remix).mp3',
+    src: song?.url,
     autoPlay: false,
   });
+
+  useEffect(() => {
+    if (paused) {
+      playerControls.pause();
+      return;
+    }
+
+    playerControls.play();
+  }, [paused]);
+
+  useEffect(() => {
+    const asyncAction = async () => {
+      const songData = songList[songIndex];
+      if (!songData) {
+        return;
+      }
+
+      const res = await request(`/songs/${songData.uuid}`);
+      dispatch(playSong(res.data.song));
+    };
+
+    asyncAction();
+  }, [songIndex]);
 
   return (
     <Wrapper>
@@ -73,15 +118,15 @@ const Player = () => {
           <Control
             caption="Play / Pause"
             handler={() => {
-              if (state.paused) {
-                controls.play();
-                return;
+              if (songList.length > 0) {
+                if (songIndex === -1) {
+                  dispatch(setNowPlaying(0));
+                }
+                dispatch(setPaused(!playerState.paused));
               }
-
-              controls.pause();
             }}
           >
-            {state.paused
+            {playerState.paused
               ? <path d="M8,5.14V19.14L19,12.14L8,5.14Z" />
               : <path d="M14,19H18V5H14M6,19H10V5H6V19Z" />}
           </Control>
@@ -106,37 +151,37 @@ const Player = () => {
           </Control>
         </ControlsGroup>
         <Timeline
-          timePassed={state.time}
-          duration={Number.isFinite(state.duration) ? state.duration : 0}
-          handler={controls.seek}
+          timePassed={playerState.time}
+          duration={Number.isFinite(playerState.duration) ? playerState.duration : 0}
+          handler={playerControls.seek}
         />
         <VolumeControlWrapper
           onMouseEnter={() => setIsVolumeSliderVisible(true)}
           onMouseLeave={() => setIsVolumeSliderVisible(false)}
           onWheel={(event) => {
             const delta = event.deltaY / Math.abs(event.deltaY);
-            let vol = state.volume - delta * (event.shiftKey ? 0.01 : 0.05);
+            let vol = playerState.volume - delta * (event.shiftKey ? 0.01 : 0.05);
             if (vol > 1) {
               vol = 1;
             } else if (vol < 0) {
               vol = 0;
             }
 
-            controls.volume(vol);
+            playerControls.volume(vol);
           }}
         >
           <Control
             caption="Volume"
             handler={() => {
-              if (state.muted) {
-                controls.unmute();
+              if (playerState.muted) {
+                playerControls.unmute();
                 return;
               }
 
-              controls.mute();
+              playerControls.mute();
             }}
           >
-            {state.muted
+            {playerState.muted
               ? (
                 <path
                   d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,
@@ -157,12 +202,12 @@ const Player = () => {
           {!isMobile() && (
             <VolumeSlider
               show={isVolumeSliderVisible}
-              value={state.volume}
-              handler={controls.volume}
+              value={playerState.volume}
+              handler={playerControls.volume}
             />
           )}
         </VolumeControlWrapper>
-        <SoundBadge author="Song Author" title="Song Title" />
+        <SoundBadge author={song?.author} title={song?.title} cover={song?.cover} />
         {audio}
       </PlayerContainer>
     </Wrapper>
