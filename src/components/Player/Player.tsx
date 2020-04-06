@@ -92,7 +92,7 @@ const Player = () => {
     }
 
     playerControls.play();
-  }, [paused]);
+  }, [paused, song]);
 
   useEffect(() => {
     const asyncAction = async () => {
@@ -100,8 +100,6 @@ const Player = () => {
       if (!songData) {
         return;
       }
-
-      dispatch(setPaused(true));
 
       const res = await request(`/songs/${songData.uuid}`);
       dispatch(playSong(res.data.song));
