@@ -4,6 +4,7 @@ import JWT from 'jsonwebtoken';
 import request, { CoreOptions } from 'request';
 import FileType from 'file-type';
 import HttpErrors from 'http-errors';
+import XmlParser from 'fast-xml-parser';
 
 const { JWT_SECRET, CDN_SERVER = '' } = process.env;
 
@@ -15,7 +16,7 @@ export default async (contentType: string, buffer: Buffer): Promise<string> => {
   }
 
   const uploadTarget = JWT.sign({
-    hex: Crypto.randomBytes(6).toString('hex'),
+    uid: Crypto.randomBytes(6).toString('hex'),
   }, String(JWT_SECRET), { expiresIn: 1800 });
   const targetUri = `${CDN_SERVER}/upload-target/${uploadTarget}`;
 
@@ -31,19 +32,21 @@ export default async (contentType: string, buffer: Buffer): Promise<string> => {
 
   return new Promise((resolve, reject) => {
     stream.pipe(
-      request.put(targetUri, requestOptions, async (uploadError, uploadResult, uploadMsg) => {
-        if (uploadError) {
-          reject(uploadError);
+      request.put(targetUri, requestOptions, async (error: Error, response, body: string) => {
+        if (error) {
+          reject(error);
           return;
         }
 
-        switch (uploadResult.statusCode) {
+        switch (response.statusCode) {
           case 201: {
-            resolve(uploadMsg);
+            resolve(response.headers.location);
             break;
           }
           default:
-            reject(new HttpErrors[uploadResult.statusCode](uploadMsg));
+            reject(
+              new HttpErrors[response.statusCode](XmlParser.parse(body).Error.Details),
+            );
         }
       }),
     );
