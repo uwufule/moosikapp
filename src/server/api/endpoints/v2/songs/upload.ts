@@ -1,8 +1,8 @@
 import { Response } from 'express';
 import HttpErrors from 'http-errors';
-import { AuthorizedRequest } from '../../../middlewares/authorization';
-import * as Songs from '../../../mongodb/songs';
-import upload from '../../../utils/cdn';
+import { AuthorizedRequest } from '../../../../middlewares/authorization';
+import * as Songs from '../../../../mongodb/songs';
+import upload from '../../../../utils/cdn';
 
 import messages from './messages.json';
 

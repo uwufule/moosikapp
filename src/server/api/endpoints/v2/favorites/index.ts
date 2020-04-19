@@ -1,11 +1,11 @@
 import { RequestHandler, Response } from 'express';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
-import { AuthorizedRequest } from '../../../middlewares/authorization';
-import * as Songs from '../../../mongodb/songs';
+import { AuthorizedRequest } from '../../../../middlewares/authorization';
+import * as Songs from '../../../../mongodb/songs';
 
-import scopes from '../../../config/scopes.json';
-import roles from '../../../config/roles.json';
+import scopes from '../../../../config/scopes.json';
+import roles from '../../../../config/roles.json';
 
 import messages from './messages.json';
 

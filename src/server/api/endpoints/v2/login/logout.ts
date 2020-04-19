@@ -1,7 +1,7 @@
 import { Response, RequestHandler } from 'express';
 import HttpErrors from 'http-errors';
-import { AuthorizedRequest } from '../../../middlewares/authorization';
-import { revokeRefreshTokens } from '../../../mongodb/refreshTokens';
+import { AuthorizedRequest } from '../../../../middlewares/authorization';
+import { revokeRefreshTokens } from '../../../../mongodb/refreshTokens';
 
 import messages from './messages.json';
 

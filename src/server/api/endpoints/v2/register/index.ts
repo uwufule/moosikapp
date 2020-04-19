@@ -2,7 +2,7 @@ import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
-import { createUser } from '../../../mongodb/users';
+import { createUser } from '../../../../mongodb/users';
 
 import {
   INVALID_USERNAME,
