@@ -5,8 +5,8 @@ import useTokenManager from '../../hooks/useTokenManager';
 import ThemeProvider from '../ThemeProvider';
 import BackgroundImage from '../BackgroundImage';
 import Header from '../Header';
-import Sidebar from '../Sidebar';
-import Modal from '../Modal';
+// import Sidebar from '../Sidebar';
+// import Modal from '../Modal';
 import Player from '../Player';
 import GlobalStyle from './GlobalStyle';
 import { RootState } from '../../redux/store';
@@ -79,7 +79,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <ThemeProvider isDarkMode={isDarkMode}>
       <GlobalStyle />
-      {false && <Sidebar />}
+      {/* <Sidebar /> */}
       <Main>
         <BackgroundImage />
         <Content mustAddMarginBottom={isLoggedIn}>
@@ -88,7 +88,7 @@ const Layout = ({ children }: LayoutProps) => {
         </Content>
         {isLoggedIn && <Player />}
       </Main>
-      {false && <Modal />}
+      {/* <Modal /> */}
     </ThemeProvider>
   );
 };
