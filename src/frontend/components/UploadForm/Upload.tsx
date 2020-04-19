@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 const UploadList = styled.div``;
 
 const Upload = () => {
-  const [files, setFiles] = useState<File[]>(null);
+  const [files, setFiles] = useState<File[]>([]);
 
   const prepareFiles = (fileList: FileList) => {
     const fileArray = Array.from(fileList);
@@ -37,7 +37,7 @@ const Upload = () => {
 
   return (
     <Wrapper>
-      {!files ? (
+      {files.length === 0 ? (
         <FileDropArea handler={prepareFiles} />
       ) : (
         <UploadList>

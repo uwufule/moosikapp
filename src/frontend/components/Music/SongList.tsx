@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import Song, { ISong } from './Song';
+import Song from './Song';
 import { Theme } from '../ThemeProvider';
+import { SongData } from '../../redux/player/types';
 
 const Wrapper = styled.div`
   padding: 8px;
@@ -16,7 +17,7 @@ const Message = styled.span`
 `;
 
 interface SongListProps {
-  songs: ISong[];
+  songs: SongData[];
   searching?: boolean;
 }
 

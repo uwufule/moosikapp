@@ -156,7 +156,7 @@ const Song = ({
   const songList = useSelector<RootState, SongData[]>(
     (state) => state.player.songList,
   );
-  const currentSong = useSelector<RootState, DetailedSongData>(
+  const currentSong = useSelector<RootState, DetailedSongData | null>(
     (state) => state.player.currentSong,
   );
   const paused = useSelector<RootState, boolean>(

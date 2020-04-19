@@ -41,7 +41,7 @@ const Note = styled.div`
 `;
 
 interface FileDropAreaProps {
-  handler: (files: FileList) => void;
+  handler: (files: FileList | null) => void;
 }
 
 const FileDropArea = ({ handler }: FileDropAreaProps) => {

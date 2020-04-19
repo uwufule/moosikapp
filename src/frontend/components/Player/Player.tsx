@@ -71,7 +71,7 @@ const Player = () => {
   const songList = useSelector<RootState, SongData[]>(
     (state) => state.player.songList,
   );
-  const song = useSelector<RootState, DetailedSongData>(
+  const song = useSelector<RootState, DetailedSongData | null>(
     (state) => state.player.currentSong,
   );
   const songIndex = useSelector<RootState, number>(
@@ -81,9 +81,24 @@ const Player = () => {
   const [audio, playerState, playerControls, ref] = useAudio({
     crossOrigin: 'anonymous',
     preload: 'auto',
-    src: song?.url,
+    src: song?.url || '',
     autoPlay: false,
   });
+
+  const onEnded = () => dispatch(setPaused(true));
+
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    ref.current.addEventListener('ended', onEnded);
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      ref.current?.removeEventListener('ended', onEnded);
+    };
+  }, [ref.current]);
 
   useEffect(() => {
     if (paused) {
@@ -139,6 +154,10 @@ const Player = () => {
             caption="Repeat"
             active={ref.current ? ref.current.loop : false}
             handler={() => {
+              if (!ref.current) {
+                return;
+              }
+
               ref.current.loop = !ref.current.loop;
             }}
           >
@@ -160,17 +179,6 @@ const Player = () => {
         <VolumeControlWrapper
           onMouseEnter={() => setIsVolumeSliderVisible(true)}
           onMouseLeave={() => setIsVolumeSliderVisible(false)}
-          onWheel={(event) => {
-            const delta = event.deltaY / Math.abs(event.deltaY);
-            let vol = playerState.volume - delta * (event.shiftKey ? 0.01 : 0.05);
-            if (vol > 1) {
-              vol = 1;
-            } else if (vol < 0) {
-              vol = 0;
-            }
-
-            playerControls.volume(vol);
-          }}
         >
           <Control
             caption="Volume"
