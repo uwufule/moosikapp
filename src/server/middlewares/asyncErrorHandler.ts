@@ -21,12 +21,13 @@ export default (error: Error, req: Request, res: Response, next: NextFunction) =
     return;
   }
 
-  if (error instanceof HttpError) {
-    const message = (
-      error.name === 'PayloadTooLargeError' ? 'Request entity too large.' : error.message
-    );
+  if (error.name === 'PayloadTooLargeError') {
+    res.status(413).send({ message: 'Request entity too large.' });
+    return;
+  }
 
-    res.status(error.status).send({ message });
+  if (error instanceof HttpError) {
+    res.status(error.status).send({ message: error.message });
     return;
   }
 
