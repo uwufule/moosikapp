@@ -1,10 +1,7 @@
 import {
   RequestHandler, Request, Response, NextFunction,
 } from 'express';
-
-interface MaybeHttpError extends Error {
-  statusCode?: number;
-}
+import { HttpError } from 'http-errors';
 
 export const withAsyncErrorHandler = (...handlers: RequestHandler[]) => (
   handlers.map((handler) => (
@@ -18,19 +15,18 @@ export const withAsyncErrorHandler = (...handlers: RequestHandler[]) => (
   ))
 );
 
-export default (error: MaybeHttpError, req: Request, res: Response, next: NextFunction) => {
+export default (error: Error, req: Request, res: Response, next: NextFunction) => {
   if (!error) {
     next();
     return;
   }
 
-  if (error.statusCode && error.message) {
-    if (error.name === 'PayloadTooLargeError') {
-      res.status(error.statusCode).send({ message: 'Request entity too large.' });
-      return;
-    }
+  if (error instanceof HttpError) {
+    const message = (
+      error.name === 'PayloadTooLargeError' ? 'Request entity too large.' : error.message
+    );
 
-    res.status(error.statusCode).send({ message: error.message });
+    res.status(error.status).send({ message });
     return;
   }
 
