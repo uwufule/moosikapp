@@ -19,7 +19,7 @@ const { JWT_SECRET } = process.env;
 export default (): RequestHandler => async (req: Request, res: Response) => {
   let jwt;
   try {
-    jwt = <RefreshTokenRecord>JWT.verify(req.query.refreshToken, String(JWT_SECRET));
+    jwt = <RefreshTokenRecord>JWT.verify(<string>req.query.refreshToken, String(JWT_SECRET));
   } catch (e) {
     throw new HttpErrors.BadRequest(messages.refresh.INVALID_REFRESH_TOKEN);
   }
