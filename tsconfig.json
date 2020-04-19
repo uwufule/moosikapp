@@ -1,8 +1,19 @@
 {
-  "extends": "./src/frontend/tsconfig.json",
   "compilerOptions": {
-    "noEmit": false,
+    "target": "es6",
     "module": "commonjs",
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "outDir": "dist"
-  }
+  },
+  "include": [
+    "src/index.ts",
+    "src/server/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
