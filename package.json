@@ -15,7 +15,7 @@
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "build": "webpack && next build",
     "dev": "nodemon",
-    "test": "cross-env TS_NODE_PROJECT=tsconfig.server.json mocha -r dotenv/config -r ts-node/register test/**/*.test.ts",
+    "test": "mocha -r dotenv/config -r ts-node/register test/**/*.test.ts",
     "test:watch": "nodemon --config nodemon.test.json",
     "lint": "eslint src/**",
     "lint:fix": "eslint src/** --fix"
