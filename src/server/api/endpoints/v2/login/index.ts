@@ -2,8 +2,8 @@ import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
 import HttpErrors from 'http-errors';
-import { findByUsernameOrEmail, PrivateUserData } from '../../../mongodb/users';
-import createTokenPair, { TokenPair } from '../../../utils/tokenPair';
+import { findByUsernameOrEmail, PrivateUserData } from '../../../../mongodb/users';
+import createTokenPair, { TokenPair } from '../../../../utils/tokenPair';
 
 import messages from './messages.json';
 

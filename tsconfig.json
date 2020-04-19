@@ -1,31 +1,8 @@
 {
+  "extends": "./src/frontend/tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "test/**/*.ts"
-  ]
+    "noEmit": false,
+    "module": "commonjs",
+    "outDir": "dist"
+  }
 }

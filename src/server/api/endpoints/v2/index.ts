@@ -1,10 +1,10 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import HttpErrors from 'http-errors';
-import checkAuth from '../../middlewares/authorization';
-import checkPermissions from '../../middlewares/permissions';
-import { validateAccept, validateContentType } from '../../middlewares/headers';
-import { withAsyncErrorHandler } from '../../middlewares/asyncErrorHandler';
+import checkAuth from '../../../middlewares/authorization';
+import checkPermissions from '../../../middlewares/permissions';
+import { validateAccept, validateContentType } from '../../../middlewares/headers';
+import { withAsyncErrorHandler } from '../../../middlewares/asyncErrorHandler';
 
 import login from './login';
 import refresh from './login/refresh';
@@ -15,7 +15,7 @@ import * as Songs from './songs';
 import * as Favorites from './favorites';
 import status from './status';
 
-import roles from '../../config/roles.json';
+import roles from '../../../config/roles.json';
 
 export default () => {
   const router = Router();

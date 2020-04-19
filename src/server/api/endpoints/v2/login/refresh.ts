@@ -1,9 +1,9 @@
 import { Request, Response, RequestHandler } from 'express';
 import JWT from 'jsonwebtoken';
 import HttpErrors from 'http-errors';
-import { getUserByUuid } from '../../../mongodb/users';
-import { isRefreshTokenExists, deleteRefreshToken } from '../../../mongodb/refreshTokens';
-import createTokenPair from '../../../utils/tokenPair';
+import { getUserByUuid } from '../../../../mongodb/users';
+import { isRefreshTokenExists, deleteRefreshToken } from '../../../../mongodb/refreshTokens';
+import createTokenPair from '../../../../utils/tokenPair';
 
 import messages from './messages.json';
 

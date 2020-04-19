@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import BodyParser from 'body-parser';
 import mongoDB from './mongodb';
-import api from './apiEndpoints';
+import api from './api';
 import asyncErrorHandler from './middlewares/asyncErrorHandler';
 
 import { MAX_FILE_SIZE } from './config/constants.json';

@@ -4,7 +4,7 @@ import server from './server';
 
 const { NODE_ENV, PORT } = process.env;
 
-const app = next({ dev: NODE_ENV !== 'production' });
+const app = next({ dir: 'src/frontend', dev: NODE_ENV !== 'production' });
 const handler = app.getRequestHandler();
 
 app.prepare()
