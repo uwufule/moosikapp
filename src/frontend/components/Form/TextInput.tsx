@@ -50,6 +50,7 @@ const TextInput = ({
         placeholder={children}
         type={type}
         required={required}
+        autoComplete="off"
         onChange={(event) => handler(event.target.value)}
       />
     </label>
