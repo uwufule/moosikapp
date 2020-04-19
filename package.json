@@ -13,7 +13,7 @@
   "keywords": [],
   "scripts": {
     "start": "cross-env NODE_ENV=production node dist/server.js",
-    "build": "webpack && next build",
+    "build": "webpack && next build src/frontend",
     "dev": "nodemon",
     "test": "mocha -r dotenv/config -r ts-node/register test/**/*.test.ts",
     "test:watch": "nodemon --config nodemon.test.json",
