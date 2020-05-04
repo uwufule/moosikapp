@@ -29,14 +29,7 @@ const NavLink = ({
   to, children, className, handler,
 }: NavLinkProps) => (
   <NextLink href={to}>
-    <StyledLink
-      className={className}
-      onClick={(event) => {
-        if (typeof handler === 'function') {
-          handler(event);
-        }
-      }}
-    >
+    <StyledLink className={className} onClick={handler}>
       {children}
     </StyledLink>
   </NextLink>
