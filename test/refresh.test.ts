@@ -45,7 +45,7 @@ describe('refresh token', () => {
 
     expect(res.status).to.eq(200);
     expect(res.header['content-type']).to.match(/application\/json/);
-    expect(res.body.token).to.be.a('string');
+    expect(res.body.accessToken).to.be.a('string');
     expect(res.body.refreshToken).to.be.a('string');
   });
 

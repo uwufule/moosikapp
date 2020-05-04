@@ -5,14 +5,14 @@ import { PrivateUserData } from '../mongodb/users';
 const { JWT_SECRET } = process.env;
 
 export interface TokenPair {
-  token: string;
+  accessToken: string;
   refreshToken: string;
 }
 
 export default async (user: PrivateUserData): Promise<TokenPair> => {
   const refreshTokenId = await createRefreshToken(user.uuid);
 
-  const token = JWT.sign({
+  const accessToken = JWT.sign({
     uuid: user.uuid,
     role: user.role,
   }, String(JWT_SECRET), { expiresIn: '30m' });
@@ -20,7 +20,7 @@ export default async (user: PrivateUserData): Promise<TokenPair> => {
   const refreshToken = JWT.sign({
     userId: user.uuid,
     id: refreshTokenId,
-  }, String(JWT_SECRET), { expiresIn: '60d' });
+  }, String(JWT_SECRET), { expiresIn: '30d' });
 
-  return { token, refreshToken };
+  return { accessToken, refreshToken };
 };

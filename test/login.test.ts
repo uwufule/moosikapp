@@ -30,7 +30,7 @@ describe('login', () => {
       .expect('Content-Type', /application\/json/)
       .end((err, res) => {
         expect(res.body.message).to.eq('Successfully logged in.');
-        expect(res.body.token).to.be.a('string');
+        expect(res.body.accessToken).to.be.a('string');
         expect(res.body.refreshToken).to.be.a('string');
 
         done();
