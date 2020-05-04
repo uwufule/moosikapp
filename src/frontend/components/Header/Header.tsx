@@ -1,15 +1,12 @@
-import { MouseEvent } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import useAuthorization from '../../hooks/useAuthorization';
 import Logo from './Logo';
 import Nav from './Nav';
 import { Link } from '../BaseNav';
+import Logout from './Logout';
 import { RootState } from '../../redux/store';
 
-type Event = MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>;
-
-const HeaderComponent = styled.header`
+const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,36 +19,18 @@ const Group = styled.div`
 `;
 
 const Header = () => {
-  const isLoggedIn = useSelector<RootState, boolean>(
-    (state) => state.login.accessToken !== '',
-  );
-
-  const authorization = useAuthorization();
-
-  const logoutHandler = async (event: Event) => {
-    event.preventDefault();
-
-    try {
-      await authorization.deauthorize();
-    } catch (e) {
-      // error message (e.response.data)
-    }
-  };
+  const isLoggedIn = useSelector<RootState, boolean>((state) => state.auth.accessToken !== '');
 
   return (
-    <HeaderComponent>
+    <StyledHeader>
       <Group>
         <Logo linkTo="/" />
         {isLoggedIn && <Nav />}
       </Group>
       <Group>
-        {isLoggedIn ? (
-          <Link to="?logout" handler={logoutHandler}>Logout</Link>
-        ) : (
-          <Link to="/login">Login</Link>
-        )}
+        {isLoggedIn ? <Logout /> : <Link to="/login">Login</Link>}
       </Group>
-    </HeaderComponent>
+    </StyledHeader>
   );
 };
 
