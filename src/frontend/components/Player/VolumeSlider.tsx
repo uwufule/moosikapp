@@ -104,7 +104,7 @@ interface VolumeSliderProps {
 }
 
 const VolumeSlider = ({ show = false, value, handler } : VolumeSliderProps) => {
-  const [isLeftMouseButtonPressed, setIsLeftMouseButtonPressed] = useState(false);
+  const [startDragging, setStartDragging] = useState(false);
 
   const percent = 100 * value;
 
@@ -117,13 +117,9 @@ const VolumeSlider = ({ show = false, value, handler } : VolumeSliderProps) => {
             aria-valuemin={0}
             aria-valuemax={1}
             aria-valuenow={value}
-            onMouseDown={(event) => {
-              if (event.button === 0) {
-                setIsLeftMouseButtonPressed(true);
-              }
-            }}
+            onMouseDown={(event) => setStartDragging(event.button === 0)}
             onMouseMove={(event) => {
-              if (isLeftMouseButtonPressed) {
+              if (startDragging) {
                 const { top, height } = event.currentTarget.getBoundingClientRect();
                 handler(1 - (event.clientY - top) / height);
               }
@@ -133,15 +129,15 @@ const VolumeSlider = ({ show = false, value, handler } : VolumeSliderProps) => {
                 const { top, height } = event.currentTarget.getBoundingClientRect();
                 handler(1 - (event.clientY - top) / height);
 
-                setIsLeftMouseButtonPressed(false);
+                setStartDragging(false);
               }
             }}
             onMouseLeave={(event) => {
-              if (isLeftMouseButtonPressed) {
+              if (startDragging) {
                 const { top, height } = event.currentTarget.getBoundingClientRect();
                 handler(1 - (event.clientY - top) / height);
 
-                setIsLeftMouseButtonPressed(false);
+                setStartDragging(false);
               }
             }}
           >

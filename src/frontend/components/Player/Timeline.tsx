@@ -72,10 +72,10 @@ interface TimelineProps {
 
 const Timeline = ({ timePassed = 0, duration = 0, handler }: TimelineProps) => {
   const [currentTime, setCurrentTime] = useState(timePassed);
-  const [isLeftMouseButtonPressed, setIsLeftMouseButtonPressed] = useState(false);
+  const [startDragging, setStartDragging] = useState(false);
 
   useEffect(() => {
-    if (!isLeftMouseButtonPressed) {
+    if (!startDragging) {
       setCurrentTime(timePassed);
     }
   }, [timePassed]);
@@ -90,13 +90,9 @@ const Timeline = ({ timePassed = 0, duration = 0, handler }: TimelineProps) => {
         aria-valuemin={0}
         aria-valuemax={duration}
         aria-valuenow={timePassed}
-        onMouseDown={(event) => {
-          if (event.button === 0) {
-            setIsLeftMouseButtonPressed(true);
-          }
-        }}
+        onMouseDown={(event) => setStartDragging(event.button === 0)}
         onMouseMove={(event) => {
-          if (isLeftMouseButtonPressed) {
+          if (startDragging) {
             const { left, width } = event.currentTarget.getBoundingClientRect();
             setCurrentTime((duration * (event.clientX - left)) / width);
           }
@@ -105,16 +101,16 @@ const Timeline = ({ timePassed = 0, duration = 0, handler }: TimelineProps) => {
           if (event.button === 0) {
             const { left, width } = event.currentTarget.getBoundingClientRect();
             const time = (duration * (event.clientX - left)) / width;
-            handler(time);
             setCurrentTime(time);
+            handler(time);
 
-            setIsLeftMouseButtonPressed(false);
+            setStartDragging(false);
           }
         }}
         onMouseLeave={() => {
-          if (isLeftMouseButtonPressed) {
+          if (startDragging) {
             handler(currentTime);
-            setIsLeftMouseButtonPressed(false);
+            setStartDragging(false);
           }
         }}
       >
