@@ -3,24 +3,20 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { RootState } from '../redux/store';
 
-const useUserRestriction = () => {
+const useRestriction = () => {
+  const router = useRouter();
+
+  const isLoggedIn = useSelector<RootState, boolean>((state) => state.auth.accessToken !== '');
+
   const allowOnlyAuthorizedUser = () => {
-    const accessToken = useSelector<RootState, string>((state) => state.login.accessToken);
-
-    const router = useRouter();
-
     useEffect(() => {
-      if (!accessToken) {
+      if (!isLoggedIn) {
         router.push(`/login?from=${router.asPath}`);
       }
-    }, [accessToken]);
+    }, [isLoggedIn]);
   };
 
   const disallowAuthorizedUser = () => {
-    const router = useRouter();
-
-    const isLoggedIn = useSelector<RootState, boolean>((state) => state.login.accessToken !== '');
-
     useEffect(() => {
       if (isLoggedIn) {
         router.push(router.query?.from?.toString() || '/');
@@ -33,4 +29,4 @@ const useUserRestriction = () => {
   };
 };
 
-export default useUserRestriction;
+export default useRestriction;
