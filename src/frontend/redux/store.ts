@@ -1,23 +1,16 @@
 import { createStore, combineReducers } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
-import login, { LoginState, LoginAction } from './reducers/login';
-import player, { PlayerState } from './player/reducers';
-import { PlayerActionTypes } from './player/actions';
+import auth from './auth/reducers';
+import player from './player/reducers';
 
-export interface RootState {
-  login: LoginState;
-  player: PlayerState;
-}
+const rootReducer = combineReducers({
+  auth,
+  player,
+});
 
-type RootAction = LoginAction | PlayerActionTypes;
+export type RootState = ReturnType<typeof rootReducer>;
 
-export default () => (
-  createStore<RootState, RootAction, any, any>(
-    combineReducers({
-      login,
-      player,
-    }),
-    composeWithDevTools(),
-  )
-);
+const makeStore = () => createStore(rootReducer, composeWithDevTools());
+
+export default makeStore;

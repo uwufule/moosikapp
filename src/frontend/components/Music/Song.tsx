@@ -1,9 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Theme } from '../ThemeProvider';
-import { setPaused, setNowPlaying } from '../../redux/player/actions';
+import { togglePlaying, setCurrentSongIndex } from '../../redux/player/actions';
 import { RootState } from '../../redux/store';
-import { SongData, DetailedSongData } from '../../redux/player/types';
+import { Song, CurrentSong } from '../../redux/player/types';
 
 type CoverProps = Theme<{ coverUrl: string }>;
 
@@ -150,17 +150,19 @@ interface SongProps {
   edit?: boolean;
 }
 
-const Song = ({
+const SongComponent = ({
   uuid, author, title, cover, favorite, edit,
 }: SongProps) => {
-  const songList = useSelector<RootState, SongData[]>(
+  const songList = useSelector<RootState, Song[]>(
     (state) => state.player.songList,
   );
-  const currentSong = useSelector<RootState, DetailedSongData | null>(
-    (state) => state.player.currentSong,
+
+  const currentSong = useSelector<RootState, CurrentSong | null>(
+    (state) => state.player.current.song,
   );
-  const paused = useSelector<RootState, boolean>(
-    (state) => state.player.paused,
+
+  const playing = useSelector<RootState, boolean>(
+    (state) => state.player.playing,
   );
 
   const dispatch = useDispatch();
@@ -180,16 +182,16 @@ const Song = ({
           title="Play / Pause"
           onClick={() => {
             if (currentSong?.uuid === uuid) {
-              dispatch(setPaused(!paused));
+              dispatch(togglePlaying(!playing));
               return;
             }
 
-            dispatch(setNowPlaying(songList?.findIndex((s) => s.uuid === uuid)));
+            dispatch(setCurrentSongIndex(songList?.findIndex((s) => s.uuid === uuid)));
           }}
         >
           <svg viewBox="0 0 24 24">
             <path
-              d={(!paused && currentSong?.uuid === uuid)
+              d={(playing && currentSong?.uuid === uuid)
                 ? 'M15,16H13V8H15M11,16H9V8H11M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z'
                 : 'M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z'}
             />
@@ -225,4 +227,4 @@ const Song = ({
   );
 };
 
-export default Song;
+export default SongComponent;

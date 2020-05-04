@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import useRestriction from '../../hooks/useRestriction';
 import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
 import { Nav, SongList } from '../../components/Music';
-import { setSongs } from '../../redux/player/actions';
+import { setSongList } from '../../redux/player/actions';
 import { RootState } from '../../redux/store';
-import { SongData } from '../../redux/player/types';
+import { Song } from '../../redux/player/types';
 
 const MusicIndex = () => {
   const restriction = useRestriction();
@@ -13,7 +13,7 @@ const MusicIndex = () => {
 
   const request = useAuthorizedRequest();
 
-  const songs = useSelector<RootState, SongData[]>((state) => state.player.songList);
+  const songs = useSelector<RootState, Song[]>((state) => state.player.songList);
 
   const dispatch = useDispatch();
 
@@ -24,13 +24,13 @@ const MusicIndex = () => {
           method: 'GET',
         });
 
-        dispatch(setSongs(res.data.songs));
+        dispatch(setSongList(res.data.songs));
       } catch (e) {
         if (e.response?.status !== 404) {
           // error message (e.response.data)
         }
 
-        dispatch(setSongs([]));
+        dispatch(setSongList([]));
       }
     };
 

@@ -4,14 +4,15 @@ import styled from 'styled-components';
 import { useAudio } from 'react-use';
 import isMobile from 'is-mobile';
 import Control from './PlayerControl';
+import PlayPauseButton from './PlayPauseButton';
 import Timeline from './Timeline';
 import VolumeSlider from './VolumeSlider';
 import SoundBadge from './SoundBadge';
 import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
 import { Theme } from '../ThemeProvider';
 import { RootState } from '../../redux/store';
-import { setPaused, setNowPlaying, playSong } from '../../redux/player/actions';
-import { DetailedSongData, SongData } from '../../redux/player/types';
+import { setCurrentSong, togglePlaying } from '../../redux/player/actions';
+import { Song, CurrentSong } from '../../redux/player/types';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -65,65 +66,69 @@ const Player = () => {
 
   const dispatch = useDispatch();
 
-  const paused = useSelector<RootState, boolean>(
-    (state) => state.player.paused,
+  const playing = useSelector<RootState, boolean>(
+    (state) => state.player.playing,
   );
-  const songList = useSelector<RootState, SongData[]>(
+
+  const songList = useSelector<RootState, Song[]>(
     (state) => state.player.songList,
   );
-  const song = useSelector<RootState, DetailedSongData | null>(
-    (state) => state.player.currentSong,
+
+  const currentSong = useSelector<RootState, CurrentSong | null>(
+    (state) => state.player.current.song,
   );
-  const songIndex = useSelector<RootState, number>(
-    (state) => state.player.nowPlaying,
+
+  const currentSongIndex = useSelector<RootState, number>(
+    (state) => state.player.current.index,
   );
 
   const [audio, playerState, playerControls, ref] = useAudio({
     crossOrigin: 'anonymous',
     preload: 'auto',
-    src: song?.url || '',
+    src: currentSong?.url || '',
     autoPlay: false,
   });
 
-  const onEnded = () => dispatch(setPaused(true));
 
   useEffect(() => {
     if (!ref.current) {
       return;
     }
 
-    ref.current.addEventListener('ended', onEnded);
+    const ended = () => dispatch(togglePlaying(false));
+
+    ref.current.addEventListener('ended', ended);
 
     // eslint-disable-next-line consistent-return
     return () => {
-      ref.current?.removeEventListener('ended', onEnded);
+      ref.current?.removeEventListener('ended', ended);
     };
   }, [ref.current]);
 
   useEffect(() => {
-    if (paused) {
-      playerControls.pause();
+    if (playing) {
+      playerControls.play();
       return;
     }
 
-    playerControls.play();
-  }, [paused, song]);
+    playerControls.pause();
+  }, [playing, currentSong]);
 
   useEffect(() => {
-    const asyncAction = async () => {
-      const songData = songList[songIndex];
-      if (!songData) {
+    const getSong = async () => {
+      const song = songList[currentSongIndex];
+      if (!song) {
         return;
       }
 
-      const res = await request(`/songs/${songData.uuid}`);
-      dispatch(playSong(res.data.song));
+      const res = await request(`/songs/${song.uuid}`);
+      dispatch(setCurrentSong(res.data.song));
 
-      dispatch(setPaused(false));
+      dispatch(togglePlaying(true));
     };
 
-    asyncAction();
-  }, [songIndex]);
+    getSong();
+  }, [currentSongIndex]);
 
   return (
     <Wrapper>
@@ -132,21 +137,7 @@ const Player = () => {
           <Control caption="Prev" handler={() => {}}>
             <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
           </Control>
-          <Control
-            caption="Play / Pause"
-            handler={() => {
-              if (songList.length > 0) {
-                if (songIndex === -1) {
-                  dispatch(setNowPlaying(0));
-                }
-                dispatch(setPaused(!playerState.paused));
-              }
-            }}
-          >
-            {playerState.paused
-              ? <path d="M8,5.14V19.14L19,12.14L8,5.14Z" />
-              : <path d="M14,19H18V5H14M6,19H10V5H6V19Z" />}
-          </Control>
+          <PlayPauseButton />
           <Control caption="Next" handler={() => {}}>
             <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
           </Control>
@@ -217,7 +208,11 @@ const Player = () => {
             />
           )}
         </VolumeControlWrapper>
-        <SoundBadge author={song?.author} title={song?.title} cover={song?.cover} />
+        <SoundBadge
+          author={currentSong?.author}
+          title={currentSong?.title}
+          cover={currentSong?.cover}
+        />
         {audio}
       </PlayerContainer>
     </Wrapper>

@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import useRestriction from '../../hooks/useRestriction';
 import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
 import { Nav, SearchForm, SongList } from '../../components/Music';
-import { setSongs } from '../../redux/player/actions';
+import { setSongList } from '../../redux/player/actions';
 import { RootState } from '../../redux/store';
-import { SongData } from '../../redux/player/types';
+import { Song } from '../../redux/player/types';
 
 const MusicSearch = () => {
   const [query, setQuery] = useState('');
@@ -16,11 +16,13 @@ const MusicSearch = () => {
 
   const request = useAuthorizedRequest();
 
-  const songs = useSelector<RootState, SongData[]>((state) => state.player.songList);
+  const songs = useSelector<RootState, Song[]>((state) => state.player.songList);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setSongList([]));
+
     const asyncEffect = async () => {
       setSearching(true);
 
@@ -32,13 +34,13 @@ const MusicSearch = () => {
           },
         });
 
-        dispatch(setSongs(res.data.songs));
+        dispatch(setSongList(res.data.songs));
       } catch (e) {
         if (e.response?.status !== 404) {
           // error message (e.response.data)
         }
 
-        dispatch(setSongs([]));
+        dispatch(setSongList([]));
       } finally {
         setSearching(false);
       }

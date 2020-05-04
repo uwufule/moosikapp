@@ -1,49 +1,29 @@
-import PlayerActions from './constants';
-import { SongData, DetailedSongData } from './types';
+import {
+  Song,
+  CurrentSong,
+  PlayerActionTypes,
+  SetSongListAction,
+  SetCurrentSongAction,
+  SetCurrentSongIndexAction,
+  TogglePlayingAction,
+} from './types';
 
-interface SetSongsAction {
-  type: PlayerActions.SET_SONG_LIST;
-  payload: SongData[];
-}
-
-export const setSongs = (songs: SongData[]): SetSongsAction => ({
-  type: PlayerActions.SET_SONG_LIST,
+export const setSongList = (songs: Song[]): SetSongListAction => ({
+  type: PlayerActionTypes.SET_SONG_LIST,
   payload: songs,
 });
 
-interface PlaySongAction {
-  type: PlayerActions.PLAY_SONG;
-  payload: DetailedSongData;
-}
-
-export const playSong = (song: DetailedSongData): PlaySongAction => ({
-  type: PlayerActions.PLAY_SONG,
+export const setCurrentSong = (song: CurrentSong): SetCurrentSongAction => ({
+  type: PlayerActionTypes.SET_CURRENT_SONG,
   payload: song,
 });
 
-interface SetNowPlayingAction {
-  type: PlayerActions.SET_NOW_PLAYING,
-  payload: number;
-}
-
-export const setNowPlaying = (index: number): SetNowPlayingAction => ({
-  type: PlayerActions.SET_NOW_PLAYING,
+export const setCurrentSongIndex = (index: number): SetCurrentSongIndexAction => ({
+  type: PlayerActionTypes.SET_CURRENT_SONG_INDEX,
   payload: index,
 });
 
-interface SetPausedAction {
-  type: PlayerActions.SET_PAUSED;
-  payload: boolean;
-}
-
-export const setPaused = (paused: boolean): SetPausedAction => ({
-  type: PlayerActions.SET_PAUSED,
-  payload: paused,
+export const togglePlaying = (playing: boolean): TogglePlayingAction => ({
+  type: PlayerActionTypes.TOGGLE_PLAYING,
+  payload: playing,
 });
-
-export type PlayerActionTypes = (
-  SetSongsAction
-  | PlaySongAction
-  | SetPausedAction
-  | SetNowPlayingAction
-);

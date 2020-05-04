@@ -1,33 +1,38 @@
-import PlayerActions from './constants';
-import { SongData, DetailedSongData } from './types';
-import { PlayerActionTypes } from './actions';
-
-export interface PlayerState {
-  songList: SongData[];
-  currentSong: DetailedSongData | null;
-  paused: boolean;
-  nowPlaying: number;
-}
+import { PlayerState, PlayerActionTypes, AnyPlayerAction } from './types';
 
 const initialState: PlayerState = {
   songList: [],
-  currentSong: null,
-  paused: true,
-  nowPlaying: -1,
+  current: {
+    song: null,
+    index: -1,
+  },
+  playing: false,
 };
 
-const playerReducer = (
-  state = initialState, action: PlayerActionTypes,
-) => {
+const playerReducer = (state = initialState, action: AnyPlayerAction): PlayerState => {
   switch (action.type) {
-    case PlayerActions.SET_SONG_LIST:
+    case PlayerActionTypes.SET_SONG_LIST:
       return { ...state, songList: action.payload };
-    case PlayerActions.PLAY_SONG:
-      return { ...state, currentSong: action.payload };
-    case PlayerActions.SET_PAUSED:
-      return { ...state, paused: action.payload };
-    case PlayerActions.SET_NOW_PLAYING:
-      return { ...state, nowPlaying: action.payload };
+    case PlayerActionTypes.SET_CURRENT_SONG: {
+      return {
+        ...state,
+        current: {
+          index: state.current.index,
+          song: action.payload,
+        },
+      };
+    }
+    case PlayerActionTypes.SET_CURRENT_SONG_INDEX: {
+      return {
+        ...state,
+        current: {
+          index: action.payload,
+          song: state.current.song,
+        },
+      };
+    }
+    case PlayerActionTypes.TOGGLE_PLAYING:
+      return { ...state, playing: action.payload };
     default:
       return state;
   }
