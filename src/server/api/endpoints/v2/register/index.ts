@@ -42,12 +42,10 @@ export default (): RequestHandler => async (req: Request, res: Response) => {
   const salt = await Bcrypt.genSalt();
   const password = await Bcrypt.hash(value.password, salt);
 
-  let uuid;
   try {
-    uuid = await createUser({ ...value, password });
+    const uuid = await createUser({ ...value, password });
+    res.status(201).send({ message: SUCCESS, uuid });
   } catch (e) {
     throw new HttpErrors.BadRequest(ACCOUNT_ALREADY_EXISTS);
   }
-
-  res.status(201).send({ message: SUCCESS, uuid });
 };
