@@ -1,12 +1,12 @@
-import Button from './Button';
+import Input, { InputType } from './Input';
+import SubmitButton from './SubmitButton';
 import Link from './Link';
-import TextInput, { TextInputType } from './TextInput';
 
 export { default } from './Form';
 
 export {
-  Button,
+  Input,
+  InputType,
+  SubmitButton,
   Link,
-  TextInput,
-  TextInputType,
 };

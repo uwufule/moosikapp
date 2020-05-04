@@ -22,24 +22,24 @@ const Input = styled.input`
   }
 `;
 
-export enum TextInputType {
+export enum InputType {
   text = 'text',
   email = 'email',
   tel = 'tel',
   password = 'password',
 }
 
-interface TextInputProps {
+interface InputProps {
   children: string;
   className?: string;
-  type: TextInputType;
+  type: InputType;
   required?: boolean;
   handler: (value: string) => void;
 }
 
-const TextInput = ({
+const FormInput = ({
   children, className, type, required = false, handler,
-}: TextInputProps) => {
+}: InputProps) => {
   const id = createHash().update(children).digest(36);
 
   return (
@@ -57,4 +57,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default FormInput;

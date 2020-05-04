@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import useRestriction from '../hooks/useRestriction';
-import Form, { TextInput, Button, TextInputType } from '../components/Form';
+import Form, {
+  Input, SubmitButton, InputType,
+} from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 import { Theme } from '../components/ThemeProvider';
 
-const StyledTextInput = styled(TextInput)`
+const StyledInput = styled(Input)`
   margin-bottom: 10px;
 
 &:last-child {
@@ -13,7 +15,7 @@ const StyledTextInput = styled(TextInput)`
 }
 `;
 
-const Text = styled.div`
+const TextContainer = styled.div`
   margin-bottom: 10px;
   font-size: 16px;
   font-weight: 400;
@@ -43,17 +45,19 @@ const Forgot = () => {
     <CenteringComponent>
       <Form
         title="Forgot"
-        handler={() => {}}
+        handler={() => {
+          // request
+        }}
       >
-        <Text>
+        <TextContainer>
           <p>To request a new password please enter your account email in the box below.</p>
           <p>We will send you an email with further instructions</p>
-        </Text>
-        <StyledTextInput type={TextInputType.text} required handler={setEmail}>
+        </TextContainer>
+        <StyledInput type={InputType.text} required handler={setEmail}>
           Email
-        </StyledTextInput>
+        </StyledInput>
         <Footer>
-          <Button>Request Password Change</Button>
+          <SubmitButton>Request Password Change</SubmitButton>
         </Footer>
       </Form>
     </CenteringComponent>

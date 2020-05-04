@@ -26,8 +26,8 @@ interface FormButtonProps {
   className?: string;
 }
 
-const FormButton = ({ children, className }: FormButtonProps) => (
+const SubmitButton = ({ children, className }: FormButtonProps) => (
   <Button className={className} value={children} />
 );
 
-export default FormButton;
+export default SubmitButton;

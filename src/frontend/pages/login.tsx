@@ -3,17 +3,17 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useRestriction from '../hooks/useRestriction';
 import useAuthorization from '../hooks/useAuthorization';
-import Form, {
-  TextInput, Link, Button, TextInputType,
-} from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
+import Form, {
+  Input, InputType, SubmitButton, Link,
+} from '../components/Form';
 
-const StyledTextInput = styled(TextInput)`
+const StyledInput = styled(Input)`
   margin-bottom: 10px;
 
-&:last-child {
-  margin-bottom: 0;
-}
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 const Footer = styled.div`
@@ -35,7 +35,7 @@ const Footer = styled.div`
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(SubmitButton)`
   margin-left: 8px;
 
   @media (max-width: 450px) {
@@ -67,14 +67,16 @@ const Login = () => {
           }
         }}
       >
-        <StyledTextInput type={TextInputType.text} required handler={setUsername}>
+        <StyledInput type={InputType.text} required handler={setUsername}>
           Username / Email
-        </StyledTextInput>
-        <StyledTextInput type={TextInputType.password} required handler={setPassword}>
+        </StyledInput>
+        <StyledInput type={InputType.password} required handler={setPassword}>
           Password
-        </StyledTextInput>
+        </StyledInput>
         <Footer>
-          <Link to="/forgot">Forgot your password?</Link>
+          <span>
+            <Link to="/forgot">Forgot your password?</Link>
+          </span>
           <div>
             <Link to="/register">Need an account?</Link>
             <StyledButton>Login</StyledButton>

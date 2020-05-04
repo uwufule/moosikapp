@@ -4,11 +4,11 @@ import { useRouter } from 'next/router';
 import useRestriction from '../hooks/useRestriction';
 import useRequest from '../hooks/useRequest';
 import Form, {
-  TextInput, Link, Button, TextInputType,
+  Input, InputType, SubmitButton, Link,
 } from '../components/Form';
 import CenteringComponent from '../components/CenteringComponent';
 
-const StyledTextInput = styled(TextInput)`
+const StyledInput = styled(Input)`
   margin-bottom: 10px;
 
 &:last-child {
@@ -22,7 +22,7 @@ const Footer = styled.div`
   justify-content: space-between;
 `;
 
-const StyledButton = styled(Button)`
+const StyledSubmitButton = styled(SubmitButton)`
   margin-left: 8px;
 
   @media (max-width: 450px) {
@@ -72,21 +72,21 @@ const Register = () => {
           }
         }}
       >
-        <StyledTextInput type={TextInputType.text} required handler={setUsername}>
+        <StyledInput type={InputType.text} required handler={setUsername}>
           Username
-        </StyledTextInput>
-        <StyledTextInput type={TextInputType.email} required handler={setEmail}>
+        </StyledInput>
+        <StyledInput type={InputType.email} required handler={setEmail}>
           Email
-        </StyledTextInput>
-        <StyledTextInput type={TextInputType.password} required handler={setPassword}>
+        </StyledInput>
+        <StyledInput type={InputType.password} required handler={setPassword}>
           Password
-        </StyledTextInput>
-        <StyledTextInput type={TextInputType.password} required handler={SetRetryPassword}>
+        </StyledInput>
+        <StyledInput type={InputType.password} required handler={SetRetryPassword}>
           Password again
-        </StyledTextInput>
+        </StyledInput>
         <Footer>
           <Link to="/login">Already have account?</Link>
-          <StyledButton>Register</StyledButton>
+          <StyledSubmitButton>Register</StyledSubmitButton>
         </Footer>
       </Form>
     </CenteringComponent>
