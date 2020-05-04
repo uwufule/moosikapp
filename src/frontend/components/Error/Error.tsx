@@ -5,12 +5,12 @@ import { Theme } from '../ThemeProvider';
 import png from './images/404.png';
 
 const Wrapper = styled.div`
+  position: relative;
   margin-top: 24px;
   flex: 1;
 `;
 
 const Title = styled.h1`
-  position: relative;
   margin: 0;
   font-size: 32px;
   font-weight: 600;
