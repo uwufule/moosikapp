@@ -41,8 +41,8 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isRequestCompleted, setIsRequestCompleted] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const isAuthorized = useSelector<RootState, boolean>(
     (state) => state.auth.accessToken !== '',
@@ -51,37 +51,42 @@ const Layout = ({ children }: LayoutProps) => {
   const tokenManager = useTokenManager();
 
   const getRefreshToken = () => {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
       throw new Error('Refresh token not found in local storage.');
-      }
+    }
 
+    return refreshToken;
+  };
+
+  useEffect(() => {
+    const makeRequest = async () => {
       try {
         const refreshToken = getRefreshToken();
         await tokenManager.refreshTokens(refreshToken);
       } catch (e) {
-        // error message
+        // error
       } finally {
-        setIsRequestCompleted(true);
+        setReady(true);
       }
     };
 
-    asyncEffect();
+    makeRequest();
   }, []);
 
   useEffect(() => {
-    setIsDarkMode(localStorage.getItem('isDarkMode') === 'true');
+    setDarkMode(localStorage.getItem('darkMode') === 'true');
   }, []);
 
   return (
-    <ThemeProvider isDarkMode={isDarkMode}>
+    <ThemeProvider darkMode={darkMode}>
       <GlobalStyle />
       {/* <Sidebar /> */}
       <Main>
         <BackgroundImage />
         <Content mustAddMarginBottom={isAuthorized}>
           <Header />
-          {isRequestCompleted && children}
+          {ready && children}
         </Content>
         {isAuthorized && <Player />}
       </Main>
