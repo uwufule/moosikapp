@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import JWT from 'jsonwebtoken';
 import useRequest from './useRequest';
-import { setTokenChain } from '../redux/actions/login';
+import { setTokenPair } from '../redux/auth/actions';
 
 interface AccessTokenRecord {
   uuid: string;
@@ -29,7 +29,7 @@ const useTokenManeger = () => {
     return record.exp * 1000 - Date.now() < 60000;
   };
 
-  const releaseTokenPair = async (refreshToken: string): Promise<TokenPair> => {
+  const refreshTokens = async (refreshToken: string): Promise<TokenPair> => {
     const res = await request(
       '/login/refresh',
       {
@@ -40,18 +40,18 @@ const useTokenManeger = () => {
       },
     );
 
-    dispatch(setTokenChain(res.data.token, res.data.refreshToken));
+    dispatch(setTokenPair(res.data.accessToken, res.data.refreshToken));
     localStorage.setItem('refreshToken', res.data.refreshToken);
 
     return {
-      accessToken: res.data.token,
+      accessToken: res.data.accessToken,
       refreshToken: res.data.refreshToken,
     };
   };
 
   return {
     isAccessTokenExpired,
-    releaseTokenPair,
+    refreshTokens,
   };
 };
 

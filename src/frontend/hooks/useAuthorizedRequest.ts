@@ -6,7 +6,7 @@ import { RootState } from '../redux/store';
 
 const useAuthorizedRequest = () => {
   let accessToken = useSelector<RootState, string>(
-    (state) => state.login.accessToken,
+    (state) => state.auth.accessToken,
   );
 
   const tokenManager = useTokenManager();
@@ -15,7 +15,7 @@ const useAuthorizedRequest = () => {
     const refreshToken = localStorage.getItem('refreshToken');
 
     if (accessToken && refreshToken && tokenManager.isAccessTokenExpired(accessToken)) {
-      const tokenPair = await tokenManager.releaseTokenPair(refreshToken);
+      const tokenPair = await tokenManager.refreshTokens(refreshToken);
 
       accessToken = tokenPair.accessToken;
     }

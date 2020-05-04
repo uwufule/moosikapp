@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import useRequest from './useRequest';
 import useAuthorizedRequest from './useAuthorizedRequest';
-import { setTokenChain, clearTokenChain } from '../redux/actions/login';
+import { setTokenPair, removeTokenPair } from '../redux/auth/actions';
 
 const useAuthorization = () => {
   const request = useRequest();
@@ -20,7 +20,7 @@ const useAuthorization = () => {
       },
     );
 
-    dispatch(setTokenChain(res.data.token, res.data.refreshToken));
+    dispatch(setTokenPair(res.data.accessToken, res.data.refreshToken));
     localStorage.setItem('refreshToken', res.data.refreshToken);
   };
 
@@ -32,7 +32,7 @@ const useAuthorization = () => {
       },
     );
 
-    dispatch(clearTokenChain());
+    dispatch(removeTokenPair());
     localStorage.removeItem('refreshToken');
   };
 

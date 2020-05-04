@@ -44,24 +44,21 @@ const Layout = ({ children }: LayoutProps) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isRequestCompleted, setIsRequestCompleted] = useState(false);
 
-  const isLoggedIn = useSelector<RootState, boolean>(
-    (state) => state.login.accessToken !== '',
+  const isAuthorized = useSelector<RootState, boolean>(
+    (state) => state.auth.accessToken !== '',
   );
 
   const tokenManager = useTokenManager();
 
-  useEffect(() => {
-    setIsRequestCompleted(false);
-
-    const asyncEffect = async () => {
+  const getRefreshToken = () => {
       const refreshToken = localStorage.getItem('refreshToken');
       if (!refreshToken) {
-        setIsRequestCompleted(true);
-        return;
+      throw new Error('Refresh token not found in local storage.');
       }
 
       try {
-        await tokenManager.releaseTokenPair(refreshToken);
+        const refreshToken = getRefreshToken();
+        await tokenManager.refreshTokens(refreshToken);
       } catch (e) {
         // error message
       } finally {
@@ -82,11 +79,11 @@ const Layout = ({ children }: LayoutProps) => {
       {/* <Sidebar /> */}
       <Main>
         <BackgroundImage />
-        <Content mustAddMarginBottom={isLoggedIn}>
+        <Content mustAddMarginBottom={isAuthorized}>
           <Header />
           {isRequestCompleted && children}
         </Content>
-        {isLoggedIn && <Player />}
+        {isAuthorized && <Player />}
       </Main>
       {/* <Modal /> */}
     </ThemeProvider>
