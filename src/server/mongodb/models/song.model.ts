@@ -1,10 +1,10 @@
 import Mongoose, { Schema } from 'mongoose';
-import UUID from 'uuid';
+import uuidv4 from 'uuid';
 
 const schema = new Schema({
   _id: {
     type: String,
-    default: UUID.v4,
+    default: uuidv4,
   },
   author: {
     type: String,
@@ -34,13 +34,13 @@ const schema = new Schema({
   },
 }, { id: false, versionKey: false, timestamps: true });
 
-schema.pre('save', function save() {
+schema.pre('save', function presave() {
   this.set('likes', [this.get('uploadedBy')]);
 });
 
 schema.set('toJSON', {
-  transform: (doc, ret) => {
-    const { _id: uuid, ...data } = ret;
+  transform: (document, object) => {
+    const { _id: uuid, ...data } = object;
     return { uuid, ...data };
   },
 });

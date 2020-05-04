@@ -1,12 +1,12 @@
 import Mongoose, { Schema } from 'mongoose';
-import UUID from 'uuid';
+import uuidv4 from 'uuid';
 
 import roles from '../../config/roles.json';
 
 const schema = new Schema({
   _id: {
     type: String,
-    default: UUID.v4,
+    default: uuidv4,
   },
   username: {
     type: String,
