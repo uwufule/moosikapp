@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import multer from 'multer';
 import HttpErrors from 'http-errors';
 import checkAuth from '../../../middlewares/authorization';
@@ -19,10 +19,6 @@ import roles from '../../../config/roles.json';
 
 export default () => {
   const router = Router();
-
-  router.all('/', (req: Request, res: Response) => {
-    res.status(200).send({ message: 'There is APIv2 endpoint.' });
-  });
 
   // login
   router.post('/login', withAsyncErrorHandler(
