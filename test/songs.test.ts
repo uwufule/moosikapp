@@ -1,45 +1,66 @@
+import { Express } from 'express';
+import Crypto from 'crypto';
+import { readFile } from 'fs';
+import { promisify } from 'util';
 import request from 'supertest';
 import { expect } from 'chai';
-import FS from 'fs';
-import { promisify } from 'util';
+import uuidv4 from 'uuid/v4';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/server';
+import createExpressServer from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
 import SongModel from '../src/server/mongodb/models/song.model';
 
-const readFile = promisify(FS.readFile);
+const readFileAsync = promisify(readFile);
 
 const { JWT_SECRET } = process.env;
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const userId = uuidv4();
 
-let token: string;
+const songId = uuidv4();
 
-let song: Buffer;
+const token = JWT.sign({ uuid: userId, role: 1024 }, String(JWT_SECRET));
+
+const createTestUserModel = () => {
+  const username = Crypto.randomBytes(12).toString('hex');
+
+  return new UserModel({
+    _id: userId,
+    username,
+    email: `${username}@domain.com`,
+    password: 'supersecretpassword',
+  });
+};
+
+const createTestSongModel = () => (
+  new SongModel({
+    _id: songId,
+    author: 'TestAuthor',
+    title: 'TestTitle',
+    cover: 'http://path/to/cover.png',
+    uploadedBy: userId,
+    path: '/path/to/file',
+    likes: [userId],
+  })
+);
+
+let app: Express;
 
 describe('songs', () => {
   beforeEach(async () => {
-    await UserModel.deleteOne({ _id: 'testuser7-uuid' });
+    app = await createExpressServer();
 
-    await (new UserModel({
-      _id: 'testuser7-uuid',
-      username: 'testuser7',
-      email: 'testuser7@domain.tld',
-      password: 'supersecretpassword',
-    })).save();
-
-    token = JWT.sign({ uuid: 'testuser7-uuid', role: 1 }, String(JWT_SECRET));
-
-    song = await readFile('test/dataset/song.mp3');
+    await createTestUserModel().save();
   });
 
   afterEach(async () => {
-    await UserModel.deleteOne({ _id: 'testuser7-uuid' });
+    await UserModel.deleteOne({ _id: userId });
   });
 
   describe('upload', () => {
-    it('should return Status-Code 201 and correct body if song successfully uploaded', async () => {
+    it.skip('should return Status-Code 201 and correct body if song successfully uploaded', async () => {
+      const song = await readFileAsync('./test/dataset/song.mp3');
+
       const res = await request(app)
         .post('/api/v2/songs')
         .set('Accept', 'application/json')
@@ -50,13 +71,12 @@ describe('songs', () => {
       expect(res.status).to.eq(201);
       expect(res.header['content-type']).to.match(/application\/json/);
       expect(res.body.message).to.eq('You have successfully uploaded a new song.');
-      expect(res.body.uuid).to.match(UUID_REGEX);
+      expect(res.body.uuid).to.be.a('string');
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
       const res = await request(app)
-        .post('/api/v2/songs')
-        .auth(token, { type: 'bearer' });
+        .post('/api/v2/songs');
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -68,7 +88,7 @@ describe('songs', () => {
         .post('/api/v2/songs')
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' })
-        .send('not-a-buffer');
+        .send('invalid-content-type');
 
       expect(res.status).to.eq(400);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -81,7 +101,7 @@ describe('songs', () => {
         .set('Accept', 'application/json')
         .set('Content-Type', 'audio/mpeg')
         .auth('invalid-access-token', { type: 'bearer' })
-        .send(song);
+        .send();
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -89,21 +109,23 @@ describe('songs', () => {
     });
 
     it('should return Status-Code 413 and correct body if song too large', async () => {
-      const tooLargeEntity = Buffer.concat([song, Buffer.alloc(11534336)]);
+      const largeSong = Buffer.alloc(11534336); // 11MB payload
 
       const res = await request(app)
         .post('/api/v2/songs')
         .set('Accept', 'application/json')
         .set('Content-Type', 'audio/mpeg')
         .auth(token, { type: 'bearer' })
-        .send(tooLargeEntity);
+        .send(largeSong);
 
       expect(res.status).to.eq(413);
       expect(res.header['content-type']).to.match(/application\/json/);
       expect(res.body.message).to.eq('Request entity too large.');
     });
 
-    it('should return Status-Code 409 and correct body if song already exists', async () => {
+    it.skip('should return Status-Code 409 and correct body if song already exists', async () => {
+      const song = await readFileAsync('./test/dataset/song.mp3');
+
       await request(app)
         .post('/api/v2/songs')
         .set('Accept', 'application/json')
@@ -126,16 +148,11 @@ describe('songs', () => {
 
   describe('get list', () => {
     beforeEach(async () => {
-      await (new SongModel({
-        _id: 'testsong2-uuid',
-        uploadedBy: 'testuser7-uuid',
-        path: `/path/to/file-${Math.round(Math.random() * 1000)}`,
-        likes: ['testuser7-uuid'],
-      })).save();
+      await createTestSongModel().save();
     });
 
     afterEach(async () => {
-      await SongModel.deleteOne({ _id: 'testsong2-uuid' });
+      await SongModel.deleteOne({ _id: songId });
     });
 
     it('should return Status-Code 200 and correct body if song list sucessfully retrieved', async () => {
@@ -152,8 +169,7 @@ describe('songs', () => {
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs')
-        .auth(token, { type: 'bearer' });
+        .get('/api/v2/songs');
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -223,21 +239,16 @@ describe('songs', () => {
 
   describe('get by uuid', () => {
     beforeEach(async () => {
-      await (new SongModel({
-        _id: 'testsong3-uuid',
-        uploadedBy: 'testuser7-uuid',
-        path: `/path/to/file-${Math.round(Math.random() * 1000)}`,
-        likes: ['testuser7-uuid'],
-      })).save();
+      await createTestSongModel().save();
     });
 
     afterEach(async () => {
-      await SongModel.deleteOne({ _id: 'testsong3-uuid' });
+      await SongModel.deleteOne({ _id: songId });
     });
 
     it('should return Status-Code 200 and correct body if song sucessfully retrieved', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/testsong3-uuid')
+        .get(`/api/v2/songs/${songId}`)
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
 
@@ -259,8 +270,7 @@ describe('songs', () => {
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs')
-        .auth(token, { type: 'bearer' });
+        .get(`/api/v2/songs/${songId}`);
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -269,7 +279,7 @@ describe('songs', () => {
 
     it('should return Status-Code 403 and correct body if invalid token provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs')
+        .get(`/api/v2/songs/${songId}`)
         .set('Accept', 'application/json')
         .auth('invalid-access-token', { type: 'bearer' });
 
@@ -280,7 +290,7 @@ describe('songs', () => {
 
     it('should return Status-Code 404 and correct body if no song found', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/nonexistent-song-uuid')
+        .get('/api/v2/songs/nonexistentsong')
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
 
@@ -292,24 +302,17 @@ describe('songs', () => {
 
   describe('find', () => {
     beforeEach(async () => {
-      await (new SongModel({
-        _id: 'testsong4-uuid',
-        author: 'Author',
-        title: 'Title',
-        uploadedBy: 'testuser7-uuid',
-        path: `/path/to/file-${Math.round(Math.random() * 1000)}`,
-        likes: ['testuser7-uuid'],
-      })).save();
+      await createTestSongModel().save();
     });
 
     afterEach(async () => {
-      await SongModel.deleteOne({ _id: 'testsong4-uuid' });
+      await SongModel.deleteOne({ _id: songId });
     });
 
     it('should return Status-Code 200 and correct body if song list sucessfully retrieved', async () => {
       const res = await request(app)
         .get('/api/v2/songs/search')
-        .query({ query: 'Title' })
+        .query({ query: 'title' })
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
 
@@ -321,9 +324,7 @@ describe('songs', () => {
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
       const res = await request(app)
-        .get('/api/v2/songs/search')
-        .query({ query: 'Title' })
-        .auth(token, { type: 'bearer' });
+        .get('/api/v2/songs/search');
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -334,6 +335,7 @@ describe('songs', () => {
       const res = await request(app)
         .get('/api/v2/songs/search')
         .set('Accept', 'application/json')
+        .query({ query: 'title' })
         .auth('invalid-access-token', { type: 'bearer' });
 
       expect(res.status).to.eq(403);
@@ -344,7 +346,7 @@ describe('songs', () => {
     it('should return Status-Code 404 and correct body if no song found', async () => {
       const res = await request(app)
         .get('/api/v2/songs/search')
-        .query({ query: 'Nonexistent' })
+        .query({ query: 'no-response-for-this-query' })
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
 
@@ -367,7 +369,7 @@ describe('songs', () => {
     it('should return Status-Code 400 and correct body if invalid query parameter `skip` provided', async () => {
       const res = await request(app)
         .get('/api/v2/songs/search')
-        .query({ query: 'Title' })
+        .query({ query: 'title' })
         .query({ skip: 'NaN' })
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
@@ -380,7 +382,7 @@ describe('songs', () => {
     it('should return Status-Code 400 and correct body if invalid query parameter `limit` provided', async () => {
       const res = await request(app)
         .get('/api/v2/songs/search')
-        .query({ query: 'Title' })
+        .query({ query: 'title' })
         .query({ limit: 'NaN' })
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
@@ -393,7 +395,7 @@ describe('songs', () => {
     it('should return Status-Code 400 and correct body if invalid query parameter `scope` provided', async () => {
       const res = await request(app)
         .get('/api/v2/songs/search')
-        .query({ query: 'Title' })
+        .query({ query: 'title' })
         .query({ scope: 'NaN' })
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
@@ -404,18 +406,13 @@ describe('songs', () => {
     });
   });
 
-  describe('update', () => {
+  describe.skip('update', () => {
     beforeEach(async () => {
-      await (new SongModel({
-        _id: 'testsong5-uuid',
-        uploadedBy: 'testuser7-uuid',
-        path: `/path/to/file-${Math.round(Math.random() * 1000)}`,
-        likes: ['testuser7-uuid'],
-      })).save();
+      await createTestSongModel().save();
     });
 
     afterEach(async () => {
-      await SongModel.deleteOne({ _id: 'testsong5-uuid' });
+      await SongModel.deleteOne({ _id: songId });
     });
 
     it.skip('should return Status-Code 200 and correct body if song sucessfully updated', async () => {
@@ -450,27 +447,28 @@ describe('songs', () => {
 
     });
 
-    it.skip('should return Status-Code 400 and correct body if invalid body parameter `cover` provided (from formdata)', async () => {
+    it.skip('should return Status-Code 400 and correct body if invalid body parameter `cover` provided', async () => {
 
     });
 
-    it.skip('should return Status-Code 400 and correct body if invalid body parameter `cover` provided (from json)', async () => {
+    describe('update cover image', () => {
+      it.skip('should return Status-Code 200 and correct body if successfuly updated cover image', async () => {
 
+      });
+
+      it.skip('should return Status-Code 400 and correct body if invalid cover image provided', async () => {
+
+      });
     });
   });
 
-  describe('delete', async () => {
+  describe.skip('delete', async () => {
     beforeEach(async () => {
-      await (new SongModel({
-        _id: 'testsong6-uuid',
-        uploadedBy: 'testuser7-uuid',
-        path: `/path/to/file-${Math.round(Math.random() * 1000)}`,
-        likes: ['testuser7-uuid'],
-      })).save();
+      await createTestSongModel().save();
     });
 
     afterEach(async () => {
-      await SongModel.deleteOne({ _id: 'testsong6-uuid' });
+      await SongModel.deleteOne({ _id: songId });
     });
 
     it.skip('should return Status-Code 204 and correct body if song sucessfully deleted', async () => {

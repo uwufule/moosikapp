@@ -1,33 +1,45 @@
+import Crypto from 'crypto';
+import { Express } from 'express';
 import request from 'supertest';
 import { expect } from 'chai';
+import uuidv4 from 'uuid/v4';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/server';
+import createExpressServer from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
 
 const { JWT_SECRET } = process.env;
 
-let token: string;
+const userId = uuidv4();
+const username = Crypto.randomBytes(12).toString('hex');
+
+const token = JWT.sign({ uuid: userId, role: 1 }, String(JWT_SECRET));
+
+const createTestUserModel = () => (
+  new UserModel({
+    _id: userId,
+    username,
+    email: `${username}@domain.com`,
+    password: 'supersecretpassword',
+  })
+);
+
+let app: Express;
 
 describe('users', () => {
   beforeEach(async () => {
-    await (new UserModel({
-      _id: 'testuser3-uuid',
-      username: 'testuser3',
-      email: 'testuser3@domain.tld',
-      password: 'supersecretpassword',
-    })).save();
+    app = await createExpressServer();
 
-    token = JWT.sign({ uuid: 'testuser3-uuid', role: 1 }, String(JWT_SECRET));
+    await createTestUserModel().save();
   });
 
   afterEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser3' });
+    await UserModel.deleteOne({ _id: userId });
   });
 
   it('should return Status-Code 200 and correct body if user founded', async () => {
     const res = await request(app)
-      .get('/api/v2/users/testuser3')
+      .get(`/api/v2/users/${username}`)
       .set('Accept', 'application/json')
       .auth(token, { type: 'bearer' });
 
@@ -45,7 +57,7 @@ describe('users', () => {
 
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
     const res = await request(app)
-      .get('/api/v2/users/testuser3')
+      .get(`/api/v2/users/${username}`)
       .auth('access token', { type: 'bearer' });
 
     expect(res.status).to.eq(405);
@@ -55,7 +67,7 @@ describe('users', () => {
 
   it('should return Status-Code 403 and correct body if invalid authorization data provided', async () => {
     const res = await request(app)
-      .get('/api/v2/users/nonexistentaccount')
+      .get(`/api/v2/users/${username}`)
       .set('Accept', 'application/json')
       .auth('invalid access token', { type: 'bearer' });
 
@@ -66,7 +78,7 @@ describe('users', () => {
 
   it('should return Status-Code 404 and correct body if nonexistent account username provided', async () => {
     const res = await request(app)
-      .get('/api/v2/users/nonexistent-account')
+      .get('/api/v2/users/nonexistentaccount')
       .set('Accept', 'application/json')
       .auth(token, { type: 'bearer' });
 

@@ -1,82 +1,91 @@
+import Crypto from 'crypto';
+import { Express } from 'express';
 import request from 'supertest';
+import { expect } from 'chai';
+import uuidv4 from 'uuid';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/server';
+import createExpressServer from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
 import RefreshTokenModel from '../src/server/mongodb/models/refreshToken.model';
 
 const { JWT_SECRET } = process.env;
 
-let token: string;
+const userId = uuidv4();
+
+const token = JWT.sign({ uuid: userId, role: 1 }, String(JWT_SECRET));
+
+const createTestUserModel = () => {
+  const username = Crypto.randomBytes(12).toString('hex');
+
+  return new UserModel({
+    _id: userId,
+    username,
+    email: `${username}@domain.com`,
+    password: 'supersecretpassword',
+  });
+};
+
+const createTestRefreshTokenModel = () => (
+  new RefreshTokenModel({ _id: uuidv4(), userId })
+);
+
+let app: Express;
 
 describe('logout', () => {
   beforeEach(async () => {
-    await (
-      new UserModel({
-        _id: 'testuser4-uuid',
-        username: 'testuser4',
-        email: 'testuser4@domain.tld',
-        password: 'supersecretpassword',
-      })
-    ).save();
+    app = await createExpressServer();
 
-    await (
-      new RefreshTokenModel({
-        _id: 'refresh-token1-uuid',
-        userId: 'testuser4-uuid',
-      })
-    ).save();
-
-    token = JWT.sign({ uuid: 'testuser4-uuid' }, String(JWT_SECRET));
+    await createTestUserModel().save();
+    await createTestRefreshTokenModel().save();
   });
 
   afterEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser4' });
-
-    await RefreshTokenModel.deleteMany({ userId: 'testuser4-uuid' });
+    await UserModel.deleteOne({ _id: userId });
+    await RefreshTokenModel.deleteMany({ userId });
   });
 
-  it('should return Status-Code 200 and correct body if user logged out', (done) => {
-    request(app)
+  it('should return Status-Code 200 and correct body if user logged out', async () => {
+    const res = await request(app)
       .post('/api/v2/logout')
       .set('Accept', 'application/json')
-      .auth(token, { type: 'bearer' })
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-      .expect({ message: 'Successfully logged out.' }, done);
+      .auth(token, { type: 'bearer' });
+
+    expect(res.status).to.eq(200);
+    expect(res.header['content-type']).to.match(/application\/json/);
+    expect(res.body.message).to.eq('Successfully logged out.');
   });
 
-  it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', (done) => {
-    request(app)
-      .post('/api/v2/logout')
-      .expect(405)
-      .expect('Content-Type', /application\/json/)
-      .expect({ message: 'Incorrect `Accept` header provided.' }, done);
+  it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
+    const res = await request(app)
+      .post('/api/v2/logout');
+
+    expect(res.status).to.eq(405);
+    expect(res.header['content-type']).to.match(/application\/json/);
+    expect(res.body.message).to.eq('Incorrect `Accept` header provided.');
   });
 
-  it('should return Status-Code 403 and correct body if invalid token provided', (done) => {
-    request(app)
-      .post('/api/v2/logout')
-      .set('Accept', 'application/json')
-      .auth('invalid-access-token', { type: 'bearer' })
-      .expect(403)
-      .expect('Content-Type', /application\/json/)
-      .expect({ message: 'Not authorized.' }, done);
-  });
-
-  it('should return Status-Code 410 and correct body if already logged out', (done) => {
-    request(app)
+  it('should return Status-Code 403 and correct body if invalid token provided', async () => {
+    const res = await request(app)
       .post('/api/v2/logout')
       .set('Accept', 'application/json')
-      .auth(token, { type: 'bearer' })
-      .end(() => {
-        request(app)
-          .post('/api/v2/logout')
-          .set('Accept', 'application/json')
-          .auth(token, { type: 'bearer' })
-          .expect(410)
-          .expect('Content-Type', /application\/json/)
-          .expect({ message: 'Already logged out.' }, done);
-      });
+      .auth('invalid-access-token', { type: 'bearer' });
+
+    expect(res.status).to.eq(403);
+    expect(res.header['content-type']).to.match(/application\/json/);
+    expect(res.body.message).to.eq('Not authorized.');
+  });
+
+  it('should return Status-Code 410 and correct body if already logged out', async () => {
+    await RefreshTokenModel.deleteMany({ userId });
+
+    const res = await request(app)
+      .post('/api/v2/logout')
+      .set('Accept', 'application/json')
+      .auth(token, { type: 'bearer' });
+
+    expect(res.status).to.eq(410);
+    expect(res.header['content-type']).to.match(/application\/json/);
+    expect(res.body.message).to.eq('Already logged out.');
   });
 });

@@ -1,30 +1,38 @@
+import Crypto from 'crypto';
+import { Express } from 'express';
 import request from 'supertest';
 import { expect } from 'chai';
 
-import app from '../src/server';
+import createExpressServer from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const username = Crypto.randomBytes(12).toString('hex');
+
+const user = {
+  username,
+  email: `${username}@domain.com`,
+  password: 'supersecretpassword',
+};
+
+let app: Express;
 
 describe('registration', () => {
   beforeEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser1' });
+    app = await createExpressServer();
+
+    await UserModel.deleteOne({ username });
   });
 
   it('should return Status-Code 201 and correct body if user entered correct data', async () => {
     const res = await request(app)
       .post('/api/v2/register')
       .set('Accept', 'application/json')
-      .send({
-        username: 'testuser1',
-        email: 'testuser1@domain.com',
-        password: 'supersecretpassword',
-      });
+      .send(user);
 
     expect(res.status).to.eq(201);
     expect(res.header['content-type']).to.match(/application\/json/);
     expect(res.body.message).to.eq('You have successfully created a new account.');
-    expect(res.body.uuid).to.be.match(UUID_REGEX);
+    expect(res.body.uuid).to.be.a('string');
   });
 
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
@@ -40,7 +48,7 @@ describe('registration', () => {
     const res = await request(app)
       .post('/api/v2/register')
       .set('Accept', 'application/json')
-      .send('string-instead-json');
+      .send('invalid-content-type');
 
     expect(res.status).to.eq(400);
     expect(res.header['content-type']).to.match(/application\/json/);
@@ -52,9 +60,8 @@ describe('registration', () => {
       .post('/api/v2/register')
       .set('Accept', 'application/json')
       .send({
+        ...user,
         username: 'invalid-username',
-        email: 'testuser1@domain.com',
-        password: 'supersecretpassword',
       });
 
     expect(res.status).to.eq(400);
@@ -67,9 +74,8 @@ describe('registration', () => {
       .post('/api/v2/register')
       .set('Accept', 'application/json')
       .send({
-        username: 'testuser1',
+        ...user,
         email: 'invalid-email',
-        password: 'supersecretpassword',
       });
 
     expect(res.status).to.eq(400);
@@ -82,8 +88,7 @@ describe('registration', () => {
       .post('/api/v2/register')
       .set('Accept', 'application/json')
       .send({
-        username: 'username',
-        email: 'email@moosikapp.tk',
+        ...user,
         password: 'short',
       });
 
@@ -93,23 +98,14 @@ describe('registration', () => {
   });
 
   it('should return Status-Code 400 and correct body if user with provided username/email already exists', async () => {
-    await request(app)
-      .post('/api/v2/register')
-      .set('Accept', 'application/json')
-      .send({
-        username: 'testuser1',
-        email: 'testuser1@domain.com',
-        password: 'supersecretpassword',
-      });
+    await (
+      new UserModel(user)
+    ).save();
 
     const res = await request(app)
       .post('/api/v2/register')
       .set('Accept', 'application/json')
-      .send({
-        username: 'testuser1',
-        email: 'testuser1@domain.com',
-        password: 'supersecretpassword',
-      });
+      .send(user);
 
     expect(res.status).to.eq(400);
     expect(res.header['content-type']).to.match(/application\/json/);

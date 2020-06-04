@@ -1,205 +1,228 @@
+import Crypto from 'crypto';
+import { Express } from 'express';
 import request from 'supertest';
 import { expect } from 'chai';
+import uuidv4 from 'uuid';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/server';
+import createExpressServer from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
 import SongModel from '../src/server/mongodb/models/song.model';
 
 const { JWT_SECRET } = process.env;
 
-let token: string;
+const userId = uuidv4();
+
+const songId = uuidv4();
+
+const token = JWT.sign({ uuid: userId, role: 1 }, String(JWT_SECRET));
+
+const createTestUserModel = () => {
+  const username = Crypto.randomBytes(12).toString('hex');
+
+  return new UserModel({
+    _id: userId,
+    username,
+    email: `${username}@domain.com`,
+    password: 'supersecretpassword',
+  });
+};
+
+const createTestSongModel = () => (
+  new SongModel({
+    _id: songId,
+    uploadedBy: userId,
+    path: '/path/to/file',
+    likes: [userId],
+  })
+);
+
+let app: Express;
 
 describe('favorites', () => {
   beforeEach(async () => {
-    await (new UserModel({
-      _id: 'testuser6-uuid',
-      username: 'testuser6',
-      email: 'testuser6@domain.com',
-      password: 'supersecretpassword',
-    })).save();
+    app = await createExpressServer();
 
-    await (new SongModel({
-      _id: 'testsong1-uuid',
-      uploadedBy: 'testuser6-uuid',
-      path: '/path/to/file',
-      likes: ['testuser6-uuid'],
-    })).save();
+    await createTestUserModel().save();
 
-    token = JWT.sign({ uuid: 'testuser6-uuid', role: 1 }, String(JWT_SECRET));
+    await createTestSongModel().save();
   });
 
   afterEach(async () => {
-    await UserModel.deleteOne({ _id: 'testuser6-uuid' });
+    await UserModel.deleteOne({ _id: userId });
 
-    await SongModel.deleteOne({ _id: 'testsong1-uuid' });
+    await SongModel.deleteOne({ _id: songId });
   });
 
   describe('retrieve', () => {
-    it('should return Status-Code 200 and correct body if song list sucessfully retrieved', (done) => {
-      request(app)
+    it('should return Status-Code 200 and correct body if song list sucessfully retrieved', async () => {
+      const res = await request(app)
         .get('/api/v2/favorites')
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Successfully retrieved favorite songs.' })
-        .end((err, res) => {
-          expect(res.body.songs).to.be.a('array');
+        .auth(token, { type: 'bearer' });
 
-          done();
-        });
+      expect(res.status).to.eq(200);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Successfully retrieved favorite songs.');
+      expect(res.body.songs).to.be.an('array');
     });
 
-    it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', (done) => {
-      request(app)
-        .get('/api/v2/favorites')
-        .expect(405)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Incorrect `Accept` header provided.' }, done);
+    it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
+      const res = await request(app)
+        .get('/api/v2/favorites');
+
+      expect(res.status).to.eq(405);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Incorrect `Accept` header provided.');
     });
 
-    it('should return Status-Code 403 and correct body if invalid token provided', (done) => {
-      request(app)
+    it('should return Status-Code 403 and correct body if invalid token provided', async () => {
+      const res = await request(app)
         .get('/api/v2/favorites')
         .set('Accept', 'application/json')
-        .auth('invalid-access-token', { type: 'bearer' })
-        .expect(403)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Not authorized.' }, done);
+        .auth('invalid-access-token', { type: 'bearer' });
+
+      expect(res.status).to.eq(403);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Not authorized.');
     });
 
-    it('should return Status-Code 400 and correct body if invalid query parameter `skip` provided', (done) => {
-      request(app)
+    it('should return Status-Code 400 and correct body if invalid query parameter `skip` provided', async () => {
+      const res = await request(app)
         .get('/api/v2/favorites')
         .query({ skip: 'NaN' })
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(400)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Invalid query parameter `skip` provided.' }, done);
+        .auth(token, { type: 'bearer' });
+
+      expect(res.status).to.eq(400);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Invalid query parameter `skip` provided.');
     });
 
-    it('should return Status-Code 400 and correct body if invalid query parameter `limit` provided', (done) => {
-      request(app)
+    it('should return Status-Code 400 and correct body if invalid query parameter `limit` provided', async () => {
+      const res = await request(app)
         .get('/api/v2/favorites')
         .query({ limit: 'NaN' })
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(400)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Invalid query parameter `limit` provided.' }, done);
+        .auth(token, { type: 'bearer' });
+
+      expect(res.status).to.eq(400);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Invalid query parameter `limit` provided.');
     });
 
-    it('should return Status-Code 400 and correct body if invalid query parameter `scope` provided', (done) => {
-      request(app)
+    it('should return Status-Code 400 and correct body if invalid query parameter `scope` provided', async () => {
+      const res = await request(app)
         .get('/api/v2/favorites')
         .query({ scope: 'NaN' })
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(400)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Invalid query parameter `scope` provided.' }, done);
+        .auth(token, { type: 'bearer' });
+
+      expect(res.status).to.eq(400);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Invalid query parameter `scope` provided.');
     });
   });
 
   describe('add', () => {
-    it('should return Status-Code 200 and correct body if song sucessfully added to favorites', (done) => {
-      request(app)
-        .post('/api/v2/favorites/testsong1-uuid')
+    it('should return Status-Code 200 and correct body if song sucessfully added to favorites', async () => {
+      const res = await request(app)
+        .post(`/api/v2/favorites/${songId}`)
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-        .end((err, res) => {
-          expect(res.body.message).to.eq('Successfully added song to favorites.');
-          expect(res.body.uuid).to.eq('testsong1-uuid');
+        .auth(token, { type: 'bearer' });
 
-          done();
-        });
+      expect(res.status).to.eq(200);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Successfully added song to favorites.');
+      expect(res.body.uuid).to.eq(songId);
     });
 
-    it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', (done) => {
-      request(app)
-        .post('/api/v2/favorites/testsong1-uuid')
-        .expect(405)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Incorrect `Accept` header provided.' }, done);
+    it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
+      const res = await request(app)
+        .post(`/api/v2/favorites/${songId}`);
+
+      expect(res.status).to.eq(405);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Incorrect `Accept` header provided.');
     });
 
-    it('should return Status-Code 403 and correct body if invalid token provided', (done) => {
-      request(app)
-        .post('/api/v2/favorites/testsong1-uuid')
+    it('should return Status-Code 403 and correct body if invalid token provided', async () => {
+      const res = await request(app)
+        .post(`/api/v2/favorites/${songId}`)
         .set('Accept', 'application/json')
-        .auth('invalid-access-token', { type: 'bearer' })
-        .expect(403)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Not authorized.' }, done);
+        .auth('invalid-access-token', { type: 'bearer' });
+
+      expect(res.status).to.eq(403);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Not authorized.');
     });
 
-    it('should return Status-Code 404 and correct body if no song found', (done) => {
-      request(app)
+    it('should return Status-Code 404 and correct body if no song found', async () => {
+      const res = await request(app)
         .post('/api/v2/favorites/nonexistent-song-uuid')
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(404)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'No song found.' }, done);
+        .auth(token, { type: 'bearer' });
+
+      expect(res.status).to.eq(404);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('No song found.');
     });
   });
 
   describe('remove', () => {
-    it('should return Status-Code 200 and correct body if song sucessfully added to favorites', (done) => {
-      request(app)
-        .delete('/api/v2/favorites/testsong1-uuid')
+    it('should return Status-Code 200 and correct body if song sucessfully added to favorites', async () => {
+      const res = await request(app)
+        .delete(`/api/v2/favorites/${songId}`)
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(204)
-        .expect({}, done);
+        .auth(token, { type: 'bearer' });
+
+      expect(res.status).to.eq(204);
+      expect(res.body).be.an('object');
+      expect(res.body).to.be.deep.eq({});
     });
 
-    it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', (done) => {
-      request(app)
-        .delete('/api/v2/favorites/testsong1-uuid')
-        .expect(405)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Incorrect `Accept` header provided.' }, done);
+    it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
+      const res = await request(app)
+        .delete(`/api/v2/favorites/${songId}`);
+
+      expect(res.status).to.eq(405);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Incorrect `Accept` header provided.');
     });
 
-    it('should return Status-Code 403 and correct body if invalid token provided', (done) => {
-      request(app)
-        .delete('/api/v2/favorites/testsong1-uuid')
+    it('should return Status-Code 403 and correct body if invalid token provided', async () => {
+      const res = await request(app)
+        .delete(`/api/v2/favorites/${songId}`)
         .set('Accept', 'application/json')
-        .auth('invalid-access-token', { type: 'bearer' })
-        .expect(403)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'Not authorized.' }, done);
+        .auth('invalid-access-token', { type: 'bearer' });
+
+      expect(res.status).to.eq(403);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('Not authorized.');
     });
 
-    it('should return Status-Code 404 and correct body if no song found', (done) => {
-      request(app)
+    it('should return Status-Code 404 and correct body if no song found', async () => {
+      const res = await request(app)
         .delete('/api/v2/favorites/nonexistent-song-uuid')
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .expect(404)
-        .expect('Content-Type', /application\/json/)
-        .expect({ message: 'No song found.' }, done);
+        .auth(token, { type: 'bearer' });
+
+      expect(res.status).to.eq(404);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('No song found.');
     });
 
-    it('should return Status-Code 404 and correct body if song not in favorites', (done) => {
-      request(app)
-        .delete('/api/v2/favorites/testsong1-uuid')
+    it('should return Status-Code 404 and correct body if song not in favorites', async () => {
+      await SongModel.updateOne({ _id: songId }, { $pull: { likes: userId } });
+
+      const res = await request(app)
+        .delete(`/api/v2/favorites/${songId}`)
         .set('Accept', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .end(() => {
-          request(app)
-            .delete('/api/v2/favorites/testsong1-uuid')
-            .set('Accept', 'application/json')
-            .auth(token, { type: 'bearer' })
-            .expect(404)
-            .expect('Content-Type', /application\/json/)
-            .expect({ message: 'No favorite.' }, done);
-        });
+        .auth(token, { type: 'bearer' });
+
+      expect(res.status).to.eq(404);
+      expect(res.header['content-type']).to.match(/application\/json/);
+      expect(res.body.message).to.eq('No favorite.');
     });
   });
 });

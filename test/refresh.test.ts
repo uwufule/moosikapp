@@ -1,40 +1,49 @@
+import Crypto from 'crypto';
+import { Express } from 'express';
 import request from 'supertest';
 import { expect } from 'chai';
+import uuidv4 from 'uuid';
 import JWT from 'jsonwebtoken';
 
-import app from '../src/server';
+import createExpressServer from '../src/server';
 import UserModel from '../src/server/mongodb/models/user.model';
 import RefreshTokenModel from '../src/server/mongodb/models/refreshToken.model';
 
 const { JWT_SECRET } = process.env;
 
-let refreshToken: string;
+const userId = uuidv4();
+const refreshTokenId = uuidv4();
+
+const refreshToken = JWT.sign({ id: refreshTokenId, userId }, String(JWT_SECRET));
+
+const createTestUserModel = () => {
+  const username = Crypto.randomBytes(12).toString('hex');
+
+  return new UserModel({
+    _id: userId,
+    username,
+    email: `${username}@domain.com`,
+    password: 'supersecretpassword',
+  });
+};
+
+const createTestRefreshTokenModel = () => (
+  new RefreshTokenModel({ _id: refreshTokenId, userId })
+);
+
+let app: Express;
 
 describe('refresh token', () => {
   beforeEach(async () => {
-    await (
-      new UserModel({
-        _id: 'testuser5-uuid',
-        username: 'testuser5',
-        email: 'testuser5@domain.tld',
-        password: 'supersecretpassword',
-      })
-    ).save();
+    app = await createExpressServer();
 
-    const { _id: id } = await (new RefreshTokenModel({ userId: 'testuser5-uuid' })).save();
-
-    const refreshTokenPayload = {
-      userId: 'testuser5-uuid',
-      id,
-    };
-
-    refreshToken = JWT.sign(refreshTokenPayload, String(JWT_SECRET));
+    await createTestUserModel().save();
+    await createTestRefreshTokenModel().save();
   });
 
   afterEach(async () => {
-    await UserModel.deleteOne({ username: 'testuser5' });
-
-    await RefreshTokenModel.deleteMany({ userId: 'testuser5-uuid' });
+    await UserModel.deleteOne({ _id: userId });
+    await RefreshTokenModel.deleteMany({ userId });
   });
 
   it('should return Status-Code 200 and correct body if tokens successfully refreshed', async () => {
@@ -71,10 +80,7 @@ describe('refresh token', () => {
   });
 
   it('should return Status-Code 400 and correct body if refresh token expired', async () => {
-    await request(app)
-      .post('/api/v2/login/refresh')
-      .query({ refreshToken })
-      .set('Accept', 'application/json');
+    await RefreshTokenModel.deleteOne({ _id: refreshTokenId });
 
     const res = await request(app)
       .post('/api/v2/login/refresh')
@@ -87,7 +93,7 @@ describe('refresh token', () => {
   });
 
   it('should return Status-Code 400 and correct body if trying to refresh tokens for deactivated user', async () => {
-    await UserModel.deleteOne({ _id: 'testuser5-uuid' });
+    await UserModel.deleteOne({ _id: userId });
 
     const res = await request(app)
       .post('/api/v2/login/refresh')
