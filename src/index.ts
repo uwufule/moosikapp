@@ -1,17 +1,21 @@
 import next from 'next';
-import { Request, Response } from 'express';
-import server from './server';
+import createExpressServer from './server';
 
 const { NODE_ENV, PORT } = process.env;
 
-const app = next({ dir: 'src/frontend', dev: NODE_ENV !== 'production' });
-const handler = app.getRequestHandler();
+const init = async () => {
+  const app = next({ dir: 'src/frontend', dev: NODE_ENV !== 'production' });
+  await app.prepare();
 
-app.prepare()
-  .then(() => {
-    server.get('*', (req: Request, res: Response) => {
-      handler(req, res);
-    });
+  const handler = app.getRequestHandler();
 
-    server.listen(Number(PORT));
+  const server = await createExpressServer();
+
+  server.get('*', (req, res) => {
+    handler(req, res);
   });
+
+  server.listen(Number(PORT));
+};
+
+init();
