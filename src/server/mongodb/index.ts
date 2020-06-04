@@ -1,15 +1,13 @@
-import Mongoose, { ConnectionOptions } from 'mongoose';
+import Mongoose from 'mongoose';
 
 const { MONGO_URI } = process.env;
 
-export default async () => {
-  const mongoUri = String(MONGO_URI);
+export default () => {
+  const uri = String(MONGO_URI);
 
-  const connectionOptions: ConnectionOptions = {
+  return Mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-  };
-
-  return Mongoose.connect(mongoUri, connectionOptions);
+  });
 };
