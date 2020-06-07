@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { Theme } from '@components/ThemeProvider';
 import FileSelectButton from './FileSelectButton';
-import { Theme } from '../ThemeProvider';
 
 type DropAreaProps = Theme<{ isDrop: boolean }>;
 
