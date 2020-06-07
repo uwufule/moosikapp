@@ -1,15 +1,15 @@
-import { AuthActionTypes, SetTokenPairAction } from './types';
+import { AuthActionTypes, SetTokensAction } from './types';
 
-export const setTokenPair = (accessToken: string, refreshToken: string): SetTokenPairAction => ({
-  type: AuthActionTypes.SET_TOKEN_PAIR,
+export const setTokens = (accessToken: string, refreshToken: string): SetTokensAction => ({
+  type: AuthActionTypes.SET_TOKENS,
   payload: {
     accessToken,
     refreshToken,
   },
 });
 
-export const removeTokenPair = (): SetTokenPairAction => ({
-  type: AuthActionTypes.SET_TOKEN_PAIR,
+export const removeTokens = (): SetTokensAction => ({
+  type: AuthActionTypes.SET_TOKENS,
   payload: {
     accessToken: '',
     refreshToken: '',

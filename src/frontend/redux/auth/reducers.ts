@@ -7,7 +7,7 @@ const initialState: AuthState = {
 
 const authReducer = (state = initialState, action: AnyAuthAction): AuthState => {
   switch (action.type) {
-    case AuthActionTypes.SET_TOKEN_PAIR:
+    case AuthActionTypes.SET_TOKENS:
       return { ...state, ...action.payload };
     default:
       return state;

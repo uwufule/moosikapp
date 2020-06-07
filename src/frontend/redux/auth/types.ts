@@ -4,12 +4,12 @@ export interface AuthState {
 }
 
 export enum AuthActionTypes {
-  SET_TOKEN_PAIR = 'SET_TOKEN_PAIR',
+  SET_TOKENS = 'set_tokens',
 }
 
-export interface SetTokenPairAction {
-  type: AuthActionTypes.SET_TOKEN_PAIR;
+export interface SetTokensAction {
+  type: AuthActionTypes.SET_TOKENS;
   payload: AuthState;
 }
 
-export type AnyAuthAction = SetTokenPairAction;
+export type AnyAuthAction = SetTokensAction;
