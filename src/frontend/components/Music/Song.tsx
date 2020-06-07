@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import useRequest from '@hooks/useRequest';
@@ -151,10 +152,10 @@ interface SongProps {
   edit?: boolean;
 }
 
-const SongComponent = ({
-  uuid, author, title, cover, favorite, edit,
+const Song = ({
+  uuid, author, title, cover, favorite = true, edit,
 }: SongProps) => {
-  const songList = useSelector<RootState, Song[]>(
+  const [fav, setFav] = useState(favorite);
     (state) => state.player.songList,
   );
 
@@ -167,6 +168,24 @@ const SongComponent = ({
   );
 
   const dispatch = useDispatch();
+
+  const { authRequest } = useRequest();
+
+  const toggleFav = async () => {
+    try {
+      if (fav) {
+        await authRequest(`/favorites/${uuid}`, { method: 'DELETE' });
+        setFav(false);
+
+        return;
+      }
+
+      await authRequest(`/favorites/${uuid}`, { method: 'POST' });
+      setFav(true);
+    } catch (e) {
+      // error
+    }
+  };
 
   return (
     <Wrapper>
@@ -214,7 +233,11 @@ const SongComponent = ({
             </ActionButtonIcon>
           </ActionButton>
         )}
-        <ActionButton active={favorite} title={favorite ? 'Remove from favorite' : 'Add to favorite'}>
+        <ActionButton
+          active={fav}
+          title={fav ? 'Remove from favorite' : 'Add to favorite'}
+          onClick={toggleFav}
+        >
           <ActionButtonIcon>
             <path
               d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3
