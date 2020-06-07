@@ -1,20 +1,20 @@
 {
   "name": "Moosik",
   "short_name": "Moosik",
+  "start_url": "/",
+  "display": "standalone",
   "icons": [
     {
       "src": "icons-192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "type": "image/png"
     },
     {
       "src": "icons-512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
-  "display": "standalone",
-  "start_url": ".",
-  "theme_color": "#212121",
-  "background_color": "#212121"
+  "theme_color": "#f6685e",
+  "background_color": "#f5f5f5"
 }
