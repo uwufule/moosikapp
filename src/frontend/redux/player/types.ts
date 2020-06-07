@@ -7,7 +7,7 @@ export interface Song {
   edit?: boolean;
 }
 
-export interface CurrentSong extends Song {
+export interface SongDetails extends Song {
   url: string;
   uploadedBy: string;
   createdAt: Date;
@@ -16,17 +16,19 @@ export interface CurrentSong extends Song {
 export interface PlayerState {
   songList: Song[];
   current: {
-    song: CurrentSong | null;
+    song: SongDetails | null;
     index: number;
   };
   playing: boolean;
+  shuffle: boolean;
 }
 
 export enum PlayerActionTypes {
   SET_SONG_LIST = 'set_song_list',
   SET_CURRENT_SONG = 'set_current_song',
   SET_CURRENT_SONG_INDEX = 'set_current_song_index',
-  TOGGLE_PLAYING = 'toggle_playing',
+  SET_PLAYING = 'set_playing',
+  SET_SHUFFLE = 'set_shuffle',
 }
 
 export interface SetSongListAction {
@@ -36,7 +38,7 @@ export interface SetSongListAction {
 
 export interface SetCurrentSongAction {
   type: PlayerActionTypes.SET_CURRENT_SONG;
-  payload: CurrentSong;
+  payload: SongDetails;
 }
 
 export interface SetCurrentSongIndexAction {
@@ -44,14 +46,20 @@ export interface SetCurrentSongIndexAction {
   payload: number;
 }
 
-export interface TogglePlayingAction {
-  type: PlayerActionTypes.TOGGLE_PLAYING,
+export interface SetPlayingAction {
+  type: PlayerActionTypes.SET_PLAYING,
   payload: boolean,
+}
+
+export interface SetShuffleAction {
+  type: PlayerActionTypes.SET_SHUFFLE;
+  payload: boolean;
 }
 
 export type AnyPlayerAction = (
   SetSongListAction
   | SetCurrentSongAction
   | SetCurrentSongIndexAction
-  | TogglePlayingAction
+  | SetPlayingAction
+  | SetShuffleAction
 );

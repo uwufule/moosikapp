@@ -7,6 +7,7 @@ const initialState: PlayerState = {
     index: -1,
   },
   playing: false,
+  shuffle: false,
 };
 
 const playerReducer = (state = initialState, action: AnyPlayerAction): PlayerState => {
@@ -31,8 +32,10 @@ const playerReducer = (state = initialState, action: AnyPlayerAction): PlayerSta
         },
       };
     }
-    case PlayerActionTypes.TOGGLE_PLAYING:
+    case PlayerActionTypes.SET_PLAYING:
       return { ...state, playing: action.payload };
+    case PlayerActionTypes.SET_SHUFFLE:
+      return { ...state, shuffle: action.payload };
     default:
       return state;
   }

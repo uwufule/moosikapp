@@ -1,11 +1,12 @@
 import {
   Song,
-  CurrentSong,
+  SongDetails,
   PlayerActionTypes,
   SetSongListAction,
   SetCurrentSongAction,
   SetCurrentSongIndexAction,
-  TogglePlayingAction,
+  SetPlayingAction,
+  SetShuffleAction,
 } from './types';
 
 export const setSongList = (songs: Song[]): SetSongListAction => ({
@@ -13,7 +14,7 @@ export const setSongList = (songs: Song[]): SetSongListAction => ({
   payload: songs,
 });
 
-export const setCurrentSong = (song: CurrentSong): SetCurrentSongAction => ({
+export const setCurrentSong = (song: SongDetails): SetCurrentSongAction => ({
   type: PlayerActionTypes.SET_CURRENT_SONG,
   payload: song,
 });
@@ -23,7 +24,12 @@ export const setCurrentSongIndex = (index: number): SetCurrentSongIndexAction =>
   payload: index,
 });
 
-export const togglePlaying = (playing: boolean): TogglePlayingAction => ({
-  type: PlayerActionTypes.TOGGLE_PLAYING,
+export const setPlaying = (playing: boolean): SetPlayingAction => ({
+  type: PlayerActionTypes.SET_PLAYING,
   payload: playing,
+});
+
+export const setShuffle = (shuffle: boolean): SetShuffleAction => ({
+  type: PlayerActionTypes.SET_SHUFFLE,
+  payload: shuffle,
 });
