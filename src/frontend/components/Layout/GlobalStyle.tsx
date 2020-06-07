@@ -1,28 +1,35 @@
 import { createGlobalStyle } from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 
+import Nunito from './fonts/NunitoRegular.ttf';
+
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: 'Nunito';
+    src: url(${Nunito});
+  }
+
   html {
-    height: 100%;
-    font-family: ${(props: Theme) => props.theme.font};
+    font-family: 'Nunito';
   }
 
   body {
-    height: inherit;
+    display: flex;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
     margin: 0;
-    background: ${(props: Theme) => props.theme.colors.body.background};
+    background: ${(props: Theme) => props.theme.colors.background};
   }
 
   #__next {
-    height: inherit;
     position: relative;
+    flex: 1;
   }
 
   * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-  }
-
-  input, textarea, button {
     -webkit-appearance: none;
   }
 `;
