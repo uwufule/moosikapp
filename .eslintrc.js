@@ -43,6 +43,11 @@ module.exports = {
         'preferButton',
       ],
     }],
+    'jsx-a11y/label-has-associated-control': [2, {
+      'labelAttributes': ['label'],
+      'controlComponents': ['Input'],
+      'depth': 3,
+    }],
   },
   settings: {
     'import/resolver': {
