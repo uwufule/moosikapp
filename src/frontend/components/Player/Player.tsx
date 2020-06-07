@@ -1,18 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import Head from 'next/head';
 import { useAudio } from 'react-use';
 import isMobile from 'is-mobile';
+import lodashShuffle from 'lodash/shuffle';
+import useRequest from '@hooks/useRequest';
+import {
+  setSongList,
+  setCurrentSong,
+  setPlaying,
+  setCurrentSongIndex,
+  setShuffle,
+} from '@redux/player/actions';
+import { Song, SongDetails } from '@redux/player/types';
+import { RootState } from '@redux/store';
+import { Theme } from '@components/ThemeProvider';
 import Control from './PlayerControl';
 import PlayPauseButton from './PlayPauseButton';
 import Timeline from './Timeline';
 import VolumeSlider from './VolumeSlider';
 import SoundBadge from './SoundBadge';
-import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
-import { Theme } from '../ThemeProvider';
-import { RootState } from '../../redux/store';
-import { setCurrentSong, togglePlaying } from '../../redux/player/actions';
-import { Song, CurrentSong } from '../../redux/player/types';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -59,10 +67,39 @@ const VolumeControlWrapper = styled.div`
   }
 `;
 
-const Player = () => {
-  const [isVolumeSliderVisible, setIsVolumeSliderVisible] = useState(false);
+const SvgPaths = {
+  Volume: () => (
+    <path
+      d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,
+        19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,
+        7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"
+    />
+  ),
+  Mute: () => (
+    <path
+      d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,
+        17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,
+        18.96L19.73,21L21,19.73L12,10.73M19,12C19,12.94 18.8,13.82 18.46,
+        14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,
+        3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,
+        7.97V10.18L16.45,12.63C16.5,12.43 16.5,12.21 16.5,12Z"
+    />
+  ),
+  Shuffle: () => (
+    <path
+      d="M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,16.54L14.83,
+        13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,9.5V4M10.59,9.17L5.41,
+        4L4,5.41L9.17,10.58L10.59,9.17Z"
+    />
+  ),
+};
 
-  const request = useAuthorizedRequest();
+const Player = () => {
+  const [defaultSongList, setDefaultSongList] = useState<Song[]>([]);
+  const [loop, setLoop] = useState(false);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+
+  const { authRequest } = useRequest();
 
   const dispatch = useDispatch();
 
@@ -74,12 +111,14 @@ const Player = () => {
     (state) => state.player.songList,
   );
 
-  const currentSong = useSelector<RootState, CurrentSong | null>(
-    (state) => state.player.current.song,
+  const {
+    song: currentSong, index: currentSongIndex,
+  } = useSelector<RootState, { song: SongDetails | null, index: number }>(
+    (state) => state.player.current,
   );
 
-  const currentSongIndex = useSelector<RootState, number>(
-    (state) => state.player.current.index,
+  const shuffle = useSelector<RootState, boolean>(
+    (state) => state.player.shuffle,
   );
 
   const [audio, playerState, playerControls, ref] = useAudio({
@@ -89,19 +128,15 @@ const Player = () => {
     autoPlay: false,
   });
 
+  const ended = () => dispatch(setPlaying(false));
 
   useEffect(() => {
-    if (!ref.current) {
-      return;
+    if (ref.current) {
+      ref.current.addEventListener('ended', ended);
     }
 
-    const ended = () => dispatch(togglePlaying(false));
-
-    ref.current.addEventListener('ended', ended);
-
-    // eslint-disable-next-line consistent-return
     return () => {
-      ref.current?.removeEventListener('ended', ended);
+      ref.current!.removeEventListener('ended', ended);
     };
   }, [ref.current]);
 
@@ -121,45 +156,78 @@ const Player = () => {
         return;
       }
 
-      const res = await request(`/songs/${song.uuid}`);
-      dispatch(setCurrentSong(res.data.song));
+      const res = await authRequest(`/songs/${song.uuid}`);
 
-      dispatch(togglePlaying(true));
+      dispatch(setCurrentSong(res.data.song));
+      dispatch(setPlaying(true));
     };
 
     getSong();
   }, [currentSongIndex]);
 
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.loop = loop;
+    }
+  }, [loop]);
+
+  useEffect(() => {
+    if (shuffle) {
+      setDefaultSongList(songList);
+
+      const shuffledSongList = lodashShuffle(songList);
+      dispatch(setSongList(shuffledSongList));
+
+      return;
+    }
+
+    dispatch(setSongList(defaultSongList));
+  }, [shuffle]);
+
   return (
     <Wrapper>
+      <Head>
+        <title>{playing ? `${currentSong?.author} - ${currentSong?.title}` : 'Moosik'}</title>
+      </Head>
       <PlayerContainer>
         <ControlsGroup>
-          <Control caption="Prev" handler={() => {}}>
+          <Control
+            caption="Prev"
+            handler={() => {
+              if (currentSongIndex > 0) {
+                dispatch(setCurrentSongIndex(currentSongIndex - 1));
+              }
+            }}
+          >
             <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
           </Control>
           <PlayPauseButton />
-          <Control caption="Next" handler={() => {}}>
+          <Control
+            caption="Next"
+            handler={() => {
+              if (currentSongIndex < songList.length - 1) {
+                dispatch(setCurrentSongIndex(currentSongIndex + 1));
+              }
+            }}
+          >
             <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
           </Control>
           <Control
             caption="Repeat"
-            active={ref.current ? ref.current.loop : false}
+            active={ref.current?.loop || false}
             handler={() => {
-              if (!ref.current) {
-                return;
-              }
-
-              ref.current.loop = !ref.current.loop;
+              setLoop(!loop);
             }}
           >
             <path d="M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z" />
           </Control>
-          <Control caption="Shuffle" handler={() => {}}>
-            <path
-              d="M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,16.54L14.83,
-                13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,9.5V4M10.59,9.17L5.41,
-                4L4,5.41L9.17,10.58L10.59,9.17Z"
-            />
+          <Control
+            caption="Shuffle"
+            handler={() => {
+              dispatch(setShuffle(!shuffle));
+            }}
+          >
+            <SvgPaths.Shuffle />
           </Control>
         </ControlsGroup>
         <Timeline
@@ -168,8 +236,8 @@ const Player = () => {
           handler={playerControls.seek}
         />
         <VolumeControlWrapper
-          onMouseEnter={() => setIsVolumeSliderVisible(true)}
-          onMouseLeave={() => setIsVolumeSliderVisible(false)}
+          onMouseEnter={() => setShowVolumeSlider(true)}
+          onMouseLeave={() => setShowVolumeSlider(false)}
         >
           <Control
             caption="Volume"
@@ -182,27 +250,11 @@ const Player = () => {
               playerControls.mute();
             }}
           >
-            {playerState.muted
-              ? (
-                <path
-                  d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,
-                    17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,
-                    18.96L19.73,21L21,19.73L12,10.73M19,12C19,12.94 18.8,13.82 18.46,
-                    14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,
-                    3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,
-                    7.97V10.18L16.45,12.63C16.5,12.43 16.5,12.21 16.5,12Z"
-                />
-              ) : (
-                <path
-                  d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,
-                    19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,
-                    7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"
-                />
-              )}
+            {playerState.muted ? <SvgPaths.Mute /> : <SvgPaths.Volume />}
           </Control>
           {!isMobile() && (
             <VolumeSlider
-              show={isVolumeSliderVisible}
+              show={showVolumeSlider}
               value={playerState.volume}
               handler={playerControls.volume}
             />
