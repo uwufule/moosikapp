@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 import styled from 'styled-components';
-import { Theme } from '../ThemeProvider';
+import { Theme } from '@components/ThemeProvider';
 
 type ButtonProps = Theme<{ active: boolean }>;
 

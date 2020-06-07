@@ -4,7 +4,7 @@ import { Transition } from 'react-transition-group';
 import {
   TransitionStatus, ENTERING, ENTERED, EXITING, EXITED,
 } from 'react-transition-group/Transition';
-import { Theme } from '../ThemeProvider';
+import { Theme } from '@components/ThemeProvider';
 
 const Wrapper = styled.div`
   width: 24px;
