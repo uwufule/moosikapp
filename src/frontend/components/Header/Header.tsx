@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
+import { RootState } from '@redux/store';
+import { Link } from '@components/BaseNav';
 import Logo from './Logo';
 import Nav from './Nav';
-import { Link } from '../BaseNav';
 import Logout from './Logout';
-import { RootState } from '../../redux/store';
 
 const StyledHeader = styled.header`
   display: flex;

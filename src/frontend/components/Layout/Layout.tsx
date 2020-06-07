@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import useTokenManager from '../../hooks/useTokenManager';
-import ThemeProvider from '../ThemeProvider';
-import BackgroundImage from '../BackgroundImage';
-import Header from '../Header';
+import useTokenManager from '@hooks/useTokenManager';
+import { RootState } from '@redux/store';
+import ThemeProvider from '@components/ThemeProvider';
+import BackgroundImage from '@components/BackgroundImage';
+import Header from '@components/Header';
 // import Sidebar from '../Sidebar';
 // import Modal from '../Modal';
 import Player from '../Player';
 import GlobalStyle from './GlobalStyle';
-import { RootState } from '../../redux/store';
 
 const Main = styled.main`
   display: flex;
@@ -41,54 +41,52 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState('');
   const [ready, setReady] = useState(false);
 
-  const isAuthorized = useSelector<RootState, boolean>(
+  const isUserAuthorized = useSelector<RootState, boolean>(
     (state) => state.auth.accessToken !== '',
   );
 
-  const tokenManager = useTokenManager();
-
-  const getRefreshToken = () => {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
-      throw new Error('Refresh token not found in local storage.');
-    }
-
-    return refreshToken;
-  };
+  const { refresh } = useTokenManager();
 
   useEffect(() => {
-    const makeRequest = async () => {
+    const sendRequest = async () => {
       try {
-        const refreshToken = getRefreshToken();
-        await tokenManager.refreshTokens(refreshToken);
-      } catch (e) {
+        const refreshToken = localStorage.getItem('token');
+        if (refreshToken) {
+          await refresh(refreshToken);
+        }
+      } catch {
         // error
       } finally {
         setReady(true);
       }
     };
 
-    makeRequest();
+    sendRequest();
   }, []);
 
   useEffect(() => {
-    setDarkMode(localStorage.getItem('darkMode') === 'true');
+    const preferredTheme = localStorage.getItem('theme');
+    if (!preferredTheme) {
+      return;
+    }
+
+    setTheme(preferredTheme);
   }, []);
 
   return (
-    <ThemeProvider darkMode={darkMode}>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
       {/* <Sidebar /> */}
       <Main>
         <BackgroundImage />
-        <Content mustAddMarginBottom={isAuthorized}>
+        <Content mustAddMarginBottom={isUserAuthorized}>
           <Header />
           {ready && children}
         </Content>
-        {isAuthorized && <Player />}
+        {isUserAuthorized && <Player />}
       </Main>
       {/* <Modal /> */}
     </ThemeProvider>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Theme } from '../ThemeProvider';
+import { Theme } from '@components/ThemeProvider';
 
 const Svg = styled.svg`
   width: 48px;

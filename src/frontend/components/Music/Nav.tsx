@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import BaseNav from '../BaseNav';
+import BaseNav from '@components/BaseNav';
 import NavLink from './NavLink';
 
 const StyledNav = styled(BaseNav)`

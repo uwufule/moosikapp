@@ -1,9 +1,6 @@
 import { MouseEvent } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from '../BaseNav';
-import request from '../../utils/transport/authorizedRequest';
-import { RootState } from '../../redux/store';
-import { removeTokenPair } from '../../redux/auth/actions';
+import useAuth from '@hooks/useAuthorization';
+import { Link } from '@components/BaseNav';
 
 const logout = (accessToken: string) => request('/logout', accessToken, { method: 'POST' });
 

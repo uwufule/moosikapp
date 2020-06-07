@@ -1,9 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { Theme } from '../ThemeProvider';
-import { togglePlaying, setCurrentSongIndex } from '../../redux/player/actions';
-import { RootState } from '../../redux/store';
-import { Song, CurrentSong } from '../../redux/player/types';
+import useRequest from '@hooks/useRequest';
+import { setCurrentSongIndex, setPlaying } from '@redux/player/actions';
+import { Song as ISong, SongDetails } from '@redux/player/types';
+import { RootState } from '@redux/store';
+import { Theme } from '@components/ThemeProvider';
 
 type CoverProps = Theme<{ coverUrl: string }>;
 

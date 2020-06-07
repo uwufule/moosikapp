@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import SongComponent from './Song';
-import { Theme } from '../ThemeProvider';
-import { Song } from '../../redux/player/types';
+import { Song as SongType } from '@redux/player/types';
+import { Theme } from '@components/ThemeProvider';
+import Song from './Song';
 
 const Wrapper = styled.div`
   padding: 8px;
@@ -17,21 +17,23 @@ const Message = styled.span`
 `;
 
 interface SongListProps {
-  songs: Song[];
+  songs: SongType[];
   searching?: boolean;
 }
 
 const SongList = ({ songs, searching = false }: SongListProps) => (
   <Wrapper>
-    {songs.map((song) => (
-      <SongComponent
-        key={song.uuid}
-        uuid={song.uuid}
-        author={song.author}
-        title={song.title}
-        cover={song.cover}
-        favorite={song.favorite}
-        edit={song.edit}
+    {songs.map(({
+      uuid, author, title, cover, favorite, edit,
+    }) => (
+      <Song
+        key={uuid}
+        uuid={uuid}
+        author={author}
+        title={title}
+        cover={cover}
+        favorite={favorite}
+        edit={edit}
       />
     ))}
     {songs.length === 0 && (

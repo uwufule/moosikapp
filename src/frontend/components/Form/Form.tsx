@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
 import styled from 'styled-components';
-import { Theme } from '../ThemeProvider';
+import { Theme } from '@components/ThemeProvider';
 
 const FormComponent = styled.form`
   width: 100%;

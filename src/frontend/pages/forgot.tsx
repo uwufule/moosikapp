@@ -1,11 +1,9 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+import Form, { Input, SubmitButton } from '@components/Form';
+import CenteringComponent from '@components/CenteringComponent';
+import { Theme } from '@components/ThemeProvider';
 import useRestriction from '../hooks/useRestriction';
-import Form, {
-  Input, SubmitButton, InputType,
-} from '../components/Form';
-import CenteringComponent from '../components/CenteringComponent';
-import { Theme } from '../components/ThemeProvider';
 
 const StyledInput = styled(Input)`
   margin-bottom: 10px;
@@ -53,7 +51,7 @@ const Forgot = () => {
           <p>To request a new password please enter your account email in the box below.</p>
           <p>We will send you an email with further instructions</p>
         </TextContainer>
-        <StyledInput type={InputType.text} required handler={setEmail}>
+        <StyledInput type="email" required handler={setEmail}>
           Email
         </StyledInput>
         <Footer>

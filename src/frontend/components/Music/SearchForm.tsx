@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Input, InputType, SubmitButton } from '../Form';
-import { Theme } from '../ThemeProvider';
+import { Input, SubmitButton } from '@components/Form';
+import { Theme } from '@components/ThemeProvider';
 
 const StyledInput = styled(Input)`
   flex: 1;
@@ -34,7 +34,7 @@ const SearchForm = ({ handler }: SearchFormProps) => {
           handler(query);
         }}
       >
-        <StyledInput type={InputType.text} handler={setQuery}>Search...</StyledInput>
+        <StyledInput type="text" handler={setQuery}>Search...</StyledInput>
         <SubmitButton>Search</SubmitButton>
       </Form>
     </Wrapper>

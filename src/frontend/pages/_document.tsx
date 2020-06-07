@@ -1,7 +1,6 @@
-import Document, {
-  Head, Main, NextScript, DocumentContext,
-} from 'next/document';
+import Document, { Main, NextScript, DocumentContext } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
+import Head from '@components/Head';
 
 export default class AppDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {

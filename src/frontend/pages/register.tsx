@@ -1,12 +1,10 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import useRequest from '@hooks/useRequest';
+import Form, { Input, SubmitButton, Link } from '@components/Form';
+import CenteringComponent from '@components/CenteringComponent';
 import useRestriction from '../hooks/useRestriction';
-import useRequest from '../hooks/useRequest';
-import Form, {
-  Input, InputType, SubmitButton, Link,
-} from '../components/Form';
-import CenteringComponent from '../components/CenteringComponent';
 
 const StyledInput = styled(Input)`
   margin-bottom: 10px;
@@ -36,12 +34,12 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [retryPassword, SetRetryPassword] = useState('');
 
+  const router = useRouter();
+
   const restriction = useRestriction();
   restriction.disallowAuthorizedUser();
 
-  const request = useRequest();
-
-  const router = useRouter();
+  const { request } = useRequest();
 
   return (
     <CenteringComponent>
@@ -54,15 +52,12 @@ const Register = () => {
           }
 
           try {
-            await request(
-              '/register',
-              {
-                method: 'POST',
-                data: {
-                  username, email, password,
-                },
+            await request('/register', {
+              method: 'POST',
+              data: {
+                username, email, password,
               },
-            );
+            });
 
             // message 'successfully registered new account. redirect to login page'
 
@@ -72,16 +67,16 @@ const Register = () => {
           }
         }}
       >
-        <StyledInput type={InputType.text} required handler={setUsername}>
+        <StyledInput type="text" required handler={setUsername}>
           Username
         </StyledInput>
-        <StyledInput type={InputType.email} required handler={setEmail}>
+        <StyledInput type="email" required handler={setEmail}>
           Email
         </StyledInput>
-        <StyledInput type={InputType.password} required handler={setPassword}>
+        <StyledInput type="password" required handler={setPassword}>
           Password
         </StyledInput>
-        <StyledInput type={InputType.password} required handler={SetRetryPassword}>
+        <StyledInput type="password" required handler={SetRetryPassword}>
           Password again
         </StyledInput>
         <Footer>

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import createHash from '../../utils/hash';
-import { Theme } from '../ThemeProvider';
+import createHash from '@utils/hash';
+import { Theme } from '@components/ThemeProvider';
 
 import png from './images/404.png';
 

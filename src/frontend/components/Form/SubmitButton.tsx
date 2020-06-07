@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Theme } from '../ThemeProvider';
+import { Theme } from '@components/ThemeProvider';
 
 const Button = styled.input.attrs({ type: 'submit' })`
   margin: 0;

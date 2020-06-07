@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { Link } from '../BaseNav';
-import { Theme } from '../ThemeProvider';
+import { Link } from '@components/BaseNav';
+import { Theme } from '@components/ThemeProvider';
 
 type StyledLinkProps = Theme<{ active: boolean }>;
 
