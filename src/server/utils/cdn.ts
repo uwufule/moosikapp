@@ -4,7 +4,6 @@ import JWT from 'jsonwebtoken';
 import request, { Response, CoreOptions } from 'request';
 import FileType from 'file-type';
 import HttpErrors from 'http-errors';
-import XmlParser from 'fast-xml-parser';
 
 const { JWT_SECRET, CDN_SERVER = '' } = process.env;
 
@@ -39,8 +38,9 @@ const uploadCallback = (resolve: Resolve, reject: Reject) => (
         reject(new HttpErrors[409]('Resource already exists.'));
         break;
       }
-      default:
-        reject(new HttpErrors[response.statusCode](XmlParser.parse(body).Error.Details));
+      default: {
+        reject(new HttpErrors[response.statusCode](body));
+      }
     }
   }
 );
@@ -49,7 +49,7 @@ export default async (contentType: string, buffer: Buffer): Promise<string> => {
   const fileType = await FileType.fromBuffer(buffer);
   if (fileType?.mime !== contentType) {
     throw new HttpErrors.BadRequest(
-      'Provided header `Content-Type` and file type does not match.',
+      'Header `Content-Type` and file type does not match.',
     );
   }
 
