@@ -3,7 +3,8 @@ import { Theme } from '@components/ThemeProvider';
 
 const Button = styled.input.attrs({ type: 'submit' })`
   margin: 0;
-  padding: 5px 10px;
+  padding: 6px 12px;
+  font-family: inherit;
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
