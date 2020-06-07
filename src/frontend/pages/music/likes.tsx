@@ -6,17 +6,12 @@ import { Song } from '@redux/player/types';
 import { RootState } from '@redux/store';
 import { Nav, SongList } from '@components/Music';
 import useRestriction from '../../hooks/useRestriction';
-import useAuthorizedRequest from '../../hooks/useAuthorizedRequest';
-import { Nav, SongList } from '../../components/Music';
-import { setSongList } from '../../redux/player/actions';
-import { RootState } from '../../redux/store';
-import { Song } from '../../redux/player/types';
 
 const MusicLikes = () => {
   const restriction = useRestriction();
   restriction.allowOnlyAuthorizedUser();
 
-  const request = useAuthorizedRequest();
+  const { authRequest } = useRequest();
 
   const songs = useSelector<RootState, Song[]>((state) => state.player.songList);
 
@@ -25,7 +20,7 @@ const MusicLikes = () => {
   useEffect(() => {
     const asyncEffect = async () => {
       try {
-        const res = await request('/favorites', {
+        const res = await authRequest('/favorites?scope=2', {
           method: 'GET',
         });
 
