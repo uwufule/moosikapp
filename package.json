@@ -1,6 +1,6 @@
 {
   "name": "moosikapp",
-  "version": "4.9.206",
+  "version": "4.9.233",
   "description": "MoosikApp backend.",
   "author": "unlakki",
   "license": "MIT",
@@ -37,6 +37,7 @@
     "@types/mocha": "^5.2.7",
     "@types/mongoose": "^5.5.16",
     "@types/multer": "^1.3.10",
+    "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
     "@types/react-redux": "^7.1.7",
