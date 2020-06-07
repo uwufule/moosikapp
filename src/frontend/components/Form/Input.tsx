@@ -5,7 +5,8 @@ import { Theme } from '@components/ThemeProvider';
 const Input = styled.input`
   width: 100%;
   margin: 0;
-  padding: 4px 5px;
+  padding: 6px 8px;
+  font-family: inherit;
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
@@ -22,17 +23,10 @@ const Input = styled.input`
   }
 `;
 
-export enum InputType {
-  text = 'text',
-  email = 'email',
-  tel = 'tel',
-  password = 'password',
-}
-
 interface InputProps {
   children: string;
   className?: string;
-  type: InputType;
+  type: 'text' | 'email' | 'tel' | 'password';
   required?: boolean;
   handler: (value: string) => void;
 }
@@ -43,7 +37,6 @@ const FormInput = ({
   const id = createHash().update(children).digest(36);
 
   return (
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     <label htmlFor={id} className={className} aria-label={children}>
       <Input
         id={id}
@@ -51,6 +44,7 @@ const FormInput = ({
         type={type}
         required={required}
         autoComplete="off"
+        autoCapitalize="off"
         onChange={(event) => handler(event.target.value)}
       />
     </label>
