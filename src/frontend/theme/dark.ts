@@ -1,4 +1,4 @@
-import shared from './shared';
+import shared from './common';
 
 const colors = {
   primary: '#dfdfe0',
@@ -23,9 +23,6 @@ const colors = {
     accent: '#b1524c',
   },
   shadow: '#010101',
-  body: {
-    background: '#010101',
-  },
 };
 
 const theme = {
