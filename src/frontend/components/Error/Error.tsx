@@ -31,9 +31,10 @@ const NotFoundImage = styled.img`
   max-height: 100%;
   height: 240px;
   position: absolute;
-  bottom: 0;
+  bottom: -5px;
   right: 10%;
   pointer-events: none;
+  z-index: 10000;
 `;
 
 interface ErrorProps {
