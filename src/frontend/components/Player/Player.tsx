@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import { useAudio } from 'react-use';
 import isMobile from 'is-mobile';
-import lodashShuffle from 'lodash/shuffle';
+import _shuffle from 'lodash/shuffle';
 import useRequest from '@hooks/useRequest';
 import {
   setSongList,
@@ -142,7 +142,7 @@ const Player = () => {
     if (shuffle) {
       setDefaultSongList(songList);
 
-      const shuffledSongList = lodashShuffle(songList);
+      const shuffledSongList = _shuffle(songList);
       dispatch(setSongList(shuffledSongList));
 
       return;

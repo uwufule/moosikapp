@@ -1,6 +1,6 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Theme } from '@components/ThemeProvider';
 
 type Event = MouseEvent<HTMLDivElement, globalThis.MouseEvent>;
@@ -88,7 +88,7 @@ const Timeline = ({ timePassed = 0, duration = 0, onTimeChanged }: TimelineProps
 
   return (
     <Wrapper>
-      <Time>{moment(currentTime * 1000).format('mm:ss')}</Time>
+      <Time>{dayjs(currentTime * 1000).format('mm:ss')}</Time>
       <PropgressWrapper
         role="slider"
         aria-valuemin={0}
@@ -121,7 +121,7 @@ const Timeline = ({ timePassed = 0, duration = 0, onTimeChanged }: TimelineProps
         <ProgressBarActive percent={percent} />
         <ProgressBarHandle percent={percent} />
       </PropgressWrapper>
-      <Time>{moment(duration * 1000).format('mm:ss')}</Time>
+      <Time>{dayjs(duration * 1000).format('mm:ss')}</Time>
     </Wrapper>
   );
 };

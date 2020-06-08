@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { AxiosRequestConfig } from 'axios';
-import merge from 'lodash/merge';
+import _merge from 'lodash/merge';
 import useTokenManager from '@hooks/useTokenManager';
 import { RootState } from '@redux/store';
 import baseRequest from '@utils/request';
@@ -13,7 +13,7 @@ const useRequest = () => {
   const { refresh, isAccessTokenExpiresSoon } = useTokenManager();
 
   const request = (url: string, config?: AxiosRequestConfig) => (
-    baseRequest(url, merge(config, {
+    baseRequest(url, _merge(config, {
       headers: {
         accept: 'application/json',
       },
@@ -25,7 +25,7 @@ const useRequest = () => {
       await refresh();
     }
 
-    return baseRequest(url, merge(config, {
+    return baseRequest(url, _merge(config, {
       headers: {
         accept: 'application/json',
         authorization: `Bearer ${accessToken}`,
