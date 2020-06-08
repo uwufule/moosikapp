@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { Transition } from 'react-transition-group';
 import {
   TransitionStatus, ENTERING, ENTERED, EXITING, EXITED,
 } from 'react-transition-group/Transition';
 import { Theme } from '@components/ThemeProvider';
+
+type Event = MouseEvent<HTMLDivElement, globalThis.MouseEvent>;
 
 const Wrapper = styled.div`
   width: 24px;
@@ -20,7 +22,7 @@ const Wrapper = styled.div`
 
 type AnimationProps = Theme<{ state: TransitionStatus }>;
 
-const translateYFunc = (state: TransitionStatus): number => {
+const translateY = (state: TransitionStatus): number => {
   switch (state) {
     case ENTERING:
       return 25;
@@ -34,7 +36,7 @@ const translateYFunc = (state: TransitionStatus): number => {
   }
 };
 
-const opacityFunc = (state: TransitionStatus): number => {
+const opacity = (state: TransitionStatus): number => {
   switch (state) {
     case ENTERING:
       return 0;
@@ -49,8 +51,8 @@ const opacityFunc = (state: TransitionStatus): number => {
 };
 
 const Animation = styled(Wrapper)<AnimationProps>`
-  transform: translateY(${(props: AnimationProps) => translateYFunc(props.state)}%);
-  opacity: ${(props: AnimationProps) => opacityFunc(props.state)};
+  transform: translateY(${(props: AnimationProps) => translateY(props.state)}%);
+  opacity: ${(props: AnimationProps) => opacity(props.state)};
   transition: ${(props: AnimationProps) => props.theme.transition};
 `;
 
@@ -76,9 +78,12 @@ const VolumeBar = styled.div`
 
 type VolumeBarProps = Theme<{ percent: number }>;
 
-const VolumeBarActive = styled.div.attrs(
-  (props: VolumeBarProps) => ({ style: { height: `${props.percent}%` } }),
-)<VolumeBarProps>`
+const setHeight = (props: VolumeBarProps) => ({
+  style: {
+    height: `${props.percent}%`,
+  },
+});
+const VolumeBarActive = styled.div.attrs(setHeight)<VolumeBarProps>`
   width: 2px;
   min-height: 0px;
   max-height: 100%;
@@ -87,9 +92,12 @@ const VolumeBarActive = styled.div.attrs(
   background: ${(props: Theme) => props.theme.colors.accent};
 `;
 
-const VolumeBarHandle = styled.div.attrs(
-  (props: VolumeBarProps) => ({ style: { bottom: `${92 * (props.percent / 100)}%` } }),
-)<VolumeBarProps>`
+const setBottom = (props: VolumeBarProps) => ({
+  style: {
+    bottom: `${92 * (props.percent / 100)}%`,
+  },
+});
+const VolumeBarHandle = styled.div.attrs(setBottom)<VolumeBarProps>`
   width: 8px;
   height: 8px;
   position: absolute;
@@ -100,11 +108,16 @@ const VolumeBarHandle = styled.div.attrs(
 interface VolumeSliderProps {
   show?: boolean;
   value: number;
-  handler: (volume: number) => void;
+  onVolumeChange: (volume: number) => void;
 }
 
-const VolumeSlider = ({ show = false, value, handler } : VolumeSliderProps) => {
-  const [startDragging, setStartDragging] = useState(false);
+const VolumeSlider = ({ show = false, value, onVolumeChange } : VolumeSliderProps) => {
+  const [dragStart, setDragStart] = useState(false);
+
+  const getVolumePercents = (event: Event) => {
+    const { top, height } = event.currentTarget.getBoundingClientRect();
+    return 1 - (event.clientY - top) / height;
+  };
 
   const percent = 100 * value;
 
@@ -117,27 +130,24 @@ const VolumeSlider = ({ show = false, value, handler } : VolumeSliderProps) => {
             aria-valuemin={0}
             aria-valuemax={1}
             aria-valuenow={value}
-            onMouseDown={(event) => setStartDragging(event.button === 0)}
+            onMouseDown={(event) => setDragStart(event.button === 0)}
             onMouseMove={(event) => {
-              if (startDragging) {
-                const { top, height } = event.currentTarget.getBoundingClientRect();
-                handler(1 - (event.clientY - top) / height);
+              if (dragStart) {
+                onVolumeChange(getVolumePercents(event));
               }
             }}
             onMouseUp={(event) => {
-              if (event.button === 0) {
-                const { top, height } = event.currentTarget.getBoundingClientRect();
-                handler(1 - (event.clientY - top) / height);
+              if (dragStart) {
+                onVolumeChange(getVolumePercents(event));
 
-                setStartDragging(false);
+                setDragStart(false);
               }
             }}
             onMouseLeave={(event) => {
-              if (startDragging) {
-                const { top, height } = event.currentTarget.getBoundingClientRect();
-                handler(1 - (event.clientY - top) / height);
+              if (dragStart) {
+                onVolumeChange(getVolumePercents(event));
 
-                setStartDragging(false);
+                setDragStart(false);
               }
             }}
           >

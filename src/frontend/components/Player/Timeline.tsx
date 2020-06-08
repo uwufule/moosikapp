@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, MouseEvent } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 import { Theme } from '@components/ThemeProvider';
+
+type Event = MouseEvent<HTMLDivElement, globalThis.MouseEvent>;
 
 const Wrapper = styled.div`
   display: flex;
@@ -42,20 +44,17 @@ const ProgressBar = styled.div`
 
 type ProgressBarProps = Theme<{ percent: number }>;
 
-const ProgressBarActive = styled.div.attrs(
-  (props: ProgressBarProps) => ({ style: { width: `${props.percent}%` } }),
-)<ProgressBarProps>`
+const setWidth = (props: ProgressBarProps) => ({ style: { width: `${props.percent}%` } });
+const ProgressBarActive = styled.div.attrs(setWidth)<ProgressBarProps>`
   min-width: 0px;
   max-width: 100%;
   height: 2px;
   position: absolute;
   background: ${(props: ProgressBarProps) => props.theme.colors.accent};
-  transition: background-color ${(props: ProgressBarProps) => props.theme.transition};
 `;
 
-const ProgressBarHandle = styled.div.attrs(
-  (props: ProgressBarProps) => ({ style: { left: `${props.percent}%` } }),
-)<ProgressBarProps>`
+const setLeft = (props: ProgressBarProps) => ({ style: { left: `${props.percent}%` } });
+const ProgressBarHandle = styled.div.attrs(setLeft)<ProgressBarProps>`
   width: 8px;
   height: 8px;
   position: absolute;
@@ -67,18 +66,23 @@ const ProgressBarHandle = styled.div.attrs(
 interface TimelineProps {
   timePassed?: number;
   duration?: number;
-  handler: (time: number) => void;
+  onTimeChanged: (time: number) => void;
 }
 
-const Timeline = ({ timePassed = 0, duration = 0, handler }: TimelineProps) => {
+const Timeline = ({ timePassed = 0, duration = 0, onTimeChanged }: TimelineProps) => {
   const [currentTime, setCurrentTime] = useState(timePassed);
-  const [startDragging, setStartDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(false);
 
   useEffect(() => {
-    if (!startDragging) {
+    if (!dragStart) {
       setCurrentTime(timePassed);
     }
   }, [timePassed]);
+
+  const getPassedPercents = (event: Event) => {
+    const { left, width } = event.currentTarget.getBoundingClientRect();
+    return (event.clientX - left) / width;
+  };
 
   const percent = 100 * (currentTime / duration);
 
@@ -90,27 +94,26 @@ const Timeline = ({ timePassed = 0, duration = 0, handler }: TimelineProps) => {
         aria-valuemin={0}
         aria-valuemax={duration}
         aria-valuenow={timePassed}
-        onMouseDown={(event) => setStartDragging(event.button === 0)}
+        onMouseDown={(event) => setDragStart(event.button === 0)}
         onMouseMove={(event) => {
-          if (startDragging) {
-            const { left, width } = event.currentTarget.getBoundingClientRect();
-            setCurrentTime((duration * (event.clientX - left)) / width);
+          if (dragStart) {
+            setCurrentTime(duration * getPassedPercents(event));
           }
         }}
         onMouseUp={(event) => {
           if (event.button === 0) {
-            const { left, width } = event.currentTarget.getBoundingClientRect();
-            const time = (duration * (event.clientX - left)) / width;
+            const time = duration * getPassedPercents(event);
             setCurrentTime(time);
-            handler(time);
+            onTimeChanged(time);
 
-            setStartDragging(false);
+            setDragStart(false);
           }
         }}
         onMouseLeave={() => {
-          if (startDragging) {
-            handler(currentTime);
-            setStartDragging(false);
+          if (dragStart) {
+            onTimeChanged(currentTime);
+
+            setDragStart(false);
           }
         }}
       >
