@@ -114,7 +114,7 @@ const Player = () => {
     }
 
     playerControls.pause();
-  }, [playing, song]);
+  }, [song, playing]);
 
   useEffect(() => {
     const getSong = async () => {
@@ -148,21 +148,19 @@ const Player = () => {
       return;
     }
 
+    if (defaultSongList.length === 0) {
+      return;
+    }
+
     dispatch(setSongList(defaultSongList));
+    setDefaultSongList([]);
   }, [shuffle]);
 
   useEffect(() => {
-    if (!song || playerState.time !== playerState.duration) {
-      return;
-    }
-
-    if (index < songList.length) {
+    if (playerState.time === playerState.duration && songList.length && index < songList.length) {
       dispatch(setCurrentSongIndex(index + 1));
-      return;
     }
-
-    dispatch(setPlaying(false));
-  }, [song, playerState.time, playerState.duration]);
+  }, [playerState.time, playerState.duration]);
 
   const toggleVolume = () => {
     if (playerState.muted) {

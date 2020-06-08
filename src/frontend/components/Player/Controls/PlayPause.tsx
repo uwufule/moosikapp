@@ -22,6 +22,7 @@ const PlayPauseButton = () => {
     if (songListLength > 0) {
       if (songIndex === -1) {
         dispatch(setCurrentSongIndex(0));
+        return;
       }
 
       dispatch(setPlaying(!playing));
