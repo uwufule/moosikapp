@@ -13,6 +13,8 @@ export interface SongDetails extends Song {
   createdAt: Date;
 }
 
+export type RepeatTypes = 'single' | 'many' | 'off';
+
 export interface PlayerState {
   songList: Song[];
   current: {
@@ -20,6 +22,7 @@ export interface PlayerState {
     index: number;
   };
   playing: boolean;
+  repeat: RepeatTypes;
   shuffle: boolean;
 }
 
@@ -28,6 +31,7 @@ export enum PlayerActionTypes {
   SET_CURRENT_SONG = 'set_current_song',
   SET_CURRENT_SONG_INDEX = 'set_current_song_index',
   SET_PLAYING = 'set_playing',
+  SET_REPEAT = 'set_repeat',
   SET_SHUFFLE = 'set_shuffle',
 }
 
@@ -47,8 +51,13 @@ export interface SetCurrentSongIndexAction {
 }
 
 export interface SetPlayingAction {
-  type: PlayerActionTypes.SET_PLAYING,
-  payload: boolean,
+  type: PlayerActionTypes.SET_PLAYING;
+  payload: boolean;
+}
+
+export interface SetRepeatAction {
+  type: PlayerActionTypes.SET_REPEAT;
+  payload: RepeatTypes;
 }
 
 export interface SetShuffleAction {
@@ -61,5 +70,6 @@ export type AnyPlayerAction = (
   | SetCurrentSongAction
   | SetCurrentSongIndexAction
   | SetPlayingAction
+  | SetRepeatAction
   | SetShuffleAction
 );

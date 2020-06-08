@@ -7,6 +7,8 @@ import {
   SetCurrentSongIndexAction,
   SetPlayingAction,
   SetShuffleAction,
+  RepeatTypes,
+  SetRepeatAction,
 } from './types';
 
 export const setSongList = (songs: Song[]): SetSongListAction => ({
@@ -27,6 +29,11 @@ export const setCurrentSongIndex = (index: number): SetCurrentSongIndexAction =>
 export const setPlaying = (playing: boolean): SetPlayingAction => ({
   type: PlayerActionTypes.SET_PLAYING,
   payload: playing,
+});
+
+export const setRepeat = (repeat: RepeatTypes): SetRepeatAction => ({
+  type: PlayerActionTypes.SET_REPEAT,
+  payload: repeat,
 });
 
 export const setShuffle = (shuffle: boolean): SetShuffleAction => ({

@@ -7,6 +7,7 @@ const initialState: PlayerState = {
     index: -1,
   },
   playing: false,
+  repeat: 'off',
   shuffle: false,
 };
 
@@ -34,6 +35,8 @@ const playerReducer = (state = initialState, action: AnyPlayerAction): PlayerSta
     }
     case PlayerActionTypes.SET_PLAYING:
       return { ...state, playing: action.payload };
+    case PlayerActionTypes.SET_REPEAT:
+      return { ...state, repeat: action.payload };
     case PlayerActionTypes.SET_SHUFFLE:
       return { ...state, shuffle: action.payload };
     default:
