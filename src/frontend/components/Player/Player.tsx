@@ -144,6 +144,7 @@ const Player = () => {
 
       const shuffledSongList = _shuffle(songList);
       dispatch(setSongList(shuffledSongList));
+      dispatch(setCurrentSongIndex(-1));
 
       return;
     }
