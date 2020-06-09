@@ -1,20 +1,15 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import useRequest from '@hooks/useRequest';
-import { RootState } from '@redux/store';
 import { Control, Icon } from './Control';
 
 interface FavButtonProps {
+  songUuid: string;
   isFav?: boolean;
   className?: string;
 }
 
-const FavButton = ({ isFav = true, className }: FavButtonProps) => {
+const FavButton = ({ songUuid, isFav = true, className }: FavButtonProps) => {
   const [fav, setFav] = useState(isFav);
-
-  const songUuid = useSelector<RootState, string | undefined>(
-    (state) => state.player.current.song?.uuid,
-  );
 
   const { authRequest } = useRequest();
 

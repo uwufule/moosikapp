@@ -137,7 +137,7 @@ const Song = ({
     </TitleAndAuthor>
     <ControlsGroup>
       {edit && <StyledEditButton />}
-      <StyledFavButton isFav={favorite} />
+      <StyledFavButton songUuid={uuid} isFav={favorite} />
     </ControlsGroup>
   </Wrapper>
 );
