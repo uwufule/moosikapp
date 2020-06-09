@@ -23,7 +23,7 @@ const SongCover = styled.div<SongCoverProps>`
       ? `url(${props.coverUrl}) center no-repeat`
       : props.theme.colors.cover.background
   )};
-  background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 const TitleAndAuthor = styled.div`
