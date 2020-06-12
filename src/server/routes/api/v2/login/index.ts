@@ -1,43 +1,37 @@
 import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
-import HttpErrors from 'http-errors';
-import { findByUsernameOrEmail, PrivateUserData } from '../../../../mongodb/users';
-import createTokenPair, { TokenPair } from '../../../../utils/tokenPair';
+import { BadRequest, Unauthorized, Forbidden } from 'http-errors';
+import { getAuthPayloadByUsernameOrEmail } from '../../../../mongodb/users';
+import { createTokens } from '../../../../utils/tokens';
 
-import messages from './messages.json';
-
-const validationSchema = Joi.object({
+const loginScheme = Joi.object({
   username: Joi.string()
     .required()
-    .error(new Error(messages.login.INVALID_USERNAME)),
+    .error(new Error('Username required.')),
   password: Joi.string()
     .required()
-    .error(new Error(messages.login.INVALID_PASSWORD)),
+    .error(new Error('Password required.')),
 });
 
-const login = async (user: PrivateUserData, password: string): Promise<TokenPair> => {
-  const comparsionResult = await Bcrypt.compare(password, user.password);
-  if (!comparsionResult) {
-    throw new HttpErrors.Unauthorized(messages.login.INVALID_AUTHORIZATION);
+export default (): RequestHandler => (
+  async (req: Request, res: Response) => {
+    const { error, value } = loginScheme.validate(req.query);
+    if (error) {
+      throw new BadRequest(error.message);
+    }
+    const { username, password } = <{ username: string, password: string }>value;
+
+    const authPayload = await getAuthPayloadByUsernameOrEmail(username);
+    if (!authPayload) {
+      throw new Forbidden('This account has been deactivated.');
+    }
+
+    if (!(await Bcrypt.compare(password, authPayload.password))) {
+      throw new Unauthorized('Invalid authorization.');
+    }
+
+    const tokens = await createTokens(authPayload);
+    res.status(200).send({ message: 'Successfully logged in.', ...tokens });
   }
-
-  const tokenPair = await createTokenPair(user);
-  return tokenPair;
-};
-
-export default (): RequestHandler => async (req: Request, res: Response) => {
-  const { error, value } = validationSchema.validate(req.body);
-  if (error) {
-    throw new HttpErrors.BadRequest(error.message);
-  }
-
-  const user = await findByUsernameOrEmail(value.username);
-  if (!user) {
-    throw new HttpErrors.Forbidden(messages.login.ACCOUNT_DOESNT_EXISTS);
-  }
-
-  const tokenChain = await login(user, value.password);
-
-  res.status(200).send({ message: messages.login.SUCCESS, ...tokenChain });
-};
+);
