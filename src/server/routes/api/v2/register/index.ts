@@ -37,7 +37,7 @@ export default (): RequestHandler => (
       username: string, email: string, password: string,
     }>value;
 
-    const password = await Bcrypt.hash(registerData.password, 16);
+    const password = await Bcrypt.hash(registerData.password, 10);
 
     try {
       const uuid = await createUser({ ...registerData, password });
