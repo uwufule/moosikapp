@@ -16,7 +16,7 @@ const loginScheme = Joi.object({
 
 export default (): RequestHandler => (
   async (req: Request, res: Response) => {
-    const { error, value } = loginScheme.validate(req.query);
+    const { error, value } = loginScheme.validate(req.body);
     if (error) {
       throw new BadRequest(error.message);
     }

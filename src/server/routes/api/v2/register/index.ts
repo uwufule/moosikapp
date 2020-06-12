@@ -29,7 +29,7 @@ const registerSceme = Joi.object({
 
 export default (): RequestHandler => (
   async (req: Request, res: Response) => {
-    const { error, value } = registerSceme.validate(req.query);
+    const { error, value } = registerSceme.validate(req.body);
     if (error) {
       throw new BadRequest(error.message);
     }
