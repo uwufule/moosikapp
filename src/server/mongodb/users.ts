@@ -1,13 +1,50 @@
 import UserModel from './models/user.model';
+import toJson from './utils/toJson';
 
-interface IUser {
-  username: string;
-  email: string;
+export interface AuthPayload {
+  uuid: string;
   password: string;
-  role?: number;
+  role: number;
 }
 
-export interface PublicUserData {
+export const getAuthPayloadByUsernameOrEmail = (
+  async (usernameOrEmail: string) => {
+    const query = {
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    };
+
+    const projection = {
+      uuid: 1,
+      password: 1,
+      role: 1,
+    };
+
+    const user = await UserModel.findOne(query, projection);
+    return toJson<AuthPayload>(user);
+  }
+);
+
+export const getAuthPayloadById = async (uuid: string) => {
+  const projection = {
+    uuid: 1,
+    password: 1,
+    role: 1,
+  };
+
+  const user = await UserModel.findById(uuid, projection);
+  return toJson<AuthPayload>(user);
+};
+
+export const getUsername = async (uuid: string) => {
+  const projection = {
+    username: 1,
+  };
+
+  const user = await UserModel.findById(uuid, projection);
+  return toJson<{ username: string }>(user)?.username;
+};
+
+export interface User {
   uuid: string;
   username: string;
   email: string;
@@ -15,16 +52,7 @@ export interface PublicUserData {
   createdAt: Date;
 }
 
-export interface PrivateUserData extends PublicUserData {
-  password: string;
-  updatedAt: Date;
-}
-
-export interface GenericParams {
-  [key: string]: any;
-}
-
-export const getUser = async (username: string): Promise<PublicUserData | null> => {
+export const getByUsername = async (username: string) => {
   const projection = {
     uuid: 1,
     username: 1,
@@ -34,42 +62,33 @@ export const getUser = async (username: string): Promise<PublicUserData | null> 
   };
 
   const user = await UserModel.findOne({ username }, projection);
-  return user?.toJSON() || null;
+  return toJson<User>(user);
 };
 
-export const getUserByUuid = async (uuid: string): Promise<PrivateUserData | null> => {
-  const user = await UserModel.findById(uuid);
-  return user?.toJSON();
-};
+interface InitialUserData {
+  username: string;
+  email: string;
+  password: string;
+  role?: number;
+}
 
-export const findByUsernameOrEmail = (
-  async (queryString: string): Promise<PrivateUserData | null> => {
-    const query = {
-      $or: [
-        {
-          username: queryString,
-        }, {
-          email: queryString,
-        },
-      ],
-    };
-
-    const user = await UserModel.findOne(query);
-    return user?.toJSON();
-  }
-);
-
-export const createUser = async (data: IUser): Promise<string> => {
+export const createUser = async (data: InitialUserData) => {
   const { _id: uuid } = await (new UserModel(data)).save();
-  return uuid;
+  return <string>uuid;
 };
 
-export const updateUser = async (uuid: string, data: GenericParams): Promise<boolean> => {
+interface UpdatedUserData {
+  [key: string]: any;
+}
+
+export const updateUser = async (uuid: string, data: UpdatedUserData) => {
   const res = await UserModel.updateOne({ _id: uuid }, data);
-  return res.n === 1;
+  return !!res.n;
 };
 
-export const deleteUser = async (uuid: string): Promise<boolean> => {
+export const deleteUser = async (uuid: string) => {
   const res = await UserModel.deleteOne({ _id: uuid });
-  return res.n === 1;
+  return !!res.n;
 };
+
+export const isUserExists = (uuid: string) => UserModel.exists({ _id: uuid });
