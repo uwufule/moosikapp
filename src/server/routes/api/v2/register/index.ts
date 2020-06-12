@@ -1,51 +1,51 @@
 import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
-import HttpErrors from 'http-errors';
+import { BadRequest } from 'http-errors';
 import { createUser } from '../../../../mongodb/users';
 
-import {
-  INVALID_USERNAME,
-  INVALID_EMAIL,
-  INVALID_PASSWORD,
-  SUCCESS,
-  ACCOUNT_ALREADY_EXISTS,
-} from './messages.json';
-
-const USERNAME_REGEX = /^([a-z0-9]|[\u30A0-\u30FF]|[\u3040-\u309F])+$/i;
-const PASSWORD_REGEX = /^[\w$.!?\-=~#@]+$/i;
-
-const validationSchema = Joi.object({
+const registerSceme = Joi.object({
   username: Joi.string()
     .required()
-    .min(2)
-    .max(24)
-    .regex(USERNAME_REGEX)
-    .error(new Error(INVALID_USERNAME)),
+    .min(1)
+    .max(64)
+    .regex(/^\w+$/u)
+    .error(new Error(
+      'Invalid username provided. Username must contain 1-64 letters or numbers.',
+    )),
   email: Joi.string()
     .required()
     .email({ allowUnicode: false })
-    .error(new Error(INVALID_EMAIL)),
+    .error(new Error(
+      'Invalid e-mail address provided.',
+    )),
   password: Joi.string()
     .required()
     .min(8)
-    .regex(PASSWORD_REGEX)
-    .error(new Error(INVALID_PASSWORD)),
+    .error(new Error(
+      'Invalid password provided. Username must be at least 8 symbols long.',
+    )),
 });
 
-export default (): RequestHandler => async (req: Request, res: Response) => {
-  const { error, value } = validationSchema.validate(req.body);
-  if (error) {
-    throw new HttpErrors.BadRequest(error.message);
-  }
+export default (): RequestHandler => (
+  async (req: Request, res: Response) => {
+    const { error, value } = registerSceme.validate(req.query);
+    if (error) {
+      throw new BadRequest(error.message);
+    }
+    const registerData = <{
+      username: string, email: string, password: string,
+    }>value;
 
-  const salt = await Bcrypt.genSalt();
-  const password = await Bcrypt.hash(value.password, salt);
+    const password = await Bcrypt.hash(registerData.password, 16);
 
-  try {
-    const uuid = await createUser({ ...value, password });
-    res.status(201).send({ message: SUCCESS, uuid });
-  } catch (e) {
-    throw new HttpErrors.BadRequest(ACCOUNT_ALREADY_EXISTS);
+    try {
+      const uuid = await createUser({ ...registerData, password });
+      res.status(201).send({ message: 'You have successfully created a new account.', uuid });
+    } catch {
+      throw new BadRequest(
+        'An account with that email address and/or username already exists.',
+      );
+    }
   }
-};
+);
