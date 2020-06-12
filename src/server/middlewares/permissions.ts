@@ -1,10 +1,10 @@
 import { RequestHandler, Response, NextFunction } from 'express';
 import HttpErrors from 'http-errors';
-import { AuthorizedRequest } from './authorization';
+import { AuthRequest } from './authorization';
 
-export default (minimunRequiredRole: number): RequestHandler => (
-  (req: AuthorizedRequest, res: Response, next: NextFunction) => {
-    if (req.jwt.role < minimunRequiredRole) {
+export default (minRequiredRole: number): RequestHandler => (
+  (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (req.auth.role < minRequiredRole) {
       throw new HttpErrors.Forbidden('Access denied.');
     }
 
