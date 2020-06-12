@@ -1,87 +1,89 @@
 import { RequestHandler, Response } from 'express';
 import Joi from '@hapi/joi';
-import HttpErrors from 'http-errors';
-import { AuthorizedRequest } from '../../../../middlewares/authorization';
+import { BadRequest, NotFound } from 'http-errors';
+import { AuthRequest } from '../../../../middlewares/authorization';
 import * as Songs from '../../../../mongodb/songs';
+import { AccessToken } from '../../../../utils/tokens';
 
-import scopes from '../../../../config/scopes.json';
 import roles from '../../../../config/roles.json';
+import scopes from '../../../../config/scopes.json';
 
-import messages from './messages.json';
+const queryParamsScheme = Joi.object({
+  skip: Joi.number()
+    .min(0)
+    .error(new Error('Invalid query parameter `skip` provided.')),
+  limit: Joi.number()
+    .min(1)
+    .max(100)
+    .error(new Error('Invalid query parameter `limit` provided.')),
+  scope: Joi.number()
+    .positive()
+    .error(new Error('Invalid query parameter `scope` provided.')),
+});
 
-interface SongData {
-  uuid: string;
-  author: string;
-  title: string;
-  cover: string;
-  favorite?: boolean;
-  edit?: boolean;
-}
+const canEdit = (scope?: number) => (
+  (auth: AccessToken, uploadedBy: string) => (
+    (scope && scope & scopes.edit)
+      ? (uploadedBy === auth.uuid) || (auth.role >= roles.moderator)
+      : undefined
+  )
+);
 
 export const getFavoriteSongs = (): RequestHandler => (
-  async (req: AuthorizedRequest, res: Response) => {
-    const validationSchema = Joi.object({
-      skip: Joi.number()
-        .min(0)
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
-      limit: Joi.number()
-        .min(1)
-        .max(100)
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
-      scope: Joi.number()
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
-    });
-
-    const { error, value } = validationSchema.validate(req.query);
-
+  async (req: AuthRequest, res: Response) => {
+    const { error, value } = queryParamsScheme.validate(req.query);
     if (error) {
-      throw new HttpErrors.BadRequest(error.message);
+      throw new BadRequest(error.message);
     }
+    const { scope, ...queryParams } = <{
+      skip?: number, limit?: number, scope?: number,
+    }>value;
 
-    const songList = await Songs.getFavoriteSongs(req.jwt.uuid, value.skip, value.limit);
+    const songList = await Songs.getFavoriteSongs(req.auth.uuid, queryParams);
     if (!songList.length) {
-      throw new HttpErrors.NotFound(messages.NOT_FOUND);
+      throw new NotFound('No favorites found.');
     }
 
-    const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
-      const song: SongData = songData;
+    const songs = songList.map(({
+      likes, uploadedBy, ...songData
+    }) => ({
+      ...songData,
+      edit: canEdit(scope)(req.auth, uploadedBy),
+    }));
 
-      if (value.scope & scopes.edit) {
-        song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
-      }
-
-      return song;
-    });
-
-    res.status(200).send({ message: messages.SUCCESS, songs });
+    res.status(200).send({ message: 'Successfully retrieved favorites.', songs });
   }
 );
 
 export const addSongToFavorite = (): RequestHandler => (
-  async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getSongByUuid(req.params.songId);
+  async (req: AuthRequest, res: Response) => {
+    const song = await Songs.getSongById(req.params.songId);
     if (!song) {
-      throw new HttpErrors.NotFound(messages.SONG_NOT_FOUND);
+      throw new NotFound('No song found.');
     }
 
-    await Songs.updateSong(req.params.songId, { $addToSet: { likes: req.jwt.uuid } });
+    await Songs.updateSong(req.params.songId, {
+      $addToSet: { likes: req.auth.uuid },
+    });
 
-    res.status(200).send({ message: messages.ADDED, uuid: req.params.songId });
+    res.status(204).send({});
   }
 );
 
 export const removeSongFromFavorite = (): RequestHandler => (
-  async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getSongByUuid(req.params.songId);
+  async (req: AuthRequest, res: Response) => {
+    const song = await Songs.getSongById(req.params.songId);
     if (!song) {
-      throw new HttpErrors.NotFound(messages.SONG_NOT_FOUND);
+      throw new NotFound('No song found.');
     }
 
-    if (!song.likes.includes(req.jwt.uuid)) {
-      throw new HttpErrors.NotFound(messages.NO_FAVORITE);
+    if (!song.likes.includes(req.auth.uuid)) {
+      throw new NotFound('No favorite found.');
     }
 
-    await Songs.updateSong(req.params.songId, { $pull: { likes: req.jwt.uuid } });
+    await Songs.updateSong(req.params.songId, {
+      $pull: { likes: req.auth.uuid },
+    });
 
     res.status(204).send();
   }
