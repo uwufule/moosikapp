@@ -66,7 +66,7 @@ export const addSongToFavorite = (): RequestHandler => (
       $addToSet: { likes: req.auth.uuid },
     });
 
-    res.status(204).send({});
+    res.status(204).send();
   }
 );
 
