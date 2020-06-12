@@ -1,7 +1,7 @@
 import Mongoose, { Schema } from 'mongoose';
 import uuidv4 from 'uuid';
 
-import roles from '../../config/roles.json';
+import { user } from '../../config/roles.json';
 
 const schema = new Schema({
   _id: {
@@ -24,7 +24,7 @@ const schema = new Schema({
   },
   role: {
     type: Number,
-    default: roles.user,
+    default: user,
   },
 }, { id: false, versionKey: false, timestamps: true });
 

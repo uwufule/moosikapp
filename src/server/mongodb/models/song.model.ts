@@ -27,9 +27,7 @@ const schema = new Schema({
     required: true,
   },
   likes: {
-    type: [{
-      type: String,
-    }],
+    type: [{ type: String }],
     default: [],
   },
 }, { id: false, versionKey: false, timestamps: true });

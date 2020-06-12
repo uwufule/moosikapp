@@ -12,4 +12,4 @@ const schema = new Schema({
   },
 }, { versionKey: false });
 
-export default Mongoose.model('refreshToken', schema);
+export default Mongoose.model('refreshtoken', schema);
