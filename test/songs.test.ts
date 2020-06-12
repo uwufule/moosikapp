@@ -105,7 +105,7 @@ describe('songs', () => {
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Not authorized.');
+      expect(res.body.message).to.eq('Invalid authorization.');
     });
 
     it('should return Status-Code 413 and correct body if song too large', async () => {
@@ -184,7 +184,7 @@ describe('songs', () => {
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Not authorized.');
+      expect(res.body.message).to.eq('Invalid authorization.');
     });
 
     it('should return Status-Code 400 and correct body if invalid query parameter `skip` provided', async () => {
@@ -285,7 +285,7 @@ describe('songs', () => {
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Not authorized.');
+      expect(res.body.message).to.eq('Invalid authorization.');
     });
 
     it('should return Status-Code 404 and correct body if no song found', async () => {
@@ -340,7 +340,7 @@ describe('songs', () => {
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Not authorized.');
+      expect(res.body.message).to.eq('Invalid authorization.');
     });
 
     it('should return Status-Code 404 and correct body if no song found', async () => {

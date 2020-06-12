@@ -63,7 +63,7 @@ describe('favorites', () => {
 
       expect(res.status).to.eq(200);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Successfully retrieved favorite songs.');
+      expect(res.body.message).to.eq('Successfully retrieved favorites.');
       expect(res.body.songs).to.be.an('array');
     });
 
@@ -84,7 +84,7 @@ describe('favorites', () => {
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Not authorized.');
+      expect(res.body.message).to.eq('Invalid authorization.');
     });
 
     it('should return Status-Code 400 and correct body if invalid query parameter `skip` provided', async () => {
@@ -125,16 +125,14 @@ describe('favorites', () => {
   });
 
   describe('add', () => {
-    it('should return Status-Code 200 and correct body if song sucessfully added to favorites', async () => {
+    it('should return Status-Code 204 and correct body if song sucessfully added to favorites', async () => {
       const res = await request(app)
         .post(`/api/v2/favorites/${songId}`)
         .set('Accept', 'application/json')
         .auth(token, { type: 'bearer' });
 
-      expect(res.status).to.eq(200);
-      expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Successfully added song to favorites.');
-      expect(res.body.uuid).to.eq(songId);
+      expect(res.status).to.eq(204);
+      expect(res.body).to.deep.eq({});
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
@@ -154,7 +152,7 @@ describe('favorites', () => {
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Not authorized.');
+      expect(res.body.message).to.eq('Invalid authorization.');
     });
 
     it('should return Status-Code 404 and correct body if no song found', async () => {
@@ -177,7 +175,6 @@ describe('favorites', () => {
         .auth(token, { type: 'bearer' });
 
       expect(res.status).to.eq(204);
-      expect(res.body).be.an('object');
       expect(res.body).to.be.deep.eq({});
     });
 
@@ -198,7 +195,7 @@ describe('favorites', () => {
 
       expect(res.status).to.eq(403);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('Not authorized.');
+      expect(res.body.message).to.eq('Invalid authorization.');
     });
 
     it('should return Status-Code 404 and correct body if no song found', async () => {
@@ -222,7 +219,7 @@ describe('favorites', () => {
 
       expect(res.status).to.eq(404);
       expect(res.header['content-type']).to.match(/application\/json/);
-      expect(res.body.message).to.eq('No favorite.');
+      expect(res.body.message).to.eq('No favorite found.');
     });
   });
 });

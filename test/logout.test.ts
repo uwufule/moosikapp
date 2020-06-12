@@ -73,7 +73,7 @@ describe('logout', () => {
 
     expect(res.status).to.eq(403);
     expect(res.header['content-type']).to.match(/application\/json/);
-    expect(res.body.message).to.eq('Not authorized.');
+    expect(res.body.message).to.eq('Invalid authorization.');
   });
 
   it('should return Status-Code 410 and correct body if already logged out', async () => {

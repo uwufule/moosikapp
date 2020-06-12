@@ -14,7 +14,7 @@ const { JWT_SECRET } = process.env;
 const userId = uuidv4();
 const refreshTokenId = uuidv4();
 
-const refreshToken = JWT.sign({ id: refreshTokenId, userId }, String(JWT_SECRET));
+const refreshToken = JWT.sign({ jti: refreshTokenId, sub: userId }, String(JWT_SECRET));
 
 const createTestUserModel = () => {
   const username = Crypto.randomBytes(12).toString('hex');
@@ -76,7 +76,7 @@ describe('refresh token', () => {
 
     expect(res.status).to.eq(400);
     expect(res.header['content-type']).to.match(/application\/json/);
-    expect(res.body.message).to.eq('Invalid refresh token provided.');
+    expect(res.body.message).to.eq('Invalid refresh token.');
   });
 
   it('should return Status-Code 400 and correct body if refresh token expired', async () => {
@@ -102,6 +102,6 @@ describe('refresh token', () => {
 
     expect(res.status).to.eq(400);
     expect(res.header['content-type']).to.match(/application\/json/);
-    expect(res.body.message).to.eq('Trying to get pair of tokens for deactivated user.');
+    expect(res.body.message).to.eq('Trying to get tokens for deactivated user.');
   });
 });
