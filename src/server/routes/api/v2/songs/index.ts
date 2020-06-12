@@ -4,6 +4,7 @@ import HttpErrors from 'http-errors';
 import { AuthorizedRequest } from '../../../../middlewares/authorization';
 import upload from './upload';
 import update from './update';
+import updateCover from './updateCover';
 import * as Songs from '../../../../mongodb/songs';
 import * as Users from '../../../../mongodb/users';
 
@@ -140,6 +141,7 @@ export const uploadSong = (): RequestHandler => upload;
 
 export const updateSong = (): RequestHandler => update;
 
+export const updateSongCover = (): RequestHandler => updateCover;
 export const deleteSong = (): RequestHandler => (
   async (req: AuthorizedRequest, res: Response) => {
     const song = await Songs.getSongByUuid(req.params.songId);

@@ -99,6 +99,14 @@ export default () => {
     Songs.updateSong(),
   ));
 
+  // update song cover (image/*)
+  router.put('/songs/:songId/cover', withAsyncErrorHandler(
+    validateContentType('image/png', 'image/jpg', 'image/jpeg', 'image/webp'),
+    BodyParser.raw({ type: ['image/*'], limit: '1MB' }),
+    checkAuth(),
+    Songs.updateSongCover(),
+  ));
+
   // delete song
   router.delete('/songs/:songId', withAsyncErrorHandler(
     validateAccept(),
