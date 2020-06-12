@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import multer from 'multer';
+import BodyParser from 'body-parser';
 import HttpErrors from 'http-errors';
 import checkAuth from '../../../middlewares/authorization';
 import checkPermissions from '../../../middlewares/permissions';
@@ -20,82 +20,74 @@ import roles from '../../../config/roles.json';
 export default () => {
   const router = Router();
 
+  router.use(validateAccept());
+
   // login
   router.post('/login', withAsyncErrorHandler(
-    validateAccept(),
     validateContentType('application/json'),
     login(),
   ));
 
-  // refresh
+  // refresh tokens
   router.post('/login/refresh', withAsyncErrorHandler(
-    validateAccept(),
     refresh(),
   ));
 
   // logout
   router.post('/logout', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     logout(),
   ));
 
   // register
   router.post('/register', withAsyncErrorHandler(
-    validateAccept(),
     validateContentType('application/json'),
     register(),
   ));
 
-  // forgot
+  // restore password
   router.post('/forgot', withAsyncErrorHandler(
     () => {
       throw new HttpErrors.NotImplemented();
     },
   ));
 
-  // get user with provided username
+  // get user by username
   router.get('/users/:username', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     users(),
   ));
 
   // get songs
   router.get('/songs', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     Songs.getSongs(),
   ));
 
-  // song search
+  // search songs
   router.get('/songs/search', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     Songs.findSongs(),
   ));
 
   // get song by id
   router.get('/songs/:songId', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
-    Songs.getByUuid(),
+    Songs.getById(),
   ));
 
   // upload song
   router.post('/songs', withAsyncErrorHandler(
-    validateAccept(),
     validateContentType('audio/mpeg'),
+    BodyParser.raw({ type: ['audio/mpeg'], limit: '10MB' }),
     checkAuth(),
     Songs.uploadSong(),
   ));
 
-  // update song
+  // update song (json)
   router.patch('/songs/:songId', withAsyncErrorHandler(
-    validateAccept(),
-    validateContentType('application/json', 'multipart/form-data'),
+    validateContentType('application/json'),
     checkAuth(),
-    multer().single('cover'),
     Songs.updateSong(),
   ));
 
@@ -109,36 +101,31 @@ export default () => {
 
   // delete song
   router.delete('/songs/:songId', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     checkPermissions(roles.moderator),
     Songs.deleteSong(),
   ));
 
-  // get favorites songs
+  // get favorite songs
   router.get('/favorites', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     Favorites.getFavoriteSongs(),
   ));
 
   // add song to favorites
   router.post('/favorites/:songId', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     Favorites.addSongToFavorite(),
   ));
 
   // remove song from favorites
   router.delete('/favorites/:songId', withAsyncErrorHandler(
-    validateAccept(),
     checkAuth(),
     Favorites.removeSongFromFavorite(),
   ));
 
   // status
   router.get('/status', withAsyncErrorHandler(
-    validateAccept(),
     status(),
   ));
 
