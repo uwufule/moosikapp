@@ -1,139 +1,132 @@
 import { Response, RequestHandler } from 'express';
 import Joi from '@hapi/joi';
-import HttpErrors from 'http-errors';
-import { AuthorizedRequest } from '../../../../middlewares/authorization';
+import { BadRequest, Forbidden, NotFound } from 'http-errors';
+import { AuthRequest } from '../../../../middlewares/authorization';
 import upload from './upload';
 import update from './update';
 import updateCover from './updateCover';
+import { AccessToken } from '../../../../utils/tokens';
 import * as Songs from '../../../../mongodb/songs';
 import * as Users from '../../../../mongodb/users';
 
-import scopes from '../../../../config/scopes.json';
 import roles from '../../../../config/roles.json';
-
-import messages from './messages.json';
+import scopes from '../../../../config/scopes.json';
 
 const { CDN_SERVER = '' } = process.env;
 
-interface SongData {
-  uuid: string;
-  author: string;
-  title: string;
-  cover: string;
-  favorite?: boolean;
-  edit?: boolean;
-}
+const queryParamsScheme = Joi.object({
+  skip: Joi.number()
+    .min(0)
+    .error(new Error('Invalid query parameter `skip` provided.')),
+  limit: Joi.number()
+    .min(1)
+    .max(100)
+    .error(new Error('Invalid query parameter `limit` provided.')),
+  scope: Joi.number()
+    .positive()
+    .error(new Error('Invalid query parameter `scope` provided.')),
+});
+
+const queryParamsWithQueryString = queryParamsScheme.append({
+  query: Joi.string()
+    .required()
+    .min(2)
+    .error(new Error('Invalid query parameter `query` provided.')),
+});
+
+const isFav = (scope?: number) => (
+  (auth: AccessToken, likes: string[]) => (
+    (scope && scope & scopes.favorite)
+      ? likes.includes(auth.uuid)
+      : undefined
+  )
+);
+
+const canEdit = (scope?: number) => (
+  (auth: AccessToken, uploadedBy: string) => (
+    (scope && scope & scopes.edit)
+      ? (uploadedBy === auth.uuid) || (auth.role >= roles.moderator)
+      : undefined
+  )
+);
 
 export const getSongs = (): RequestHandler => (
-  async (req: AuthorizedRequest, res: Response) => {
-    const validationSchema = Joi.object({
-      skip: Joi.number()
-        .min(0)
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
-      limit: Joi.number()
-        .min(1)
-        .max(100)
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
-      scope: Joi.number()
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
-    });
-
-    const { error, value } = validationSchema.validate(req.query);
+  async (req: AuthRequest, res: Response) => {
+    const { error, value } = queryParamsScheme.validate(req.query);
     if (error) {
-      throw new HttpErrors.BadRequest(error.message);
+      throw new BadRequest(error.message);
+    }
+    const { scope, ...queryParams } = <{
+      skip?: number, limit?: number, scope?: number,
+    }>value;
+
+    const songList = await Songs.getSongs(queryParams);
+    if (!songList.length) {
+      throw new NotFound('No songs found.');
     }
 
-    const songList = await Songs.getSongs(value.skip, value.limit);
-    if (songList.length === 0) {
-      throw new HttpErrors.NotFound(messages.songs.NOT_FOUND);
-    }
+    const songs = songList.map(({
+      likes, uploadedBy, ...songData
+    }) => ({
+      ...songData,
+      favorite: isFav(scope)(req.auth, likes),
+      edit: canEdit(scope)(req.auth, uploadedBy),
+    }));
 
-    const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
-      const song: SongData = songData;
-
-      if (value.scope & scopes.favorite) {
-        song.favorite = likes.includes(req.jwt.uuid);
-      }
-
-      if (value.scope & scopes.edit) {
-        song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
-      }
-
-      return song;
-    });
-
-    res.status(200).send({ message: messages.songs.SUCCESS, songs });
+    res.status(200).send({ message: 'Successfully retrieved songs.', songs });
   }
 );
 
-export const getByUuid = (): RequestHandler => (
-  async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getSongByUuid(req.params.songId);
+export const getById = (): RequestHandler => (
+  async (req: AuthRequest, res: Response) => {
+    const song = await Songs.getSongById(req.params.songId);
     if (!song) {
-      throw new HttpErrors.NotFound(messages.song.NOT_FOUND);
+      throw new NotFound('No song found.');
     }
 
     const {
       path, uploadedBy, likes, ...songData
     } = song;
 
-    const user = await Users.getUserByUuid(uploadedBy);
+    const username = await Users.getUsername(uploadedBy);
 
     res.status(200).send({
-      message: messages.song.SUCCESS,
+      message: 'Successfully retrieved song.',
       song: {
         ...songData,
         url: `${CDN_SERVER}${path}`,
-        uploadedBy: user?.username || 'deleted user',
-        favorite: likes.includes(req.jwt.uuid),
-        edit: uploadedBy === req.jwt.uuid,
+        uploadedBy: username || 'Deactivated User',
+        favorite: isFav(scopes.favorite)(req.auth, likes),
+        edit: canEdit(scopes.edit)(req.auth, uploadedBy),
       },
     });
   }
 );
 
 export const findSongs = (): RequestHandler => (
-  async (req: AuthorizedRequest, res: Response) => {
-    const validationSchema = Joi.object({
-      skip: Joi.number()
-        .min(0)
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.SKIP)),
-      limit: Joi.number()
-        .min(1)
-        .max(100)
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.LIMIT)),
-      scope: Joi.number()
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.SCOPE)),
-      query: Joi.string()
-        .required()
-        .error(new Error(messages.INVALID_QUERY_PARAMETER.QUERY)),
-    });
-
-    const { error, value } = validationSchema.validate(req.query);
+  async (req: AuthRequest, res: Response) => {
+    const { error, value } = queryParamsWithQueryString.validate(req.query);
     if (error) {
-      throw new HttpErrors.BadRequest(error.message);
+      throw new BadRequest(error.message);
+    }
+    const { query, scope, ...queryParams } = <{
+      query: string, skip?: number, limit?: number, scope?: number,
+    }>value;
+
+    const songList = await Songs.findSongs(decodeURI(query), queryParams);
+    if (!songList.length) {
+      throw new NotFound('No songs found.');
     }
 
-    const songList = await Songs.findSongs(decodeURI(value.query), value.skip, value.limit);
-    if (songList.length === 0) {
-      throw new HttpErrors.NotFound(messages.songs.NOT_FOUND);
-    }
+    const songs = songList.map(({
+      likes, uploadedBy, ...songData
+    }) => ({
+      ...songData,
+      favorite: isFav(scope)(req.auth, likes),
+      edit: canEdit(scope)(req.auth, uploadedBy),
+    }));
 
-    const songs = songList.map(({ likes, uploadedBy, ...songData }) => {
-      const song: SongData = songData;
-
-      if (value.scope & scopes.favorite) {
-        song.favorite = likes.includes(req.jwt.uuid);
-      }
-
-      if (value.scope & scopes.edit) {
-        song.edit = (uploadedBy === req.jwt.uuid) || (req.jwt.role >= roles.moderator);
-      }
-
-      return song;
-    });
-
-    res.status(200).send({ message: messages.songs.SUCCESS, songs });
+    res.status(200).send({ message: 'Successfully retrieved songs.', songs });
   }
 );
 
@@ -142,15 +135,16 @@ export const uploadSong = (): RequestHandler => upload;
 export const updateSong = (): RequestHandler => update;
 
 export const updateSongCover = (): RequestHandler => updateCover;
+
 export const deleteSong = (): RequestHandler => (
-  async (req: AuthorizedRequest, res: Response) => {
-    const song = await Songs.getSongByUuid(req.params.songId);
+  async (req: AuthRequest, res: Response) => {
+    const song = await Songs.getSongById(req.params.songId);
     if (!song) {
-      throw new HttpErrors.NotFound(messages.song.NOT_FOUND);
+      throw new NotFound('No song found.');
     }
 
-    if ((song.uploadedBy !== req.jwt.uuid) && (req.jwt.role < roles.moderator)) {
-      throw new HttpErrors.Forbidden(messages.ACCESS_DENIED);
+    if ((song.uploadedBy !== req.auth.uuid) && (req.auth.role < roles.moderator)) {
+      throw new Forbidden('Access denied.');
     }
 
     await Songs.deleteSong(req.params.songId);
