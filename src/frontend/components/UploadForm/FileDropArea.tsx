@@ -28,7 +28,7 @@ const Title = styled.h1`
 `;
 
 const Note = styled.div`
-  margin-top: 16px;
+  margin-top: 24px;
   text-align: center;
   color: ${(props: Theme) => props.theme.colors.secondary};
 
