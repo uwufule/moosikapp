@@ -10,7 +10,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   html {
-    font-family: 'Nunito';
+    font-family: Nunito, BlinkMacSystemFont, -apple-system, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
 
   body {
