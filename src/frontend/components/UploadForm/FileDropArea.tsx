@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 import FileSelectButton from './FileSelectButton';
+// import DifferentUploadMethodsLink from './DifferentUploadMethodsLink';
 
 type DropAreaProps = Theme<{ isDrop: boolean }>;
 
@@ -74,6 +75,7 @@ const FileDropArea = ({ handler }: FileDropAreaProps) => {
       >
         or choose files to upload
       </FileSelectButton>
+      {/* <DifferentUploadMethodsLink /> */}
       <Note>
         <p>Note: Your audio file may not exceed 10 MB and has to be in MP3 format.</p>
       </Note>
