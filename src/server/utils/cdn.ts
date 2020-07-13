@@ -1,9 +1,8 @@
-import { Readable } from 'stream';
 import Crypto from 'crypto';
 import JWT from 'jsonwebtoken';
-import request, { Response, CoreOptions } from 'request';
 import FileType from 'file-type';
 import HttpErrors from 'http-errors';
+import fetch, { FetchError } from 'node-fetch';
 
 const { JWT_SECRET, CDN_SERVER = '' } = process.env;
 
@@ -14,37 +13,6 @@ const createUploadTargetUri = () => {
   return `${CDN_SERVER}/upload-target/${target}`;
 };
 
-interface Resolve {
-  (value: string): void;
-}
-
-interface Reject {
-  (error: Error): void;
-}
-
-const uploadCallback = (resolve: Resolve, reject: Reject) => (
-  (error: Error, response: Response, body: string) => {
-    if (error) {
-      reject(error);
-      return;
-    }
-
-    switch (response.statusCode) {
-      case 201: {
-        resolve(<string>response.headers.location);
-        break;
-      }
-      case 409: {
-        reject(new HttpErrors[409]('Resource already exists.'));
-        break;
-      }
-      default: {
-        reject(new HttpErrors[response.statusCode](body));
-      }
-    }
-  }
-);
-
 export default async (contentType: string, buffer: Buffer): Promise<string> => {
   const fileType = await FileType.fromBuffer(buffer);
   if (fileType?.mime !== contentType) {
@@ -53,17 +21,21 @@ export default async (contentType: string, buffer: Buffer): Promise<string> => {
     );
   }
 
-  const config: CoreOptions = {
-    headers: {
-      'content-type': contentType,
-    },
-  };
+  try {
+    const res = await fetch(createUploadTargetUri(), {
+      method: 'PUT',
+      headers: {
+        'content-type': contentType,
+      },
+      body: buffer,
+    });
 
-  const stream = new Readable();
-  stream.push(buffer);
-  stream.push(null);
+    return <string>res.headers.get('location');
+  } catch (e) {
+    if (e instanceof FetchError) {
+      // throw error, recieved from cdn server
+    }
 
-  return new Promise((resolve, reject) => {
-    stream.pipe(request.put(createUploadTargetUri(), config, uploadCallback(resolve, reject)));
-  });
+    throw new HttpErrors[502]('CDN server is unavailable.');
+  }
 };
