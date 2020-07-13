@@ -75,7 +75,7 @@ const FileDropArea = ({ handler }: FileDropAreaProps) => {
         or choose files to upload
       </FileSelectButton>
       <Note>
-        <p>Your audio file may not exceed 10 MB and has to be in MP3 format.</p>
+        <p>Note: Your audio file may not exceed 10 MB and has to be in MP3 format.</p>
       </Note>
     </DropArea>
   );
