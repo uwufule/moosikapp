@@ -8,6 +8,14 @@ webpack.config.js
 # type definitions
 **/*.d.ts
 
-# miscellaneous
-**/*.webp
+# images
+**/*.png
 **/*.jpg
+**/*.webp
+**/*.ico
+
+# text files
+**/*.txt
+
+# font
+**/*.ttf
