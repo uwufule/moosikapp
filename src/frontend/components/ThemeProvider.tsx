@@ -1,24 +1,26 @@
 import { ThemeProvider, ThemedStyledProps } from 'styled-components';
-import defaultTheme from '@theme/default';
+import defaultLightTheme from '@theme/default';
 import darkTheme from '@theme/dark';
 
-export type Theme<P = {}> = ThemedStyledProps<P, typeof defaultTheme>;
+export type ThemeString = 'dark' | 'light';
+
+export type Theme<P = {}> = ThemedStyledProps<P, typeof defaultLightTheme>;
 
 const getTheme = (theme: string) => {
   switch (theme) {
     case 'dark':
       return darkTheme;
     default:
-      return defaultTheme;
+      return defaultLightTheme;
   }
 };
 
 interface AppThemeProviderProps {
   children: JSX.Element[];
-  theme?: string; // 'dark' | 'light'
+  theme?: ThemeString;
 }
 
-const AppThemeProvider = ({ children, theme = 'default' }: AppThemeProviderProps) => (
+const AppThemeProvider = ({ children, theme = 'light' }: AppThemeProviderProps) => (
   <ThemeProvider theme={getTheme(theme)}>{children}</ThemeProvider>
 );
 
