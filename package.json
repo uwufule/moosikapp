@@ -18,11 +18,18 @@
     "test": "mocha -r dotenv/config -r ts-node/register test/**/*.test.ts",
     "test:watch": "nodemon --config nodemon.test.json",
     "lint": "eslint src/**",
-    "lint:fix": "eslint src/** --fix"
+    "lint:fix": "eslint src/** --fix",
+    "precommit": "lint-staged"
   },
   "private": true,
   "bugs": {
     "url": "https://github.com/unlakki/moosikapp/issues"
+  },
+  "lint-staged": {
+    "*.{ts, tsx}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -54,14 +61,19 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-airbnb-typescript": "^6.3.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-json": "^2.1.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
     "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
+    "prettier": "^2.0.5",
     "supertest": "^4.0.2",
     "terser-webpack-plugin": "^2.2.1",
     "ts-loader": "^6.0.4",
