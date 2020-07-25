@@ -1,1 +1,1 @@
-# [Бэкенд MoosikApp](https://moosikapp.tk)
+Source code of [moosik](https://moosikapp.tk) application.
