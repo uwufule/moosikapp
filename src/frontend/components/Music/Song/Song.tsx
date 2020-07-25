@@ -16,7 +16,7 @@ const StyledPlayPauseButton = styled(PlayPauseButton)`
 const StyledEditButton = styled(EditButton)`
   @media (min-width: 960px) {
     & {
-      opacity: .7;
+      opacity: 0.7;
       transition: all ${(props: Theme) => props.theme.transition};
     }
   }
@@ -25,7 +25,7 @@ const StyledEditButton = styled(EditButton)`
 const StyledFavButton = styled(FavButton)`
   @media (min-width: 960px) {
     & {
-      opacity: .7;
+      opacity: 0.7;
       transition: all ${(props: Theme) => props.theme.transition};
     }
   }
@@ -40,21 +40,19 @@ const Wrapper = styled.div`
     margin-bottom: 0;
   }
 
-   @media (min-width: 960px) {
-     & {
-       transition: all ${(props: Theme) => props.theme.transition};
-     }
+  @media (min-width: 960px) {
+    & {
+      transition: all ${(props: Theme) => props.theme.transition};
+    }
 
-     &:hover {
-       background: ${(props: Theme) => props.theme.colors.accentBackground};
-     }
+    &:hover {
+      background: ${(props: Theme) => props.theme.colors.accentBackground};
+    }
 
-     &:hover ${StyledPlayPauseButton},
-     &:hover ${StyledEditButton},
-     &:hover ${StyledFavButton} {
-       opacity: 1;
-     }
-   }
+    &:hover ${StyledPlayPauseButton}, &:hover ${StyledEditButton}, &:hover ${StyledFavButton} {
+      opacity: 1;
+    }
+  }
 `;
 
 type CoverProps = Theme<{ url: string }>;
@@ -66,9 +64,8 @@ const Cover = styled.div<CoverProps>`
   width: 48px;
   height: 48px;
   position: relative;
-  background: ${(props) => (
-    props.url ? `url(${props.url})` : props.theme.colors.cover.background
-  )} 50% no-repeat;
+  background: ${(props) => (props.url ? `url(${props.url})` : props.theme.colors.cover.background)}
+    50% no-repeat;
   background-size: cover;
 `;
 
@@ -116,9 +113,7 @@ interface SongProps {
   edit?: boolean;
 }
 
-const Song = ({
-  uuid, author, title, cover, favorite = true, edit,
-}: SongProps) => (
+const Song = ({ uuid, author, title, cover, favorite = true, edit }: SongProps) => (
   <Wrapper>
     <Cover url={cover}>
       {!cover && (

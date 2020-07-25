@@ -1,19 +1,14 @@
-import {
-  RequestHandler, Request, Response, NextFunction,
-} from 'express';
+import { RequestHandler, Request, Response, NextFunction } from 'express';
 import { HttpError } from 'http-errors';
 
-export const withAsyncErrorHandler = (...handlers: RequestHandler[]) => (
-  handlers.map((handler) => (
-    async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        await handler(req, res, next);
-      } catch (e) {
-        next(e);
-      }
+export const withAsyncErrorHandler = (...handlers: RequestHandler[]) =>
+  handlers.map((handler) => async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await handler(req, res, next);
+    } catch (e) {
+      next(e);
     }
-  ))
-);
+  });
 
 export default (error: Error, req: Request, res: Response, next: NextFunction) => {
   if (!error) {

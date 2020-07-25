@@ -4,9 +4,7 @@ import { RootState } from '@redux/store';
 import { Control, Icon } from './Control';
 
 const ShuffleButton = () => {
-  const shuffle = useSelector<RootState, boolean>(
-    (state) => state.player.shuffle,
-  );
+  const shuffle = useSelector<RootState, boolean>((state) => state.player.shuffle);
 
   const dispatch = useDispatch();
 

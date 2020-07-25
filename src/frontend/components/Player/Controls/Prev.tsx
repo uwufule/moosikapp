@@ -4,9 +4,7 @@ import { RootState } from '@redux/store';
 import { Control, Icon } from './Control';
 
 const NextButton = () => {
-  const currentSongIndex = useSelector<RootState, number>(
-    (state) => state.player.current.index,
-  );
+  const currentSongIndex = useSelector<RootState, number>((state) => state.player.current.index);
 
   const dispatch = useDispatch();
 

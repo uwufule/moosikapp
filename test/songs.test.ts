@@ -32,7 +32,7 @@ const createTestUserModel = () => {
   });
 };
 
-const createTestSongModel = () => (
+const createTestSongModel = () =>
   new SongModel({
     _id: songId,
     author: 'TestAuthor',
@@ -41,8 +41,7 @@ const createTestSongModel = () => (
     uploadedBy: userId,
     path: '/path/to/file',
     likes: [userId],
-  })
-);
+  });
 
 let app: Express;
 
@@ -75,8 +74,7 @@ describe('songs', () => {
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-      const res = await request(app)
-        .post('/api/v2/songs');
+      const res = await request(app).post('/api/v2/songs');
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -168,8 +166,7 @@ describe('songs', () => {
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-      const res = await request(app)
-        .get('/api/v2/songs');
+      const res = await request(app).get('/api/v2/songs');
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -269,8 +266,7 @@ describe('songs', () => {
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-      const res = await request(app)
-        .get(`/api/v2/songs/${songId}`);
+      const res = await request(app).get(`/api/v2/songs/${songId}`);
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -323,8 +319,7 @@ describe('songs', () => {
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-      const res = await request(app)
-        .get('/api/v2/songs/search');
+      const res = await request(app).get('/api/v2/songs/search');
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -415,50 +410,28 @@ describe('songs', () => {
       await SongModel.deleteOne({ _id: songId });
     });
 
-    it.skip('should return Status-Code 200 and correct body if song sucessfully updated', async () => {
+    it.skip('should return Status-Code 200 and correct body if song sucessfully updated', async () => {});
 
-    });
+    it.skip('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {});
 
-    it.skip('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
+    it.skip('should return Status-Code 400 and correct body if incorrect header `Content-Type` provided', async () => {});
 
-    });
+    it.skip('should return Status-Code 403 and correct body if invalid token provided', async () => {});
 
-    it.skip('should return Status-Code 400 and correct body if incorrect header `Content-Type` provided', async () => {
+    it.skip('should return Status-Code 404 and correct body if no song found', async () => {});
 
-    });
+    it.skip('should return Status-Code 403 and correct body if user does not have access to edit song', async () => {});
 
-    it.skip('should return Status-Code 403 and correct body if invalid token provided', async () => {
+    it.skip('should return Status-Code 400 and correct body if invalid body parameter `author` provided', async () => {});
 
-    });
+    it.skip('should return Status-Code 400 and correct body if invalid body parameter `title` provided', async () => {});
 
-    it.skip('should return Status-Code 404 and correct body if no song found', async () => {
-
-    });
-
-    it.skip('should return Status-Code 403 and correct body if user does not have access to edit song', async () => {
-
-    });
-
-    it.skip('should return Status-Code 400 and correct body if invalid body parameter `author` provided', async () => {
-
-    });
-
-    it.skip('should return Status-Code 400 and correct body if invalid body parameter `title` provided', async () => {
-
-    });
-
-    it.skip('should return Status-Code 400 and correct body if invalid body parameter `cover` provided', async () => {
-
-    });
+    it.skip('should return Status-Code 400 and correct body if invalid body parameter `cover` provided', async () => {});
 
     describe('update cover image', () => {
-      it.skip('should return Status-Code 200 and correct body if successfuly updated cover image', async () => {
+      it.skip('should return Status-Code 200 and correct body if successfuly updated cover image', async () => {});
 
-      });
-
-      it.skip('should return Status-Code 400 and correct body if invalid cover image provided', async () => {
-
-      });
+      it.skip('should return Status-Code 400 and correct body if invalid cover image provided', async () => {});
     });
   });
 
@@ -471,24 +444,14 @@ describe('songs', () => {
       await SongModel.deleteOne({ _id: songId });
     });
 
-    it.skip('should return Status-Code 204 and correct body if song sucessfully deleted', async () => {
+    it.skip('should return Status-Code 204 and correct body if song sucessfully deleted', async () => {});
 
-    });
+    it.skip('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {});
 
-    it.skip('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
+    it.skip('should return Status-Code 403 and correct body if invalid token provided', async () => {});
 
-    });
+    it.skip('should return Status-Code 404 and correct body if no song found', async () => {});
 
-    it.skip('should return Status-Code 403 and correct body if invalid token provided', async () => {
-
-    });
-
-    it.skip('should return Status-Code 404 and correct body if no song found', async () => {
-
-    });
-
-    it.skip('should return Status-Code 403 and correct body if user does not have access to edit song', async () => {
-
-    });
+    it.skip('should return Status-Code 403 and correct body if user does not have access to edit song', async () => {});
   });
 });

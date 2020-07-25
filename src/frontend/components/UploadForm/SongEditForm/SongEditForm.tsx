@@ -7,11 +7,7 @@ interface SongEditFormProps {
 const SongEditForm = ({ songUuid }: SongEditFormProps) => {
   const { authRequest } = useRequest();
 
-  return (
-    <div>
-      {songUuid}
-    </div>
-  );
+  return <div>{songUuid}</div>;
 };
 
 export default SongEditForm;

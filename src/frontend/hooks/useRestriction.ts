@@ -25,7 +25,8 @@ const useRestriction = () => {
   };
 
   return {
-    allowOnlyAuthorizedUser, disallowAuthorizedUser,
+    allowOnlyAuthorizedUser,
+    disallowAuthorizedUser,
   };
 };
 

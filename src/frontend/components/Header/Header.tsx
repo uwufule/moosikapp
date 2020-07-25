@@ -27,9 +27,7 @@ const Header = () => {
         <Logo linkTo="/" />
         {isLoggedIn && <Nav />}
       </Group>
-      <Group>
-        {isLoggedIn ? <Logout /> : <Link to="/login">Login</Link>}
-      </Group>
+      <Group>{isLoggedIn ? <Logout /> : <Link to="/login">Login</Link>}</Group>
     </StyledHeader>
   );
 };

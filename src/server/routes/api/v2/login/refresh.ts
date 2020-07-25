@@ -19,25 +19,23 @@ const getRefreshTokenPayload = (refreshToken: string) => {
   }
 };
 
-export default (): RequestHandler => (
-  async (req: Request, res: Response) => {
-    const { refreshToken } = req.query;
-    if (typeof refreshToken !== 'string') {
-      throw new BadRequest('Invalid refresh token.');
-    }
-
-    const payload = getRefreshTokenPayload(refreshToken);
-
-    if (!(await isRefreshTokenExists(payload.jti))) {
-      throw new BadRequest('Refresh token expired.');
-    }
-
-    const authPayload = await getAuthPayloadById(payload.sub);
-    if (!authPayload) {
-      throw new BadRequest('Trying to get tokens for deactivated user.');
-    }
-
-    const tokens = await updateTokens(authPayload, payload.jti);
-    res.status(200).send(tokens);
+export default (): RequestHandler => async (req: Request, res: Response) => {
+  const { refreshToken } = req.query;
+  if (typeof refreshToken !== 'string') {
+    throw new BadRequest('Invalid refresh token.');
   }
-);
+
+  const payload = getRefreshTokenPayload(refreshToken);
+
+  if (!(await isRefreshTokenExists(payload.jti))) {
+    throw new BadRequest('Refresh token expired.');
+  }
+
+  const authPayload = await getAuthPayloadById(payload.sub);
+  if (!authPayload) {
+    throw new BadRequest('Trying to get tokens for deactivated user.');
+  }
+
+  const tokens = await updateTokens(authPayload, payload.jti);
+  res.status(200).send(tokens);
+};

@@ -36,20 +36,18 @@ const SvgPaths = {
 
 interface PlayPauseButtonProps {
   songUuid: string;
-  className?: string
+  className?: string;
 }
 
 const PlayPauseButton = ({ songUuid, className }: PlayPauseButtonProps) => {
-  const playing = useSelector<RootState, boolean>(
-    (state) => state.player.playing,
-  );
+  const playing = useSelector<RootState, boolean>((state) => state.player.playing);
 
   const currentSongUuid = useSelector<RootState, string | undefined>(
     (state) => state.player.current.song?.uuid,
   );
 
-  const songIndex = useSelector<RootState, number>(
-    (state) => state.player.songList.findIndex((song) => song.uuid === songUuid),
+  const songIndex = useSelector<RootState, number>((state) =>
+    state.player.songList.findIndex((song) => song.uuid === songUuid),
   );
 
   const dispatch = useDispatch();
@@ -66,9 +64,7 @@ const PlayPauseButton = ({ songUuid, className }: PlayPauseButtonProps) => {
 
   return (
     <Button className={className} title={isPlayingThisSong ? 'Pause' : 'Play'} onClick={togglePlay}>
-      <svg viewBox="0 0 24 24">
-        {isPlayingThisSong ? <SvgPaths.Play /> : <SvgPaths.Pause />}
-      </svg>
+      <svg viewBox="0 0 24 24">{isPlayingThisSong ? <SvgPaths.Play /> : <SvgPaths.Pause />}</svg>
     </Button>
   );
 };

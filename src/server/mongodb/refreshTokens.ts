@@ -1,7 +1,7 @@
 import RefreshTokenModel from './models/refreshToken.model';
 
 export const createRefreshToken = async (userId: string) => {
-  const { _id: uuid } = await (new RefreshTokenModel({ userId })).save();
+  const { _id: uuid } = await new RefreshTokenModel({ userId }).save();
   return uuid;
 };
 

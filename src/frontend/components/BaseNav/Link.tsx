@@ -25,9 +25,7 @@ interface NavLinkProps {
   handler?: (event: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>) => void;
 }
 
-const NavLink = ({
-  to, children, className, handler,
-}: NavLinkProps) => (
+const NavLink = ({ to, children, className, handler }: NavLinkProps) => (
   <NextLink href={to}>
     <StyledLink className={className} onClick={handler}>
       {children}

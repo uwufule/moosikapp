@@ -6,31 +6,34 @@ import { RootState } from '@redux/store';
 import baseRequest from '@utils/request';
 
 const useRequest = () => {
-  const accessToken = useSelector<RootState, string>(
-    (state) => state.auth.accessToken,
-  );
+  const accessToken = useSelector<RootState, string>((state) => state.auth.accessToken);
 
   const { refresh, isAccessTokenExpiresSoon } = useTokenManager();
 
-  const request = (url: string, config?: AxiosRequestConfig) => (
-    baseRequest(url, _merge(config, {
-      headers: {
-        accept: 'application/json',
-      },
-    }))
-  );
+  const request = (url: string, config?: AxiosRequestConfig) =>
+    baseRequest(
+      url,
+      _merge(config, {
+        headers: {
+          accept: 'application/json',
+        },
+      }),
+    );
 
   const authRequest = async (url: string, config?: AxiosRequestConfig) => {
     if (isAccessTokenExpiresSoon()) {
       await refresh();
     }
 
-    return baseRequest(url, _merge(config, {
-      headers: {
-        accept: 'application/json',
-        authorization: `Bearer ${accessToken}`,
-      },
-    }));
+    return baseRequest(
+      url,
+      _merge(config, {
+        headers: {
+          accept: 'application/json',
+          authorization: `Bearer ${accessToken}`,
+        },
+      }),
+    );
   };
 
   return {

@@ -28,14 +28,13 @@ const createTestUserModel = () => {
   });
 };
 
-const createTestSongModel = () => (
+const createTestSongModel = () =>
   new SongModel({
     _id: songId,
     uploadedBy: userId,
     path: '/path/to/file',
     likes: [userId],
-  })
-);
+  });
 
 let app: Express;
 
@@ -68,8 +67,7 @@ describe('favorites', () => {
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-      const res = await request(app)
-        .get('/api/v2/favorites');
+      const res = await request(app).get('/api/v2/favorites');
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -136,8 +134,7 @@ describe('favorites', () => {
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-      const res = await request(app)
-        .post(`/api/v2/favorites/${songId}`);
+      const res = await request(app).post(`/api/v2/favorites/${songId}`);
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);
@@ -179,8 +176,7 @@ describe('favorites', () => {
     });
 
     it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-      const res = await request(app)
-        .delete(`/api/v2/favorites/${songId}`);
+      const res = await request(app).delete(`/api/v2/favorites/${songId}`);
 
       expect(res.status).to.eq(405);
       expect(res.header['content-type']).to.match(/application\/json/);

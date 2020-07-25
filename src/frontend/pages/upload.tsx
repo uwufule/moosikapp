@@ -5,9 +5,7 @@ const Upload = () => {
   const restriction = useRestriction();
   restriction.allowOnlyAuthorizedUser();
 
-  return (
-    <UploadForm />
-  );
+  return <UploadForm />;
 };
 
 export default Upload;

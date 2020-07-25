@@ -12,9 +12,8 @@ const DropArea = styled.div<DropAreaProps>`
   align-items: center;
   margin: 24px 8px;
   padding: 24px;
-  border: 2px dashed ${(props: DropAreaProps) => (
-    props.isDrop ? props.theme.colors.primary : 'transparent'
-  )};
+  border: 2px dashed
+    ${(props: DropAreaProps) => (props.isDrop ? props.theme.colors.primary : 'transparent')};
   outline: 0;
   transition: border-color ${(props: DropAreaProps) => props.theme.transition};
 `;

@@ -2,7 +2,11 @@ import { useState, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { Transition } from 'react-transition-group';
 import {
-  TransitionStatus, ENTERING, ENTERED, EXITING, EXITED,
+  TransitionStatus,
+  ENTERING,
+  ENTERED,
+  EXITING,
+  EXITED,
 } from 'react-transition-group/Transition';
 import { Theme } from '@components/ThemeProvider';
 
@@ -111,7 +115,7 @@ interface VolumeSliderProps {
   onVolumeChange: (volume: number) => void;
 }
 
-const VolumeSlider = ({ show = false, value, onVolumeChange } : VolumeSliderProps) => {
+const VolumeSlider = ({ show = false, value, onVolumeChange }: VolumeSliderProps) => {
   const [dragStart, setDragStart] = useState(false);
 
   const getVolumePercents = (event: Event) => {

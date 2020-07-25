@@ -31,9 +31,7 @@ interface InputProps {
   handler: (value: string) => void;
 }
 
-const FormInput = ({
-  children, className, type, required = false, handler,
-}: InputProps) => {
+const FormInput = ({ children, className, type, required = false, handler }: InputProps) => {
   const id = createHash().update(children).digest(36);
 
   return (

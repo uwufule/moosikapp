@@ -11,7 +11,8 @@ const useAuth = () => {
     const res = await request('/login', {
       method: 'POST',
       data: {
-        username, password,
+        username,
+        password,
       },
     });
 

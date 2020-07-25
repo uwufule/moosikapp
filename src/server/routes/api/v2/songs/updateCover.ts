@@ -18,7 +18,7 @@ export default async (req: AuthRequest, res: Response) => {
     throw new NotFound('No song found.');
   }
 
-  if ((song.uploadedBy !== req.auth.uuid) && (req.auth.role < roles.moderator)) {
+  if (song.uploadedBy !== req.auth.uuid && req.auth.role < roles.moderator) {
     throw new Forbidden('Access denied.');
   }
 

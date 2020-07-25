@@ -8,7 +8,7 @@ const ButtonWrapper = styled.label`
   padding: 8px 16px;
   font-size: 18px;
   font-weight: 400;
-  
+
   text-align: center;
   color: ${(props: Theme) => props.theme.colors.button.text};
   background: ${(props: Theme) => props.theme.colors.button.background};
@@ -37,20 +37,13 @@ interface FileSelectButtonProps {
   handler: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const FileSelectButton = ({
-  children, accept, multiple, handler,
-}: FileSelectButtonProps) => {
+const FileSelectButton = ({ children, accept, multiple, handler }: FileSelectButtonProps) => {
   const id = createHash().update(children).digest(36);
 
   return (
     <ButtonWrapper htmlFor={id}>
       <span>{children}</span>
-      <Input
-        id={id}
-        accept={accept}
-        multiple={multiple}
-        onChange={handler}
-      />
+      <Input id={id} accept={accept} multiple={multiple} onChange={handler} />
     </ButtonWrapper>
   );
 };

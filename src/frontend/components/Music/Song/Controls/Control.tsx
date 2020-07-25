@@ -11,9 +11,7 @@ export const Control = styled.button.attrs({ type: 'button' })<ControlProps>`
   background: none;
   border: 0;
   outline: 0;
-  fill: ${(props) => (
-    props.active ? props.theme.colors.accent : props.theme.colors.secondary
-  )};
+  fill: ${(props) => (props.active ? props.theme.colors.accent : props.theme.colors.secondary)};
   cursor: pointer;
 `;
 

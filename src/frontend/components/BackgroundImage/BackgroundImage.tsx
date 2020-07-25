@@ -18,7 +18,7 @@ const Image = styled.img`
   position: absolute;
   left: -30px;
   top: -30px;
-  filter: blur(15px) brightness(.55);
+  filter: blur(15px) brightness(0.55);
   pointer-events: none;
 `;
 

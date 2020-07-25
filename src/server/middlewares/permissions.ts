@@ -3,11 +3,13 @@ import HttpErrors from 'http-errors';
 import { AuthRequest } from './authorization';
 
 export default (minRequiredRole: number): RequestHandler => (
-  (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (req.auth.role < minRequiredRole) {
-      throw new HttpErrors.Forbidden('Access denied.');
-    }
-
-    next();
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (req.auth.role < minRequiredRole) {
+    throw new HttpErrors.Forbidden('Access denied.');
   }
-);
+
+  next();
+};

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import BodyParser from 'body-parser';
-import { MethodNotAllowed } from 'http-errors';
+import HttpErrors from 'http-errors';
 import v2 from './v2';
 
 export default () => {
@@ -11,7 +11,7 @@ export default () => {
   router.use('/v2', v2());
 
   router.all('*', () => {
-    throw new MethodNotAllowed('Method not allowed.');
+    throw new HttpErrors.MethodNotAllowed('Method not allowed.');
   });
 
   return router;

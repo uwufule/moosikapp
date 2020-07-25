@@ -5,6 +5,9 @@ import { Theme } from '@components/ThemeProvider';
 const FormComponent = styled.form`
   width: 100%;
   max-width: 600px;
+  /* background: ${(props: Theme) => props.theme.colors.background};
+  padding: 64px 32px;
+  box-shadow: ${(props: Theme) => props.theme.shadow.long}; */
 `;
 
 const Title = styled.h1`
@@ -35,9 +38,7 @@ const Form = ({ title, children, handler }: FormProps) => (
     }}
   >
     <Title>{title}</Title>
-    <FormBody>
-      {children}
-    </FormBody>
+    <FormBody>{children}</FormBody>
   </FormComponent>
 );
 

@@ -11,11 +11,8 @@ const StyledButton = styled.button.attrs({ type: 'button' })<StyledButtonProps>`
   background: transparent;
   border: 0;
   outline: 0;
-  fill: ${(props: StyledButtonProps) => (
-    props.active
-      ? props.theme.colors.accent
-      : props.theme.colors.primary
-  )};
+  fill: ${(props: StyledButtonProps) =>
+    props.active ? props.theme.colors.accent : props.theme.colors.primary};
   cursor: pointer;
   transition: ${(props: StyledButtonProps) => props.theme.transition};
 `;

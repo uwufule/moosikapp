@@ -2,7 +2,7 @@ import JWT from 'jsonwebtoken';
 import { createRefreshToken, deleteRefreshToken } from '../mongodb/refreshTokens';
 import { AuthPayload } from '../mongodb/users';
 
-const jwtSecret = String(process.env.JWT_SECRET);
+const JWT_SECRET = String(process.env.JWT_SECRET);
 
 interface AccessTokenPayload {
   uuid: string;
@@ -14,9 +14,8 @@ export interface AccessToken extends AccessTokenPayload {
   exp: number;
 }
 
-const signAccessToken = (payload: AccessTokenPayload) => (
-  JWT.sign(payload, jwtSecret, { expiresIn: '30m' })
-);
+const signAccessToken = (payload: AccessTokenPayload) =>
+  JWT.sign(payload, JWT_SECRET, { expiresIn: '30m' });
 
 interface RefreshTokenPayload {
   jti: string;
@@ -28,9 +27,8 @@ export interface RefreshToken extends RefreshTokenPayload {
   exp: number;
 }
 
-const signRefreshToken = (payload: RefreshTokenPayload) => (
-  JWT.sign(payload, jwtSecret, { expiresIn: '30d' })
-);
+const signRefreshToken = (payload: RefreshTokenPayload) =>
+  JWT.sign(payload, JWT_SECRET, { expiresIn: '30d' });
 
 export const createTokens = async (auth: AuthPayload) => {
   const accessToken = signAccessToken(auth);

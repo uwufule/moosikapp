@@ -8,12 +8,14 @@ export interface UploadProgressEvent {
   total: number;
 }
 
-const request = (url: string, config: AxiosRequestConfig) => (
-  axios(`${API_URL}${url}`, _merge(config, {
-    headers: {
-      accept: 'application/json',
-    },
-  }))
-);
+const request = (url: string, config: AxiosRequestConfig) =>
+  axios(
+    `${API_URL}${url}`,
+    _merge(config, {
+      headers: {
+        accept: 'application/json',
+      },
+    }),
+  );
 
 export default request;

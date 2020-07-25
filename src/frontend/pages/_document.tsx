@@ -9,12 +9,12 @@ export default class AppDocument extends Document {
     const originalRenderPage = ctx.renderPage;
 
     try {
-      ctx.renderPage = () => originalRenderPage({
-        enhanceApp: (App) => (
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          (props) => styleSheet.collectStyles(<App {...props} />)
-        ),
-      });
+      ctx.renderPage = () =>
+        originalRenderPage({
+          enhanceApp: (App) =>
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            (props) => styleSheet.collectStyles(<App {...props} />),
+        });
 
       const initialProps = await Document.getInitialProps(ctx);
 

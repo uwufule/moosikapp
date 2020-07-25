@@ -22,7 +22,7 @@ const TextContainer = styled.div`
   color: ${(props: Theme) => props.theme.colors.secondary};
   text-shadow: ${(props: Theme) => props.theme.shadow.long};
   
-  &>p {
+  & > p {
     margin: 0;
   }
 `;

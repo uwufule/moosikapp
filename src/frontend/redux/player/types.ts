@@ -65,11 +65,10 @@ export interface SetShuffleAction {
   payload: boolean;
 }
 
-export type AnyPlayerAction = (
-  SetSongListAction
+export type AnyPlayerAction =
+  | SetSongListAction
   | SetCurrentSongAction
   | SetCurrentSongIndexAction
   | SetPlayingAction
   | SetRepeatAction
-  | SetShuffleAction
-);
+  | SetShuffleAction;

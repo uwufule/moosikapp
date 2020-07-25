@@ -7,22 +7,20 @@ export interface AuthPayload {
   role: number;
 }
 
-export const getAuthPayloadByUsernameOrEmail = (
-  async (usernameOrEmail: string) => {
-    const query = {
-      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
-    };
+export const getAuthPayloadByUsernameOrEmail = async (usernameOrEmail: string) => {
+  const query = {
+    $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+  };
 
-    const projection = {
-      uuid: 1,
-      password: 1,
-      role: 1,
-    };
+  const projection = {
+    uuid: 1,
+    password: 1,
+    role: 1,
+  };
 
-    const user = await UserModel.findOne(query, projection);
-    return toJson<AuthPayload>(user);
-  }
-);
+  const user = await UserModel.findOne(query, projection);
+  return toJson<AuthPayload>(user);
+};
 
 export const getAuthPayloadById = async (uuid: string) => {
   const projection = {
@@ -73,7 +71,7 @@ interface InitialUserData {
 }
 
 export const createUser = async (data: InitialUserData) => {
-  const { _id: uuid } = await (new UserModel(data)).save();
+  const { _id: uuid } = await new UserModel(data).save();
   return <string>uuid;
 };
 

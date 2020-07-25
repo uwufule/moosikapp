@@ -5,9 +5,7 @@ import { RootState } from '@redux/store';
 import { Control, Icon } from './Control';
 
 const RepeatButton = () => {
-  const repeat = useSelector<RootState, RepeatTypes>(
-    (state) => state.player.repeat,
-  );
+  const repeat = useSelector<RootState, RepeatTypes>((state) => state.player.repeat);
 
   const dispatch = useDispatch();
 

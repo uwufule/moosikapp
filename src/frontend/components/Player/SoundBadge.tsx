@@ -18,11 +18,10 @@ type SongCoverProps = Theme<{ coverUrl?: string }>;
 const SongCover = styled.div<SongCoverProps>`
   width: 32px;
   height: 32px;
-  background: ${(props: SongCoverProps) => (
+  background: ${(props: SongCoverProps) =>
     props.coverUrl
       ? `url(${props.coverUrl}) center no-repeat`
-      : props.theme.colors.cover.background
-  )};
+      : props.theme.colors.cover.background};
   background-size: cover;
 `;
 

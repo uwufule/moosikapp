@@ -24,9 +24,7 @@ interface FormLinkProps {
 
 const FormLink = ({ to, children }: FormLinkProps) => (
   <Link href={to}>
-    <StyledLink>
-      {children}
-    </StyledLink>
+    <StyledLink>{children}</StyledLink>
   </Link>
 );
 

@@ -7,17 +7,9 @@ import { getSongById, updateSong } from '../../../../mongodb/songs';
 import roles from '../../../../config/roles.json';
 
 const bodyScheme = Joi.object({
-  author: Joi.string()
-    .min(1)
-    .max(120)
-    .error(new Error('Invalid field `author` provided.')),
-  title: Joi.string()
-    .min(1)
-    .max(120)
-    .error(new Error('Invalid field `title` provided.')),
-  cover: Joi.string()
-    .uri()
-    .error(new Error('Invalid field `cover` provided.')),
+  author: Joi.string().min(1).max(120).error(new Error('Invalid field `author` provided.')),
+  title: Joi.string().min(1).max(120).error(new Error('Invalid field `title` provided.')),
+  cover: Joi.string().uri().error(new Error('Invalid field `cover` provided.')),
 });
 
 export default async (req: AuthRequest, res: Response) => {
@@ -26,7 +18,7 @@ export default async (req: AuthRequest, res: Response) => {
     throw new NotFound('No song found.');
   }
 
-  if ((song.uploadedBy !== req.auth.uuid) && (req.auth.role < roles.moderator)) {
+  if (song.uploadedBy !== req.auth.uuid && req.auth.role < roles.moderator) {
     throw new Forbidden('Access denied.');
   }
 

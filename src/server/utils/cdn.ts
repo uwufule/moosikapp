@@ -16,9 +16,7 @@ const createUploadTargetUri = () => {
 export default async (contentType: string, buffer: Buffer): Promise<string> => {
   const fileType = await FileType.fromBuffer(buffer);
   if (fileType?.mime !== contentType) {
-    throw new HttpErrors.BadRequest(
-      'Header `Content-Type` and file type does not match.',
-    );
+    throw new HttpErrors.BadRequest('Header `Content-Type` and file type does not match.');
   }
 
   try {
@@ -36,6 +34,6 @@ export default async (contentType: string, buffer: Buffer): Promise<string> => {
       // throw error, recieved from cdn server
     }
 
-    throw new HttpErrors[502]('CDN server is unavailable.');
+    throw new HttpErrors.ServiceUnavailable('CDN server is unavailable.');
   }
 };

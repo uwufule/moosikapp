@@ -58,7 +58,7 @@ const ProgressBarHandle = styled.div.attrs(setLeft)<ProgressBarProps>`
   width: 8px;
   height: 8px;
   position: absolute;
-  margin: -3px -3px 0 0 ;
+  margin: -3px -3px 0 0;
   border-radius: 100%;
   background: ${(props: ProgressBarProps) => props.theme.colors.accent};
 `;

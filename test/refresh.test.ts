@@ -27,9 +27,7 @@ const createTestUserModel = () => {
   });
 };
 
-const createTestRefreshTokenModel = () => (
-  new RefreshTokenModel({ _id: refreshTokenId, userId })
-);
+const createTestRefreshTokenModel = () => new RefreshTokenModel({ _id: refreshTokenId, userId });
 
 let app: Express;
 
@@ -59,9 +57,7 @@ describe('refresh token', () => {
   });
 
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-    const res = await request(app)
-      .post('/api/v2/login/refresh')
-      .query({ refreshToken });
+    const res = await request(app).post('/api/v2/login/refresh').query({ refreshToken });
 
     expect(res.status).to.eq(405);
     expect(res.header['content-type']).to.match(/application\/json/);

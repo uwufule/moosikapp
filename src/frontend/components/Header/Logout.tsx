@@ -15,7 +15,11 @@ const Logout = () => {
     }
   };
 
-  return <Link to="?logout" handler={handleClick}>Logout</Link>;
+  return (
+    <Link to="?logout" handler={handleClick}>
+      Logout
+    </Link>
+  );
 };
 
 export default Logout;

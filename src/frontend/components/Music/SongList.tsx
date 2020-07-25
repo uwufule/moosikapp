@@ -23,9 +23,7 @@ interface SongListProps {
 
 const SongList = ({ songs, searching = false }: SongListProps) => (
   <Wrapper>
-    {songs.map(({
-      uuid, author, title, cover, favorite, edit,
-    }) => (
+    {songs.map(({ uuid, author, title, cover, favorite, edit }) => (
       <Song
         key={uuid}
         uuid={uuid}
@@ -38,9 +36,7 @@ const SongList = ({ songs, searching = false }: SongListProps) => (
     ))}
     {songs.length === 0 && (
       <Message>
-        {searching
-          ? 'Enter your request in the input field ...'
-          : 'Nothing to show :('}
+        {searching ? 'Enter your request in the input field ...' : 'Nothing to show :('}
       </Message>
     )}
   </Wrapper>

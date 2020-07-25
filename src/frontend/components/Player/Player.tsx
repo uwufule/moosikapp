@@ -70,31 +70,21 @@ const VolumeControlWrapper = styled.div`
   }
 `;
 
-type CurrentSong = { song: SongDetails | null, index: number };
+type CurrentSong = { song: SongDetails | null; index: number };
 
 const Player = () => {
   const [defaultSongList, setDefaultSongList] = useState<Song[]>([]);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
 
-  const playing = useSelector<RootState, boolean>(
-    (state) => state.player.playing,
-  );
+  const playing = useSelector<RootState, boolean>((state) => state.player.playing);
 
-  const songList = useSelector<RootState, Song[]>(
-    (state) => state.player.songList,
-  );
+  const songList = useSelector<RootState, Song[]>((state) => state.player.songList);
 
-  const { song, index } = useSelector<RootState, CurrentSong>(
-    (state) => state.player.current,
-  );
+  const { song, index } = useSelector<RootState, CurrentSong>((state) => state.player.current);
 
-  const repeat = useSelector<RootState, RepeatTypes>(
-    (state) => state.player.repeat,
-  );
+  const repeat = useSelector<RootState, RepeatTypes>((state) => state.player.repeat);
 
-  const shuffle = useSelector<RootState, boolean>(
-    (state) => state.player.shuffle,
-  );
+  const shuffle = useSelector<RootState, boolean>((state) => state.player.shuffle);
 
   const dispatch = useDispatch();
 

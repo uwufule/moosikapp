@@ -14,12 +14,10 @@ interface AccessToken {
 const useTokenManager = () => {
   const dispatch = useDispatch();
 
-  const [accessToken, refreshToken] = useSelector<RootState, [string, string]>(
-    (state) => ([
-      state.auth.accessToken,
-      state.auth.refreshToken,
-    ]),
-  );
+  const [accessToken, refreshToken] = useSelector<RootState, [string, string]>((state) => [
+    state.auth.accessToken,
+    state.auth.refreshToken,
+  ]);
 
   const isAccessTokenExpiresSoon = () => {
     const payload = <AccessToken>JWT.decode(accessToken);

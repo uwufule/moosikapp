@@ -15,14 +15,13 @@ const username = Crypto.randomBytes(12).toString('hex');
 
 const token = JWT.sign({ uuid: userId, role: 1 }, String(JWT_SECRET));
 
-const createTestUserModel = () => (
+const createTestUserModel = () =>
   new UserModel({
     _id: userId,
     username,
     email: `${username}@domain.com`,
     password: 'supersecretpassword',
-  })
-);
+  });
 
 let app: Express;
 

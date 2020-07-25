@@ -27,9 +27,7 @@ interface VolumeButtonProps {
 
 const VolumeButton = ({ muted, onClick }: VolumeButtonProps) => (
   <Control title="Volume" onClick={onClick}>
-    <Icon>
-      {muted ? <SvgPaths.Mute /> : <SvgPaths.Volume />}
-    </Icon>
+    <Icon>{muted ? <SvgPaths.Mute /> : <SvgPaths.Volume />}</Icon>
   </Control>
 );
 

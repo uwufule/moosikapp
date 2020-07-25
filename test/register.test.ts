@@ -36,8 +36,7 @@ describe('registration', () => {
   });
 
   it('should return Status-Code 405 and correct body if incorrect header `Accept` provided', async () => {
-    const res = await request(app)
-      .post('/api/v2/register');
+    const res = await request(app).post('/api/v2/register');
 
     expect(res.status).to.eq(405);
     expect(res.header['content-type']).to.match(/application\/json/);
@@ -98,9 +97,7 @@ describe('registration', () => {
   });
 
   it('should return Status-Code 400 and correct body if user with provided username/email already exists', async () => {
-    await (
-      new UserModel(user)
-    ).save();
+    await new UserModel(user).save();
 
     const res = await request(app)
       .post('/api/v2/register')
@@ -109,6 +106,8 @@ describe('registration', () => {
 
     expect(res.status).to.eq(400);
     expect(res.header['content-type']).to.match(/application\/json/);
-    expect(res.body.message).to.eq('An account with that email address and/or username already exists.');
+    expect(res.body.message).to.eq(
+      'An account with that email address and/or username already exists.',
+    );
   });
 });

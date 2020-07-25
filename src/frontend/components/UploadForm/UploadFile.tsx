@@ -91,13 +91,13 @@ const UploadFile = ({ file }: UploadProgressProps) => {
         <ProgressBarActive percent={percent} />
         <FileName>{file.name}</FileName>
       </ProgressBar>
-      {songUuid && (
-        <SongEditForm songUuid={songUuid} />
-      )}
+      {songUuid && <SongEditForm songUuid={songUuid} />}
     </UploadFileWrapper>
   );
 };
 
-export default memo(UploadFile, (prevProps, nextProps) => (
-  prevProps.file.name === nextProps.file.name && prevProps.file.size === nextProps.file.size
-));
+export default memo(
+  UploadFile,
+  (prevProps, nextProps) =>
+    prevProps.file.name === nextProps.file.name && prevProps.file.size === nextProps.file.size,
+);

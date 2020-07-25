@@ -15,74 +15,74 @@ export interface Song {
   uploadedBy: string;
 }
 
-export const getSongs = (
-  async ({ skip = 0, limit = 100 }: GetSongsOptions) => {
-    const projection = {
-      uuid: 1,
-      author: 1,
-      title: 1,
-      cover: 1,
-      likes: 1,
-      uploadedBy: 1,
-    };
+export const getSongs = async ({ skip = 0, limit = 100 }: GetSongsOptions) => {
+  const projection = {
+    uuid: 1,
+    author: 1,
+    title: 1,
+    cover: 1,
+    likes: 1,
+    uploadedBy: 1,
+  };
 
-    const songs = await SongModel.find({}, projection).skip(skip).limit(limit);
-    return songs.map<Song>((song) => song.toJSON());
-  }
-);
+  const songs = await SongModel.find({}, projection).skip(skip).limit(limit);
+  return songs.map<Song>((song) => song.toJSON());
+};
 
-export const findSongs = (
-  async (queryString: string, { skip = 0, limit = 100 }: GetSongsOptions) => {
-    const query = {
-      $or: [
-        {
-          author: {
-            $regex: queryString,
-            $options: 'i',
-          },
+export const findSongs = async (
+  queryString: string,
+  { skip = 0, limit = 100 }: GetSongsOptions,
+) => {
+  const query = {
+    $or: [
+      {
+        author: {
+          $regex: queryString,
+          $options: 'i',
         },
-        {
-          title: {
-            $regex: queryString,
-            $options: 'i',
-          },
+      },
+      {
+        title: {
+          $regex: queryString,
+          $options: 'i',
         },
-      ],
-    };
+      },
+    ],
+  };
 
-    const projection = {
-      uuid: 1,
-      author: 1,
-      title: 1,
-      cover: 1,
-      likes: 1,
-      uploadedBy: 1,
-    };
+  const projection = {
+    uuid: 1,
+    author: 1,
+    title: 1,
+    cover: 1,
+    likes: 1,
+    uploadedBy: 1,
+  };
 
-    const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
-    return songs.map<Song>((song) => song.toJSON());
-  }
-);
+  const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
+  return songs.map<Song>((song) => song.toJSON());
+};
 
-export const getFavoriteSongs = (
-  async (userId: string, { skip = 0, limit = 100 }: GetSongsOptions) => {
-    const query = {
-      likes: userId,
-    };
+export const getFavoriteSongs = async (
+  userId: string,
+  { skip = 0, limit = 100 }: GetSongsOptions,
+) => {
+  const query = {
+    likes: userId,
+  };
 
-    const projection = {
-      uuid: 1,
-      author: 1,
-      title: 1,
-      cover: 1,
-      likes: 1,
-      uploadedBy: 1,
-    };
+  const projection = {
+    uuid: 1,
+    author: 1,
+    title: 1,
+    cover: 1,
+    likes: 1,
+    uploadedBy: 1,
+  };
 
-    const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
-    return songs.map<Song>((song) => song.toJSON());
-  }
-);
+  const songs = await SongModel.find(query, projection).skip(skip).limit(limit);
+  return songs.map<Song>((song) => song.toJSON());
+};
 
 export interface SongDetails extends Song {
   path: string;
@@ -115,7 +115,7 @@ interface InitialSongData {
 }
 
 export const saveSong = async (data: InitialSongData) => {
-  const { _id: uuid } = await (new SongModel(data)).save();
+  const { _id: uuid } = await new SongModel(data).save();
   return <string>uuid;
 };
 
