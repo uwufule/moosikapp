@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import Form, { Input, SubmitButton } from '@components/Form';
-import CenteringComponent from '@components/CenteringComponent';
+import FlexCenterAlignment from '@components/FlexCenterAlignment';
 import { Theme } from '@components/ThemeProvider';
 import useRestriction from '../hooks/useRestriction';
 
 const StyledInput = styled(Input)`
   margin-bottom: 10px;
 
-&:last-child {
-  margin-bottom: 0;
-}
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 const TextContainer = styled.div`
@@ -21,7 +21,7 @@ const TextContainer = styled.div`
   text-align: center;
   color: ${(props: Theme) => props.theme.colors.secondary};
   text-shadow: ${(props: Theme) => props.theme.shadow.long};
-  
+
   & > p {
     margin: 0;
   }
@@ -40,7 +40,7 @@ const Forgot = () => {
   restriction.disallowAuthorizedUser();
 
   return (
-    <CenteringComponent>
+    <FlexCenterAlignment>
       <Form
         title="Forgot"
         handler={() => {
@@ -58,7 +58,7 @@ const Forgot = () => {
           <SubmitButton>Request Password Change</SubmitButton>
         </Footer>
       </Form>
-    </CenteringComponent>
+    </FlexCenterAlignment>
   );
 };
 

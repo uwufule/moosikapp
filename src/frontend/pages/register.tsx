@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useRequest from '@hooks/useRequest';
 import Form, { Input, SubmitButton, Link } from '@components/Form';
-import CenteringComponent from '@components/CenteringComponent';
+import FlexCenterAlignment from '@components/FlexCenterAlignment';
 import useRestriction from '../hooks/useRestriction';
 
 const StyledInput = styled(Input)`
   margin-bottom: 10px;
 
-&:last-child {
-  margin-bottom: 0;
-}
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 const Footer = styled.div`
@@ -42,7 +42,7 @@ const Register = () => {
   const { request } = useRequest();
 
   return (
-    <CenteringComponent>
+    <FlexCenterAlignment>
       <Form
         title="Register"
         handler={async () => {
@@ -55,7 +55,9 @@ const Register = () => {
             await request('/register', {
               method: 'POST',
               data: {
-                username, email, password,
+                username,
+                email,
+                password,
               },
             });
 
@@ -84,7 +86,7 @@ const Register = () => {
           <StyledSubmitButton>Register</StyledSubmitButton>
         </Footer>
       </Form>
-    </CenteringComponent>
+    </FlexCenterAlignment>
   );
 };
 

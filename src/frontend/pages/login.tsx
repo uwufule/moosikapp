@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useAuth from '@hooks/useAuthorization';
-import CenteringComponent from '@components/CenteringComponent';
+import FlexCenterAlignment from '@components/FlexCenterAlignment';
 import Form, { Input, SubmitButton, Link } from '@components/Form';
 import useRestriction from '../hooks/useRestriction';
 
@@ -53,7 +53,7 @@ const Login = () => {
   const { authorize } = useAuth();
 
   return (
-    <CenteringComponent>
+    <FlexCenterAlignment>
       <Form
         title="Login"
         handler={async () => {
@@ -81,7 +81,7 @@ const Login = () => {
           </div>
         </Footer>
       </Form>
-    </CenteringComponent>
+    </FlexCenterAlignment>
   );
 };
 
