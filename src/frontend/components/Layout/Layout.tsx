@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import useTokenManager from '@hooks/useTokenManager';
 import { RootState } from '@redux/store';
-import ThemeProvider from '@components/ThemeProvider';
+import ThemeProvider, { ThemeString } from '@components/ThemeProvider';
 import BackgroundImage from '@components/BackgroundImage';
 import Header from '@components/Header';
 // import Sidebar from '../Sidebar';
@@ -41,7 +41,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [theme, setTheme] = useState('');
+  const [theme, setTheme] = useState<ThemeString>('light');
   const [ready, setReady] = useState(false);
 
   const isUserAuthorized = useSelector<RootState, boolean>(
@@ -68,7 +68,7 @@ const Layout = ({ children }: LayoutProps) => {
   }, []);
 
   useEffect(() => {
-    const preferredTheme = localStorage.getItem('theme');
+    const preferredTheme = localStorage.getItem('theme') as ThemeString;
     if (!preferredTheme) {
       return;
     }
