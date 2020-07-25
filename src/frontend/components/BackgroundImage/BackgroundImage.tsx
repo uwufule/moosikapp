@@ -7,17 +7,18 @@ const Wrapper = styled.div`
   width: 100vw;
   height: 100vh;
   position: fixed;
+  background: #000000;
   overflow: hidden;
   user-select: none;
   z-index: -1;
 `;
 
 const Image = styled.img`
-  min-width: calc(100% + 60px);
-  min-height: calc(100% + 60px);
+  min-width: 110%;
+  min-height: 110%;
   position: absolute;
-  left: -30px;
-  top: -30px;
+  left: -5%;
+  top: -5%;
   filter: blur(15px) brightness(0.55);
   pointer-events: none;
 `;
