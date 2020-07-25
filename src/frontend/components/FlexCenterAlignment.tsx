@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-const CenteringComponent = styled.div`
+const FlexCenterAlignment = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
 `;
 
-export default CenteringComponent;
+export default FlexCenterAlignment;
