@@ -11,7 +11,7 @@ const Head = () => (
     <link href="/favicon.ico" rel="icon" />
     <link rel="apple-touch-icon" sizes="256x256" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#f5f5f5" />
+    <meta name="theme-color" content="#27292d" />
   </NextHead>
 );
 
