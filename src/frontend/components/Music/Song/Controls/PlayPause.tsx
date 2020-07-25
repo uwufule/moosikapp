@@ -35,32 +35,32 @@ const SvgPaths = {
 };
 
 interface PlayPauseButtonProps {
-  songUuid: string;
+  songId: string;
   className?: string;
 }
 
-const PlayPauseButton = ({ songUuid, className }: PlayPauseButtonProps) => {
+const PlayPauseButton = ({ songId, className }: PlayPauseButtonProps) => {
   const playing = useSelector<RootState, boolean>((state) => state.player.playing);
 
-  const currentSongUuid = useSelector<RootState, string | undefined>(
+  const currentSongId = useSelector<RootState, string | undefined>(
     (state) => state.player.current.song?.uuid,
   );
 
   const songIndex = useSelector<RootState, number>((state) =>
-    state.player.songList.findIndex((song) => song.uuid === songUuid),
+    state.player.songList.findIndex((song) => song.uuid === songId),
   );
 
   const dispatch = useDispatch();
 
   const togglePlay = () => {
-    if (songUuid === currentSongUuid) {
+    if (songId === currentSongId) {
       dispatch(setPlaying(!playing));
       return;
     }
     dispatch(setCurrentSongIndex(songIndex));
   };
 
-  const isPlayingThisSong = playing && songUuid === currentSongUuid;
+  const isPlayingThisSong = playing && songId === currentSongId;
 
   return (
     <Button className={className} title={isPlayingThisSong ? 'Pause' : 'Play'} onClick={togglePlay}>
