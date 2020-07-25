@@ -1,33 +1,31 @@
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import useRequest from '@hooks/useRequest';
+import { setFav } from '@redux/player/actions';
 import { Control, Icon } from './Control';
 
 interface FavButtonProps {
-  songUuid: string;
-  isFav?: boolean;
+  songId: string;
+  isFav: boolean;
   className?: string;
 }
 
-const FavButton = ({ songUuid, isFav = true, className }: FavButtonProps) => {
-  const [fav, setFav] = useState(isFav);
+const FavButton = ({ songId, isFav, className }: FavButtonProps) => {
+  const dispatch = useDispatch();
 
   const { authRequest } = useRequest();
 
   const toggleFav = async () => {
-    if (!songUuid) {
-      return;
-    }
-
     try {
-      if (fav) {
-        await authRequest(`/favorites/${songUuid}`, { method: 'DELETE' });
-        setFav(false);
+      if (isFav) {
+        await authRequest(`/favorites/${songId}`, { method: 'DELETE' });
 
+        dispatch(setFav(songId, false));
         return;
       }
 
-      await authRequest(`/favorites/${songUuid}`, { method: 'POST' });
-      setFav(true);
+      await authRequest(`/favorites/${songId}`, { method: 'POST' });
+
+      dispatch(setFav(songId, true));
     } catch (e) {
       // error
     }
@@ -36,8 +34,8 @@ const FavButton = ({ songUuid, isFav = true, className }: FavButtonProps) => {
   return (
     <Control
       className={className}
-      title={fav ? 'Remove from favorite' : 'Add to favorite'}
-      active={fav}
+      title={isFav ? 'Remove from favorite' : 'Add to favorite'}
+      active={isFav}
       onClick={toggleFav}
     >
       <Icon>
@@ -49,6 +47,10 @@ const FavButton = ({ songUuid, isFav = true, className }: FavButtonProps) => {
       </Icon>
     </Control>
   );
+};
+
+FavButton.defaultProps = {
+  className: '',
 };
 
 export default FavButton;

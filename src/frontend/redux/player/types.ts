@@ -28,6 +28,7 @@ export interface PlayerState {
 
 export enum PlayerActionTypes {
   SET_SONG_LIST = 'set_song_list',
+  SET_FAV = 'set_fav',
   SET_CURRENT_SONG = 'set_current_song',
   SET_CURRENT_SONG_INDEX = 'set_current_song_index',
   SET_PLAYING = 'set_playing',
@@ -38,6 +39,14 @@ export enum PlayerActionTypes {
 export interface SetSongListAction {
   type: PlayerActionTypes.SET_SONG_LIST;
   payload: Song[];
+}
+
+export interface SetFavAction {
+  type: PlayerActionTypes.SET_FAV;
+  payload: {
+    songId: string;
+    value: boolean;
+  };
 }
 
 export interface SetCurrentSongAction {
@@ -67,6 +76,7 @@ export interface SetShuffleAction {
 
 export type AnyPlayerAction =
   | SetSongListAction
+  | SetFavAction
   | SetCurrentSongAction
   | SetCurrentSongIndexAction
   | SetPlayingAction

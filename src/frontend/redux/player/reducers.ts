@@ -14,7 +14,14 @@ const initialState: PlayerState = {
 const playerReducer = (state = initialState, action: AnyPlayerAction): PlayerState => {
   switch (action.type) {
     case PlayerActionTypes.SET_SONG_LIST:
-      return { ...state, songList: action.payload };
+      return { ...state, songList: [...action.payload] };
+    case PlayerActionTypes.SET_FAV:
+      return {
+        ...state,
+        songList: state.songList.map((song) =>
+          song.uuid === action.payload.songId ? { ...song, favorite: action.payload.value } : song,
+        ),
+      };
     case PlayerActionTypes.SET_CURRENT_SONG: {
       return {
         ...state,

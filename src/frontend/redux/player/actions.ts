@@ -9,6 +9,7 @@ import {
   SetShuffleAction,
   RepeatTypes,
   SetRepeatAction,
+  SetFavAction,
 } from './types';
 
 export const setSongList = (songs: Song[]): SetSongListAction => ({
@@ -39,4 +40,12 @@ export const setRepeat = (repeat: RepeatTypes): SetRepeatAction => ({
 export const setShuffle = (shuffle: boolean): SetShuffleAction => ({
   type: PlayerActionTypes.SET_SHUFFLE,
   payload: shuffle,
+});
+
+export const setFav = (songId: string, value: boolean): SetFavAction => ({
+  type: PlayerActionTypes.SET_FAV,
+  payload: {
+    songId,
+    value,
+  },
 });
