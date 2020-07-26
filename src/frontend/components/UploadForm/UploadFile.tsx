@@ -7,10 +7,10 @@ import { Theme } from '@components/ThemeProvider';
 import SongEditForm from './SongEditForm';
 
 const UploadFileWrapper = styled.div`
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   background: ${(props: Theme) => props.theme.colors.accentBackground};
 
-  &::last-child {
+  &:last-child {
     margin-bottom: 0;
   }
 `;
@@ -20,6 +20,7 @@ type ProgressBarProps = Theme<{ percent: number }>;
 const ProgressBar = styled.div`
   height: 24px;
   position: relative;
+  overflow: hidden;
 `;
 
 const setWidth = (props: ProgressBarProps) => ({ style: { width: `${props.percent}%` } });
@@ -46,7 +47,7 @@ interface UploadProgressProps {
 }
 
 const UploadFile = ({ file }: UploadProgressProps) => {
-  const [songUuid, setSongUuid] = useState<string>('');
+  const [songId, setSongId] = useState<string>('');
   const [percent, setPercent] = useState<number>(0);
 
   const { authRequest } = useRequest();
@@ -70,8 +71,9 @@ const UploadFile = ({ file }: UploadProgressProps) => {
           onUploadProgress,
         });
 
-        setSongUuid(res.data.uuid);
+        setSongId(res.data.uuid);
       } catch (e) {
+        setSongId(e.response.data.message);
         // e.response.data.message
       }
     };
@@ -79,7 +81,7 @@ const UploadFile = ({ file }: UploadProgressProps) => {
     upload();
 
     return () => {
-      if (!songUuid) {
+      if (!songId) {
         source.cancel();
       }
     };
@@ -91,7 +93,7 @@ const UploadFile = ({ file }: UploadProgressProps) => {
         <ProgressBarActive percent={percent} />
         <FileName>{file.name}</FileName>
       </ProgressBar>
-      {songUuid && <SongEditForm songUuid={songUuid} />}
+      {songId && <SongEditForm songId={songId} />}
     </UploadFileWrapper>
   );
 };
