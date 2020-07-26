@@ -69,7 +69,7 @@ export default () => {
   );
 
   // update song (json)
-  router.patch(
+  router.put(
     '/songs/:songId',
     withAsyncErrorHandler(validateContentType('application/json'), checkAuth(), Songs.updateSong()),
   );
