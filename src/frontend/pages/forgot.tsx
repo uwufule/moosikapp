@@ -19,7 +19,7 @@ const TextContainer = styled.div`
   font-weight: 400;
   line-height: 1.5;
   text-align: center;
-  color: ${(props: Theme) => props.theme.colors.secondary};
+  color: ${(props: Theme) => props.theme.text.secondary};
   text-shadow: ${(props: Theme) => props.theme.shadow.long};
 
   & > p {
