@@ -17,10 +17,11 @@ const Form = styled.form`
 `;
 
 interface SearchFormProps {
+  initialQuery?: string;
   handler: (query: string) => void;
 }
 
-const SearchBox = ({ handler }: SearchFormProps) => {
+const SearchBox = ({ initialQuery = '', handler }: SearchFormProps) => {
   const [query, setQuery] = useState('');
 
   const onQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +36,7 @@ const SearchBox = ({ handler }: SearchFormProps) => {
   return (
     <Wrapper>
       <Form onSubmit={onSubmit}>
-        <Input onChange={onQueryChange} placeholder="Search..." />
+        <Input defaultValue={initialQuery} onChange={onQueryChange} placeholder="Search..." />
         <Submit value="Search" />
       </Form>
     </Wrapper>
