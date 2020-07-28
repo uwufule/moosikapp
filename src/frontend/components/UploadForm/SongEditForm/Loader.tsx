@@ -24,24 +24,24 @@ const StyledLoader = styled.div`
   color: official;
   display: inline-block;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
 
   & div {
-    transform-origin: 40px 40px;
+    transform-origin: 30px 30px;
     animation: spinner 1.2s linear infinite;
   }
 
   & div:after {
-    content: ' ';
+    content: '';
     display: block;
     position: absolute;
-    top: 3px;
-    left: 37px;
-    width: 6px;
-    height: 18px;
+    top: 6px;
+    left: 27px;
+    width: 4px;
+    height: 13px;
     border-radius: 20%;
-    background: #fff;
+    background: #ffffff;
   }
 
   & div:nth-child(1) {

@@ -9,7 +9,8 @@ const StyledLink = styled(Link)<StyledLinkProps>`
   margin-left: 6px;
   padding: 8px 6px;
   border-bottom: 2px solid
-    ${(props: StyledLinkProps) => (props.active ? props.theme.colors.accent : 'transparent')};
+    ${(props: StyledLinkProps) =>
+      props.active ? props.theme.songList.nav.underline : 'transparent'};
   transition: all ${(props: StyledLinkProps) => props.theme.transition};
 
   &:first-child {

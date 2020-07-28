@@ -9,14 +9,14 @@ const StyledButton = styled.label`
   font-size: 14px;
   font-weight: 400;
   text-align: center;
-  color: ${(props: Theme) => props.theme.colors.button.text};
-  background: ${(props: Theme) => props.theme.colors.background};
+  color: ${(props: Theme) => props.theme.uploadForm.editForm.cover.button.text};
+  background: ${(props: Theme) => props.theme.uploadForm.editForm.cover.button.background.inactive};
   cursor: pointer;
   transition: background-color ${(props: Theme) => props.theme.transition};
   box-shadow: ${(props: Theme) => props.theme.shadow.short};
 
   &:hover {
-    background: ${(props: Theme) => props.theme.colors.button.accent};
+    background: ${(props: Theme) => props.theme.uploadForm.editForm.cover.button.background.active};
   }
 `;
 

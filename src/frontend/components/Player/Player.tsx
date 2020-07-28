@@ -29,7 +29,7 @@ const Wrapper = styled.div`
   width: 100%;
   position: fixed;
   bottom: 0;
-  background: ${(props: Theme) => props.theme.colors.background};
+  background: ${(props: Theme) => props.theme.player.background};
   box-shadow: ${(props: Theme) => props.theme.shadow.short};
   z-index: 1;
 `;

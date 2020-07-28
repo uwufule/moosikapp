@@ -46,7 +46,7 @@ const Wrapper = styled.div`
     }
 
     &:hover {
-      background: ${(props: Theme) => props.theme.colors.accentBackground};
+      background: ${(props: Theme) => props.theme.songList.song.background};
     }
 
     &:hover ${StyledPlayPauseButton}, &:hover ${StyledEditButton}, &:hover ${StyledFavButton} {
@@ -64,7 +64,8 @@ const Cover = styled.div<CoverProps>`
   width: 48px;
   height: 48px;
   position: relative;
-  background: ${(props) => (props.url ? `url(${props.url})` : props.theme.colors.cover.background)}
+  background: ${(props: CoverProps) =>
+      props.url ? `url(${props.url})` : props.theme.songList.song.cover.background}
     50% no-repeat;
   background-size: cover;
 `;
@@ -72,7 +73,7 @@ const Cover = styled.div<CoverProps>`
 const DefaultCover = styled.svg.attrs({ viewBox: '0 0 24 24' })`
   width: 32px;
   height: 32px;
-  fill: ${(props: Theme) => props.theme.colors.cover.foreground};
+  fill: ${(props: Theme) => props.theme.songList.song.cover.foreground};
 `;
 
 const TitleAndAuthor = styled.div`
@@ -90,14 +91,14 @@ const Title = styled.span`
   font-size: 16px;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: ${(props: Theme) => props.theme.colors.primary};
+  color: ${(props: Theme) => props.theme.songList.song.title};
 `;
 
 const Author = styled.span`
   font-size: 14px;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: ${(props: Theme) => props.theme.colors.secondary};
+  color: ${(props: Theme) => props.theme.songList.song.author};
 `;
 
 const ControlsGroup = styled.div`

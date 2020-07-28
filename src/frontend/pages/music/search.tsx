@@ -4,7 +4,7 @@ import useRequest from '@hooks/useRequest';
 import { setSongList } from '@redux/player/actions';
 import { Song } from '@redux/player/types';
 import { RootState } from '@redux/store';
-import { Nav, SongList, SearchForm } from '@components/Music';
+import { Nav, SongList, SearchBox } from '@components/Music';
 import useRestriction from '../../hooks/useRestriction';
 
 const MusicSearch = () => {
@@ -57,7 +57,7 @@ const MusicSearch = () => {
   return (
     <section>
       <Nav />
-      <SearchForm handler={setQuery} />
+      <SearchBox handler={setQuery} />
       <SongList songs={songs} searching={query.length < 2 || searching} />
     </section>
   );

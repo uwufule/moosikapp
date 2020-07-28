@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 const Time = styled.span`
   font-size: 14px;
   line-height: 16px;
-  color: ${(props: Theme) => props.theme.colors.primary};
+  color: ${(props: Theme) => props.theme.player.text};
 `;
 
 const PropgressWrapper = styled.div`
@@ -39,7 +39,7 @@ const ProgressBar = styled.div`
   width: 100%;
   height: 2px;
   position: absolute;
-  background: ${(props: Theme) => props.theme.colors.secondary};
+  background: ${(props: Theme) => props.theme.player.progressBar.background};
 `;
 
 type ProgressBarProps = Theme<{ percent: number }>;
@@ -50,7 +50,7 @@ const ProgressBarActive = styled.div.attrs(setWidth)<ProgressBarProps>`
   max-width: 100%;
   height: 2px;
   position: absolute;
-  background: ${(props: ProgressBarProps) => props.theme.colors.accent};
+  background: ${(props: ProgressBarProps) => props.theme.player.progressBar.foreground};
 `;
 
 const setLeft = (props: ProgressBarProps) => ({ style: { left: `${props.percent}%` } });
@@ -60,7 +60,7 @@ const ProgressBarHandle = styled.div.attrs(setLeft)<ProgressBarProps>`
   position: absolute;
   margin: -3px -3px 0 0;
   border-radius: 100%;
-  background: ${(props: ProgressBarProps) => props.theme.colors.accent};
+  background: ${(props: ProgressBarProps) => props.theme.player.progressBar.foreground};
 `;
 
 interface TimelineProps {

@@ -8,12 +8,12 @@ import UploadFile from './UploadFile';
 
 const UploadFormWrapper = styled.div`
   margin-top: 24px;
-  background: ${(props: Theme) => props.theme.colors.background};
+  background: ${(props: Theme) => props.theme.uploadForm.background};
   box-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
 const UploadsList = styled.div`
-  border-top: 2px solid ${(props: Theme) => props.theme.colors.secondary};
+  border-top: 2px solid ${(props: Theme) => props.theme.uploadForm.dividerLine};
   padding: 16px 8px;
 `;
 

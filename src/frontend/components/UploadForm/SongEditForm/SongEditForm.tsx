@@ -2,7 +2,7 @@ import { useState, useCallback, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import useRequest from '@hooks/useRequest';
 import { Theme } from '@components/ThemeProvider';
-import CoverImage from './CoverImage';
+import CoverImage, { CoverImageContainer } from './CoverImage';
 import PickImageButton from './PickImageButton';
 import Loader from './Loader';
 
@@ -18,29 +18,17 @@ const Wrapper = styled.div`
   }
 `;
 
-const CoverImageContainer = styled.div`
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  position: relative;
-  max-width: 240px;
-  width: 100%;
-  height: 240px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #cb5a52 15%, #313c44 100%);
-
-  @media (max-width: 640px) {
-    & {
-      align-self: center;
-    }
-  }
-`;
-
 const EditTab = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0 16px;
   flex: 1;
+
+  @media (max-width: 640px) {
+    & {
+      margin-top: 8px;
+    }
+  }
 `;
 
 const Label = styled.label`
@@ -50,7 +38,7 @@ const Label = styled.label`
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
-  color: ${(props: Theme) => props.theme.colors.otherText};
+  color: ${(props: Theme) => props.theme.uploadForm.editForm.text};
 
   &:last-child {
     margin-bottom: 0;
@@ -65,15 +53,15 @@ const TextField = styled.input.attrs({ type: 'text' })`
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
-  background: ${(props: Theme) => props.theme.colors.input.background};
-  color: ${(props: Theme) => props.theme.colors.input.text};
-  border: 1px solid ${(props: Theme) => props.theme.colors.input.border};
+  background: ${(props: Theme) => props.theme.uploadForm.editForm.input.background};
+  color: ${(props: Theme) => props.theme.uploadForm.editForm.input.text};
+  border: 1px solid ${(props: Theme) => props.theme.uploadForm.editForm.input.border.inactive};
   border-radius: 0;
   outline: 0;
   transition: all ${(props: Theme) => props.theme.transition};
 
   &:focus {
-    border-color: ${(props: Theme) => props.theme.colors.input.accent};
+    border-color: ${(props: Theme) => props.theme.uploadForm.editForm.input.border.active};
   }
 `;
 
@@ -98,8 +86,8 @@ const SaveButton = styled.button.attrs({ attrs: 'button' })`
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
-  background: ${(props: Theme) => props.theme.colors.button.background};
-  color: ${(props: Theme) => props.theme.colors.button.text};
+  background: ${(props: Theme) => props.theme.uploadForm.editForm.saveButton.background.inactive};
+  color: ${(props: Theme) => props.theme.uploadForm.editForm.saveButton.text};
   border: 0;
   border-radius: 0;
   outline: 0;
@@ -107,8 +95,7 @@ const SaveButton = styled.button.attrs({ attrs: 'button' })`
   transition: all ${(props: Theme) => props.theme.transition};
 
   &:hover {
-    background: ${(props: Theme) => props.theme.colors.button.accent};
-    box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.button.accent};
+    background: ${(props: Theme) => props.theme.uploadForm.editForm.saveButton.background.active};
   }
 `;
 
@@ -120,7 +107,7 @@ const SongEditForm = ({ songId }: SongEditFormProps) => {
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
   const [cover, setCover] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCoverLoading, setIsCoverLoading] = useState(false);
 
   const { authRequest } = useRequest();
 
@@ -147,21 +134,23 @@ const SongEditForm = ({ songId }: SongEditFormProps) => {
     }
 
     try {
-      setIsLoading(true);
+      setIsCoverLoading(true);
       setCover(image);
 
       await authRequest(`/songs/${songId}/cover`, { method: 'PUT', data: image });
 
-      setIsLoading(false);
-    } catch (e) {}
+      setIsCoverLoading(false);
+    } catch (e) {
+      // e.response.data.message
+    }
   };
 
   return (
     <Wrapper>
       <CoverImageContainer>
-        {cover && <CoverImage imageUrl={URL.createObjectURL(cover)} blurred={isLoading} />}
+        {cover && <CoverImage imageUrl={URL.createObjectURL(cover)} blurred={isCoverLoading} />}
         <PickImageButton onChange={onCoverUpdate} />
-        {isLoading && <Loader />}
+        {isCoverLoading && <Loader />}
       </CoverImageContainer>
       <EditTab>
         <Label htmlFor="">

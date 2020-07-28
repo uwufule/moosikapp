@@ -5,7 +5,7 @@ import Song from './Song';
 
 const Wrapper = styled.div`
   padding: 8px;
-  background: ${(props: Theme) => props.theme.colors.background};
+  background: ${(props: Theme) => props.theme.songList.background};
   box-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
@@ -13,7 +13,7 @@ const Message = styled.span`
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  color: ${(props: Theme) => props.theme.colors.primary};
+  color: ${(props: Theme) => props.theme.songList.text};
 `;
 
 interface SongListProps {

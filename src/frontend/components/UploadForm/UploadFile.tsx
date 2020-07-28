@@ -8,7 +8,7 @@ import SongEditForm from './SongEditForm';
 
 const UploadFileWrapper = styled.div`
   margin-bottom: 16px;
-  background: ${(props: Theme) => props.theme.colors.accentBackground};
+  background: ${(props: Theme) => props.theme.uploadForm.uploadFile.background};
 
   &:last-child {
     margin-bottom: 0;
@@ -29,7 +29,8 @@ const ProgressBarActive = styled.div.attrs(setWidth)`
   max-width: 100%;
   height: 100%;
   position: absolute;
-  background: ${(props: ProgressBarProps) => props.theme.colors.accent};
+  background: ${(props: ProgressBarProps) =>
+    props.theme.uploadForm.uploadFile.progressBar.foreground};
 `;
 
 const FileName = styled.span`
@@ -38,7 +39,7 @@ const FileName = styled.span`
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  color: ${(props: Theme) => props.theme.colors.primary};
+  color: ${(props: Theme) => props.theme.uploadForm.uploadFile.title};
   z-index: 1;
 `;
 

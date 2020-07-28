@@ -41,7 +41,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [theme, setTheme] = useState<ThemeString>('light');
+  const [theme, setTheme] = useState<ThemeString>('default');
   const [ready, setReady] = useState(false);
 
   const isUserAuthorized = useSelector<RootState, boolean>(

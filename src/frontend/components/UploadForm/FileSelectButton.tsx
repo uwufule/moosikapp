@@ -10,8 +10,8 @@ const ButtonWrapper = styled.label`
   font-weight: 400;
 
   text-align: center;
-  color: ${(props: Theme) => props.theme.colors.button.text};
-  background: ${(props: Theme) => props.theme.colors.button.background};
+  color: ${(props: Theme) => props.theme.uploadForm.fileSelect.text};
+  background: ${(props: Theme) => props.theme.uploadForm.fileSelect.background.inactive};
   cursor: pointer;
   transition: background-color ${(props: Theme) => props.theme.transition};
 
@@ -20,7 +20,7 @@ const ButtonWrapper = styled.label`
   }
 
   &:hover {
-    background: ${(props: Theme) => props.theme.colors.button.accent};
+    background: ${(props: Theme) => props.theme.uploadForm.fileSelect.background.active};
   }
 `;
 

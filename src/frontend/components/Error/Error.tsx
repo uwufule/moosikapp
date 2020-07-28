@@ -13,7 +13,7 @@ const Title = styled.h1`
   font-size: 32px;
   font-weight: 600;
   line-height: 1.5;
-  color: ${(props: Theme) => props.theme.colors.otherText};
+  color: ${(props: Theme) => props.theme.text.primary};
   text-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
@@ -21,7 +21,7 @@ const Message = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  color: ${(props: Theme) => props.theme.colors.secondary};
+  color: ${(props: Theme) => props.theme.text.secondary};
   text-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 

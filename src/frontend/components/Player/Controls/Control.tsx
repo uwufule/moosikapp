@@ -12,7 +12,7 @@ const StyledButton = styled.button.attrs({ type: 'button' })<StyledButtonProps>`
   border: 0;
   outline: 0;
   fill: ${(props: StyledButtonProps) =>
-    props.active ? props.theme.colors.accent : props.theme.colors.primary};
+    props.active ? props.theme.player.controls.active : props.theme.player.controls.inactive};
   cursor: pointer;
   transition: ${(props: StyledButtonProps) => props.theme.transition};
 `;

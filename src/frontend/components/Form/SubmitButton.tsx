@@ -8,8 +8,8 @@ const Button = styled.input.attrs({ type: 'submit' })`
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
-  background: ${(props: Theme) => props.theme.colors.button.background};
-  color: ${(props: Theme) => props.theme.colors.button.text};
+  background: ${(props: Theme) => props.theme.forms.button.background.inactive};
+  color: ${(props: Theme) => props.theme.forms.button.text};
   border: 0;
   border-radius: 0;
   outline: 0;
@@ -17,8 +17,8 @@ const Button = styled.input.attrs({ type: 'submit' })`
   transition: all ${(props: Theme) => props.theme.transition};
 
   &:hover {
-    background: ${(props: Theme) => props.theme.colors.button.accent};
-    box-shadow: 0 0 2px ${(props: Theme) => props.theme.colors.button.accent};
+    background: ${(props: Theme) => props.theme.forms.button.background.active};
+    box-shadow: 0 0 2px ${(props: Theme) => props.theme.forms.button.background.active};
   }
 `;
 

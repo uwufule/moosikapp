@@ -1,6 +1,24 @@
 import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 
+export const CoverImageContainer = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  max-width: 240px;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  background: ${(props: Theme) => props.theme.uploadForm.editForm.cover.background};
+
+  @media (max-width: 640px) {
+    & {
+      align-self: center;
+    }
+  }
+`;
+
 type CoverImageProps = Theme<{ imageUrl: string; blurred: boolean }>;
 
 const CoverImage = styled.div.attrs((props: CoverImageProps) => ({
