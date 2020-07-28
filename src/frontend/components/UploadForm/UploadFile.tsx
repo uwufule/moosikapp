@@ -74,7 +74,6 @@ const UploadFile = ({ file }: UploadProgressProps) => {
 
         setSongId(res.data.uuid);
       } catch (e) {
-        setSongId(e.response.data.message);
         // e.response.data.message
       }
     };
