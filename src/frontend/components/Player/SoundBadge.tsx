@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 
@@ -49,6 +50,11 @@ const SongAuthor = styled(Truncate)`
   font-size: 12px;
   line-height: 15px;
   color: ${(props: Theme) => props.theme.player.soundBadge.author};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 interface SoundBadgeProps {
@@ -62,7 +68,9 @@ const SoundBadge = ({ author, title, cover }: SoundBadgeProps) => (
     <SongCover coverUrl={cover} />
     <TitleAndAuthor>
       <SongTitle>{title}</SongTitle>
-      <SongAuthor>{author}</SongAuthor>
+      <Link href={`/music/search?query=${author}`}>
+        <SongAuthor>{author}</SongAuthor>
+      </Link>
     </TitleAndAuthor>
   </Container>
 );

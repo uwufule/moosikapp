@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 import PlayPauseButton from './Controls/PlayPause';
@@ -94,6 +95,11 @@ const Author = styled.span`
   text-overflow: ellipsis;
   overflow: hidden;
   color: ${(props: Theme) => props.theme.songList.song.author};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const ControlsGroup = styled.div`
@@ -117,7 +123,9 @@ const Song = ({ uuid, author, title, cover, favorite = true, edit = false }: Son
     </Cover>
     <TitleAndAuthor>
       <Title>{title}</Title>
-      <Author>{author}</Author>
+      <Link href={`/music/search?query=${author}`}>
+        <Author>{author}</Author>
+      </Link>
     </TitleAndAuthor>
     <ControlsGroup>
       {edit && <StyledEditButton />}

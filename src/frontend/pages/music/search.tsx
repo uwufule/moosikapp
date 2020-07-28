@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import useRequest from '@hooks/useRequest';
@@ -8,7 +9,11 @@ import { Nav, SongList, SearchBox } from '@components/Music';
 import useRestriction from '../../hooks/useRestriction';
 
 const MusicSearch = () => {
-  const [query, setQuery] = useState('');
+  const router = useRouter();
+
+  const [query, setQuery] = useState<string>(
+    typeof router.query.query === 'string' ? router.query.query : '',
+  );
   const [searching, setSearching] = useState(false);
 
   const restriction = useRestriction();
@@ -57,7 +62,10 @@ const MusicSearch = () => {
   return (
     <section>
       <Nav />
-      <SearchBox handler={setQuery} />
+      <SearchBox
+        initialQuery={typeof router.query.query === 'string' ? router.query.query : ''}
+        handler={setQuery}
+      />
       <SongList songs={songs} searching={query.length < 2 || searching} />
     </section>
   );
