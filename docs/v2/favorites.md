@@ -68,11 +68,7 @@ Headers: {
 
 Ответ
 ```js
-// Status Code: 200
-{
-  message: 'Successfully added song to favorites.',
-  uuid: String, // e.g. 00000000-0000-0000-0000-000000000000
-}
+// Status Code: 204
 ```
 
 Возможные ошибки

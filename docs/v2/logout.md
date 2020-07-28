@@ -7,13 +7,6 @@ Headers: {
 }
 ```
 
-#### Параметры запроса
-```js
-{
-  refreshToken: [String, 'required'],
-}
-```
-
 #### Ответ
 ```js
 // Status Code: 200
