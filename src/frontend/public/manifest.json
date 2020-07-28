@@ -3,7 +3,7 @@
   "short_name": "Moosik",
   "description": "Cool music app.",
   "categories": ["music", "anime"],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "icons": [{
       "src": "icons-192.png",
