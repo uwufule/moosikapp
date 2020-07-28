@@ -1,7 +1,11 @@
+import { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
+import useRequest from '@hooks/useRequest';
 import { Theme } from '@components/ThemeProvider';
+import PickImageButton from './PickImageButton';
+import Loader from './Loader';
 
-export const CoverImageContainer = styled.div`
+const ImageContainer = styled.div`
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -19,14 +23,14 @@ export const CoverImageContainer = styled.div`
   }
 `;
 
-type CoverImageProps = Theme<{ imageUrl: string; blurred: boolean }>;
+type ImageProps = Theme<{ url: string; blurred: boolean }>;
 
-const CoverImage = styled.div.attrs((props: CoverImageProps) => ({
+const Image = styled.div.attrs((props: ImageProps) => ({
   style: {
-    backgroundImage: props.imageUrl ? `url(${props.imageUrl})` : '',
+    backgroundImage: props.url ? `url(${props.url})` : '',
     filter: props.blurred ? 'blur(4px) brightness(0.6)' : '',
   },
-}))<CoverImageProps>`
+}))<ImageProps>`
   width: 104%;
   height: 104%;
   position: absolute;
@@ -35,5 +39,54 @@ const CoverImage = styled.div.attrs((props: CoverImageProps) => ({
   background-size: cover;
   background-position: center;
 `;
+
+interface CoverImageProps {
+  songId: string;
+}
+
+const CoverImage = ({ songId }: CoverImageProps) => {
+  const [cover, setCover] = useState<File | null>(null);
+  const [isCoverLoading, setIsCoverLoading] = useState<boolean>(false);
+
+  const { authRequest } = useRequest();
+
+  const onCoverUpdate = async (event: ChangeEvent<HTMLInputElement>) => {
+    const image = event.target.files?.item(0);
+    if (!image) {
+      return;
+    }
+
+    if (!/image\/(png|jpeg)/.test(image.type)) {
+      return;
+    }
+
+    if (image.size > 1024 * 1024) {
+      return;
+    }
+
+    try {
+      setIsCoverLoading(true);
+      setCover(image);
+
+      await authRequest(`/songs/${songId}/cover`, {
+        method: 'PUT',
+        data: image,
+        headers: { 'content-type': image.type },
+      });
+
+      setIsCoverLoading(false);
+    } catch (e) {
+      // e.response.data.message
+    }
+  };
+
+  return (
+    <ImageContainer>
+      {cover && <Image url={URL.createObjectURL(cover)} blurred={isCoverLoading} />}
+      <PickImageButton onChange={onCoverUpdate} />
+      {isCoverLoading && <Loader />}
+    </ImageContainer>
+  );
+};
 
 export default CoverImage;
