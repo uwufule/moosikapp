@@ -16,7 +16,6 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    display: flex;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -25,8 +24,8 @@ const GlobalStyle = createGlobalStyle`
   }
 
   #__next {
+    height: 100%;
     position: relative;
-    flex: 1;
   }
 
   * {
