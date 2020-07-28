@@ -20,6 +20,8 @@ type ProgressBarProps = Theme<{ percent: number }>;
 const ProgressBar = styled.div`
   height: 24px;
   position: relative;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   overflow: hidden;
 `;
 
