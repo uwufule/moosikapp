@@ -3,6 +3,7 @@ import { Theme } from '@components/ThemeProvider';
 import PlayPauseButton from './Controls/PlayPause';
 import EditButton from './Controls/Edit';
 import FavButton from './Controls/Fav';
+import DefaultCover from './DefaultCover';
 
 const StyledPlayPauseButton = styled(PlayPauseButton)`
   @media (min-width: 960px) {
@@ -70,12 +71,6 @@ const Cover = styled.div<CoverProps>`
   background-size: cover;
 `;
 
-const DefaultCover = styled.svg.attrs({ viewBox: '0 0 24 24' })`
-  width: 32px;
-  height: 32px;
-  fill: ${(props: Theme) => props.theme.songList.song.cover.foreground};
-`;
-
 const TitleAndAuthor = styled.div`
   display: flex;
   flex-direction: column;
@@ -117,14 +112,7 @@ interface SongProps {
 const Song = ({ uuid, author, title, cover, favorite = true, edit = false }: SongProps) => (
   <Wrapper>
     <Cover url={cover}>
-      {!cover && (
-        <DefaultCover>
-          <path
-            d="M12,3V12.26C11.5,12.09 11,12 10.5,12C8,12 6,14 6,16.5C6,19 8,21
-                10.5,21C13,21 15,19 15,16.5V6H19V3H12Z"
-          />
-        </DefaultCover>
-      )}
+      {!cover && <DefaultCover />}
       <StyledPlayPauseButton songId={uuid} />
     </Cover>
     <TitleAndAuthor>
