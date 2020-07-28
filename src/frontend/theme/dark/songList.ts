@@ -11,6 +11,7 @@ const songList = {
       background: '#383b40',
       foreground: '#1f2023',
     },
+    playPayseButton: '#dfdfe0',
     controls: {
       inactive: '#b4b4b6',
       active: '#cb5a52',

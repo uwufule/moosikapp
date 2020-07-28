@@ -13,7 +13,7 @@ const Button = styled.button.attrs({ type: 'button' })`
   background: none;
   border: 0;
   outline: 0;
-  fill: ${(props: Theme) => props.theme.songList.song.controls.inactive};
+  fill: ${(props: Theme) => props.theme.songList.song.playPayseButton};
   filter: drop-shadow(${(props: Theme) => props.theme.shadow.short});
   z-index: 1;
   cursor: pointer;
