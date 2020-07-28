@@ -2,8 +2,6 @@ import styled from 'styled-components';
 import createHash from '@utils/hash';
 import { Theme } from '@components/ThemeProvider';
 
-import png from './images/404.png';
-
 const Wrapper = styled.div`
   position: relative;
   margin-top: 24px;
@@ -27,16 +25,6 @@ const Message = styled.div`
   text-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
-const NotFoundImage = styled.img`
-  max-height: 100%;
-  height: 240px;
-  position: absolute;
-  bottom: -5px;
-  right: 10%;
-  pointer-events: none;
-  z-index: 10000;
-`;
-
 interface ErrorProps {
   title: string;
   message: string[];
@@ -50,7 +38,6 @@ const Error = ({ title, message }: ErrorProps) => (
         <p key={createHash().update(line).digest(36)}>{line}</p>
       ))}
     </Message>
-    <NotFoundImage alt="error" src={png} />
   </Wrapper>
 );
 
