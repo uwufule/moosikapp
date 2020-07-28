@@ -15,7 +15,7 @@ const songList = {
       inactive: '#b4b4b6',
       active: '#cb5a52',
     },
-    background: '#',
+    background: '#2d2f34',
   },
   searchBox: {
     input: {
@@ -23,7 +23,7 @@ const songList = {
       text: '#dfdfe0',
       border: {
         active: '#cb5a52',
-        inactive: '#313c44',
+        inactive: '#383b40',
       },
     },
     button: {
