@@ -2,9 +2,7 @@ import { useState, useCallback, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import useRequest from '@hooks/useRequest';
 import { Theme } from '@components/ThemeProvider';
-import CoverImage, { CoverImageContainer } from './CoverImage';
-import PickImageButton from './PickImageButton';
-import Loader from './Loader';
+import Input from './Input';
 
 const Wrapper = styled.div`
   display: flex;
@@ -153,14 +151,8 @@ const SongEditForm = ({ songId }: SongEditFormProps) => {
         {isCoverLoading && <Loader />}
       </CoverImageContainer>
       <EditTab>
-        <Label htmlFor="">
-          <span>Author:</span>
-          <TextField type="text" onChange={(event) => setAuthor(event.target.value)} />
-        </Label>
-        <Label htmlFor="">
-          <span>Title:</span>
-          <TextField type="text" onChange={(event) => setTitle(event.target.value)} />
-        </Label>
+        <Input title="Author:" onChange={(event) => setAuthor(event.target.value)} />
+        <Input title="Title:" onChange={(event) => setTitle(event.target.value)} />
         <FormButtons>
           <SaveButton onClick={onSave}>Save</SaveButton>
         </FormButtons>
