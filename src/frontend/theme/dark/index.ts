@@ -2,6 +2,7 @@ import forms from './forms';
 import songList from './songList';
 import uploadForm from './uploadForm';
 import player from './player';
+import errorModal from './errorModal';
 
 const theme = {
   background: '#27292d',
@@ -20,6 +21,7 @@ const theme = {
   songList,
   uploadForm,
   player,
+  errorModal,
   shadow: {
     long: '0 0 4px #010101',
     short: '0 0 2px #010101',

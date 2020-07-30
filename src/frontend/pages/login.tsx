@@ -2,9 +2,10 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useAuth from '@hooks/useAuthorization';
+import useRestriction from '@hooks/useRestriction';
+import useErrorHandler from '@hooks/useErrorHandler';
 import FlexCenterAlignment from '@components/FlexCenterAlignment';
 import Form, { Input, SubmitButton, Link } from '@components/Form';
-import useRestriction from '../hooks/useRestriction';
 
 const StyledInput = styled(Input)`
   margin-bottom: 10px;
@@ -52,19 +53,18 @@ const Login = () => {
 
   const { authorize } = useAuth();
 
+  const handleError = useErrorHandler();
+
+  const auth = () => {
+    handleError(async () => {
+      await authorize(username, password);
+      router.push(router.query?.from?.toString() || '/');
+    });
+  };
+
   return (
     <FlexCenterAlignment>
-      <Form
-        title="Login"
-        handler={async () => {
-          try {
-            await authorize(username, password);
-            router.push(router.query?.from?.toString() || '/');
-          } catch (e) {
-            // error message (e.response.data)
-          }
-        }}
-      >
+      <Form title="Login" handler={auth}>
         <StyledInput type="text" required handler={setUsername}>
           Username / Email
         </StyledInput>

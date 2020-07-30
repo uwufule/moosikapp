@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import useRequest from '@hooks/useRequest';
+import useErrorHandler from '@hooks/useErrorHandler';
 import { Theme } from '@components/ThemeProvider';
 import Input from './Input';
 import CoverImage from './CoverImage';
@@ -74,12 +75,16 @@ const SongEditForm = ({ songId }: SongEditFormProps) => {
 
   const { authRequest } = useRequest();
 
-  const onSave = useCallback(async () => {
-    if (!author || !title) {
-      return;
-    }
+  const handleError = useErrorHandler();
 
-    await authRequest(`/songs/${songId}`, { method: 'PUT', data: { author, title } });
+  const onSave = useCallback(() => {
+    handleError(async () => {
+      if (!author || !title) {
+        throw new Error('No tittle or author.');
+      }
+
+      await authRequest(`/songs/${songId}`, { method: 'PUT', data: { author, title } });
+    });
   }, [author, title]);
 
   return (

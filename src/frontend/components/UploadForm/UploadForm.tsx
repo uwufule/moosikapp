@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import useErrorHandler from '@hooks/useErrorHandler';
 import createHash from '@utils/hash';
 import validateFiles from '@utils/validator';
 import { Theme } from '@components/ThemeProvider';
@@ -20,13 +21,22 @@ const UploadsList = styled.div`
 const UploadForm = () => {
   const [files, setFiles] = useState<File[]>([]);
 
-  const handlePickFiles = (fileList: FileList) => {
-    const result = validateFiles(Array.from(fileList), files);
-    if (result.errors.length > 0) {
-      // result.errors
-    }
+  const handleError = useErrorHandler();
 
-    setFiles([...files, ...result.files]);
+  const handlePickFiles = (fileList: FileList) => {
+    handleError(() => {
+      const result = validateFiles(Array.from(fileList), files);
+      if (result.errors.length > 0) {
+        throw new Error(
+          result.errors.reduce(
+            (acc, val) => (acc.includes(val.error.message) ? acc : `${acc} ${val.error.message}`),
+            '',
+          ),
+        );
+      }
+
+      setFiles([...files, ...result.files]);
+    });
   };
 
   return (

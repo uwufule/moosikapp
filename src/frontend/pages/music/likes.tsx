@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import useRequest from '@hooks/useRequest';
+import useRestriction from '@hooks/useRestriction';
+import useErrorHandler from '@hooks/useErrorHandler';
 import { setSongList } from '@redux/player/actions';
 import { Song } from '@redux/player/types';
 import { RootState } from '@redux/store';
 import { Nav, SongList } from '@components/Music';
-import useRestriction from '../../hooks/useRestriction';
 
 const MusicLikes = () => {
   const restriction = useRestriction();
@@ -17,24 +18,16 @@ const MusicLikes = () => {
 
   const dispatch = useDispatch();
 
+  const handlerError = useErrorHandler(() => dispatch(setSongList([])));
+
   useEffect(() => {
-    const asyncEffect = async () => {
-      try {
-        const res = await authRequest('/favorites?scope=2', {
-          method: 'GET',
-        });
+    handlerError(async () => {
+      const res = await authRequest('/favorites?scope=2', {
+        method: 'GET',
+      });
 
-        dispatch(setSongList(res.data.songs));
-      } catch (e) {
-        if (e.response?.status !== 404) {
-          // error message (e.response.data)
-        }
-
-        dispatch(setSongList([]));
-      }
-    };
-
-    asyncEffect();
+      dispatch(setSongList(res.data.songs));
+    });
   }, []);
 
   return (

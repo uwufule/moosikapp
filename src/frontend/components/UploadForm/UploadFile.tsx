@@ -2,6 +2,7 @@ import { useState, useEffect, memo } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import useRequest from '@hooks/useRequest';
+import useErrorHandler from '@hooks/useErrorHandler';
 import { UploadProgressEvent } from '@utils/request';
 import { Theme } from '@components/ThemeProvider';
 import SongEditForm from './SongEditForm';
@@ -55,6 +56,8 @@ const UploadFile = ({ file }: UploadProgressProps) => {
 
   const { authRequest } = useRequest();
 
+  const handleError = useErrorHandler();
+
   const onUploadProgress = (progress: UploadProgressEvent) => {
     setPercent((progress.loaded / progress.total) * 100);
   };
@@ -62,25 +65,19 @@ const UploadFile = ({ file }: UploadProgressProps) => {
   useEffect(() => {
     const source = axios.CancelToken.source();
 
-    const upload = async () => {
-      try {
-        const res = await authRequest('/songs', {
-          method: 'POST',
-          headers: {
-            'content-type': file.type,
-          },
-          data: file,
-          cancelToken: source.token,
-          onUploadProgress,
-        });
+    handleError(async () => {
+      const res = await authRequest('/songs', {
+        method: 'POST',
+        headers: {
+          'content-type': file.type,
+        },
+        data: file,
+        cancelToken: source.token,
+        onUploadProgress,
+      });
 
-        setSongId(res.data.uuid);
-      } catch (e) {
-        // e.response.data.message
-      }
-    };
-
-    upload();
+      setSongId(res.data.uuid);
+    });
 
     return () => {
       if (!songId) {

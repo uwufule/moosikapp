@@ -2,11 +2,12 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import useRequest from '@hooks/useRequest';
+import useRestriction from '@hooks/useRestriction';
+import useErrorHandler from '@hooks/useErrorHandler';
 import { setSongList } from '@redux/player/actions';
 import { Song } from '@redux/player/types';
 import { RootState } from '@redux/store';
 import { Nav, SongList, SearchBox } from '@components/Music';
-import useRestriction from '../../hooks/useRestriction';
 
 const MusicSearch = () => {
   const router = useRouter();
@@ -25,38 +26,34 @@ const MusicSearch = () => {
 
   const dispatch = useDispatch();
 
+  const handleError = useErrorHandler(
+    () => dispatch(setSongList([])),
+    () => setSearching(false),
+  );
+
   useEffect(() => {
     dispatch(setSongList([]));
 
-    const asyncEffect = async () => {
-      setSearching(true);
-
-      try {
-        const res = await authRequest('/songs/search?scope=1', {
-          method: 'GET',
-          params: {
-            query,
-          },
-        });
-
-        dispatch(setSongList(res.data.songs));
-      } catch (e) {
-        if (e.response?.status !== 404) {
-          // error message (e.response.data)
-        }
-
-        dispatch(setSongList([]));
-      } finally {
-        setSearching(false);
-      }
-    };
-
-    if (query.length < 2) {
-      // error message
+    if (query.length === 0) {
       return;
     }
 
-    asyncEffect();
+    handleError(async () => {
+      if (query.length < 2) {
+        throw new Error('Minimum query length is 2.');
+      }
+
+      setSearching(true);
+
+      const res = await authRequest('/songs/search?scope=1', {
+        method: 'GET',
+        params: {
+          query,
+        },
+      });
+
+      dispatch(setSongList(res.data.songs));
+    });
   }, [query]);
 
   return (

@@ -2,9 +2,10 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useRequest from '@hooks/useRequest';
+import useRestriction from '@hooks/useRestriction';
+import useErrorHandler from '@hooks/useErrorHandler';
 import Form, { Input, SubmitButton, Link } from '@components/Form';
 import FlexCenterAlignment from '@components/FlexCenterAlignment';
-import useRestriction from '../hooks/useRestriction';
 
 const StyledInput = styled(Input)`
   margin-bottom: 10px;
@@ -41,34 +42,30 @@ const Register = () => {
 
   const { request } = useRequest();
 
+  const handleError = useErrorHandler();
+
+  const register = () => {
+    handleError(async () => {
+      if (password !== retryPassword) {
+        throw new Error("Passwords doesn't match.");
+      }
+
+      await request('/register', {
+        method: 'POST',
+        data: {
+          username,
+          email,
+          password,
+        },
+      });
+
+      router.push('/login');
+    });
+  };
+
   return (
     <FlexCenterAlignment>
-      <Form
-        title="Register"
-        handler={async () => {
-          // validation ...
-          if (password !== retryPassword) {
-            return;
-          }
-
-          try {
-            await request('/register', {
-              method: 'POST',
-              data: {
-                username,
-                email,
-                password,
-              },
-            });
-
-            // message 'successfully registered new account. redirect to login page'
-
-            router.push('/login');
-          } catch (e) {
-            // error message (e.response.data)
-          }
-        }}
-      >
+      <Form title="Register" handler={register}>
         <StyledInput type="text" required handler={setUsername}>
           Username
         </StyledInput>

@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import useRequest from '@hooks/useRequest';
+import useErrorHandler from '@hooks/useErrorHandler';
 import { Theme } from '@components/ThemeProvider';
 import PickImageButton from './PickImageButton';
 import Loader from './Loader';
@@ -50,21 +51,26 @@ const CoverImage = ({ songId }: CoverImageProps) => {
 
   const { authRequest } = useRequest();
 
-  const onCoverUpdate = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleError = useErrorHandler(
+    () => setCover(null),
+    () => setIsCoverLoading(false),
+  );
+
+  const onCoverUpdate = (event: ChangeEvent<HTMLInputElement>) => {
     const image = event.target.files?.item(0);
     if (!image) {
       return;
     }
 
-    if (!/image\/(png|jpeg)/.test(image.type)) {
-      return;
-    }
+    handleError(async () => {
+      if (!/image\/(png|jpe?g|webp)/.test(image.type)) {
+        throw new Error('Unsupported image type');
+      }
 
-    if (image.size > 1024 * 1024) {
-      return;
-    }
+      if (image.size > 1024 * 1024) {
+        throw new Error('File too large.');
+      }
 
-    try {
       setIsCoverLoading(true);
       setCover(image);
 
@@ -73,11 +79,7 @@ const CoverImage = ({ songId }: CoverImageProps) => {
         data: image,
         headers: { 'content-type': image.type },
       });
-
-      setIsCoverLoading(false);
-    } catch (e) {
-      // e.response.data.message
-    }
+    });
   };
 
   return (

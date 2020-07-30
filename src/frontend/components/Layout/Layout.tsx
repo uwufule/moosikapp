@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import useTokenManager from '@hooks/useTokenManager';
+import useErrorHandler from '@hooks/useErrorHandler';
 import { RootState } from '@redux/store';
 import ThemeProvider, { ThemeString } from '@components/ThemeProvider';
 import BackgroundImage from '@components/BackgroundImage';
 import Header from '@components/Header';
 // import Sidebar from '../Sidebar';
-// import Modal from '../Modal';
+import Modal from '../Modal';
 import Player from '../Player';
 import GlobalStyle from './GlobalStyle';
 
@@ -48,23 +49,21 @@ const Layout = ({ children }: LayoutProps) => {
     (state) => state.auth.accessToken !== '',
   );
 
+  const hasErrorMessage = useSelector<RootState, boolean>(
+    (state) => state.modal.errorMessage !== '',
+  );
+
   const { refresh } = useTokenManager();
 
-  useEffect(() => {
-    const sendRequest = async () => {
-      try {
-        const refreshToken = localStorage.getItem('token');
-        if (refreshToken) {
-          await refresh(refreshToken);
-        }
-      } catch {
-        // error
-      } finally {
-        setReady(true);
-      }
-    };
+  const handleError = useErrorHandler(undefined, () => setReady(true));
 
-    sendRequest();
+  useEffect(() => {
+    handleError(async () => {
+      const refreshToken = localStorage.getItem('token');
+      if (refreshToken) {
+        await refresh(refreshToken);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -88,7 +87,7 @@ const Layout = ({ children }: LayoutProps) => {
         </Content>
         {isUserAuthorized && <Player />}
       </Main>
-      {/* <Modal /> */}
+      {hasErrorMessage && <Modal />}
     </ThemeProvider>
   );
 };

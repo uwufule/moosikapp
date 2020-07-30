@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux';
 import useRequest from '@hooks/useRequest';
+import useErrorHandler from '@hooks/useErrorHandler';
 import { setFav } from '@redux/player/actions';
 import { Control, Icon } from './Control';
 
@@ -14,8 +15,10 @@ const FavButton = ({ songId, isFav, className }: FavButtonProps) => {
 
   const { authRequest } = useRequest();
 
-  const toggleFav = async () => {
-    try {
+  const handleError = useErrorHandler();
+
+  const toggleFav = () => {
+    handleError(async () => {
       if (isFav) {
         await authRequest(`/favorites/${songId}`, { method: 'DELETE' });
 
@@ -26,9 +29,7 @@ const FavButton = ({ songId, isFav, className }: FavButtonProps) => {
       await authRequest(`/favorites/${songId}`, { method: 'POST' });
 
       dispatch(setFav(songId, true));
-    } catch (e) {
-      // error
-    }
+    });
   };
 
   return (
