@@ -20,7 +20,10 @@ const StyledButton = styled.label`
   }
 `;
 
-const Input = styled.input.attrs({ type: 'file' })`
+const Input = styled.input.attrs({
+  type: 'file',
+  accept: 'image/png,image/jpg,image/jpeg,image/webp',
+})`
   width: 0;
   height: 0;
   position: absolute;
