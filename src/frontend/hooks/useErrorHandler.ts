@@ -15,12 +15,16 @@ const useErrorHandler = <C extends Function, F extends Function>(catchFn?: C, fi
 
       if (err.isAxiosError) {
         const axiosErr = <AxiosError>err;
-        dispatch(showErrorMessage(axiosErr.response?.data.message || 'Unknown error.'));
+        dispatch(
+          showErrorMessage(
+            axiosErr.response?.data.message || axiosErr.response?.statusText || 'Unknown error.',
+          ),
+        );
 
         return;
       }
 
-      dispatch(showErrorMessage(err.message));
+      dispatch(showErrorMessage(err.message || 'Unknown error.'));
     } finally {
       if (typeof finallyFn === 'function') {
         finallyFn();
