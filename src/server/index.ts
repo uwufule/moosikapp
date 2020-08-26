@@ -13,7 +13,7 @@ const init = async () => {
   app.use(helmet({ hsts: false }));
   app.use(cors());
 
-  app.use('api', api());
+  app.use('/api', api());
 
   app.use(asyncErrorHandler);
 
