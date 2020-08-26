@@ -1,10 +1,10 @@
 import { Response, RequestHandler } from 'express';
 import { Gone } from 'http-errors';
 import { AuthRequest } from '../../../../middlewares/authorization';
-import { revokeRefreshTokens } from '../../../../mongodb/refreshTokens';
+import { revokeRefreshTokensForUser } from '../../../../mongodb/refreshTokens';
 
 export default (): RequestHandler => async (req: AuthRequest, res: Response) => {
-  if (!(await revokeRefreshTokens(req.auth.uuid))) {
+  if (!(await revokeRefreshTokensForUser(req.auth.userId))) {
     throw new Gone('Already logged out.');
   }
 

@@ -7,7 +7,7 @@ export default (minRequiredRole: number): RequestHandler => (
   res: Response,
   next: NextFunction,
 ) => {
-  if (req.auth.role < minRequiredRole) {
+  if (req.auth.userRole < minRequiredRole) {
     throw new HttpErrors.Forbidden('Access denied.');
   }
 

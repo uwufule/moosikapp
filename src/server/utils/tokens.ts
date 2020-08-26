@@ -1,21 +1,17 @@
 import JWT from 'jsonwebtoken';
-import { createRefreshToken, deleteRefreshToken } from '../mongodb/refreshTokens';
-import { AuthPayload } from '../mongodb/users';
+import { createRefreshTokenId, deleteRefreshTokenById } from '../mongodb/refreshTokens';
 
 const JWT_SECRET = String(process.env.JWT_SECRET);
 
 interface AccessTokenPayload {
-  uuid: string;
-  role: number;
+  sub: string;
+  scope: number;
 }
 
 export interface AccessToken extends AccessTokenPayload {
   iat: number;
   exp: number;
 }
-
-const signAccessToken = (payload: AccessTokenPayload) =>
-  JWT.sign(payload, JWT_SECRET, { expiresIn: '30m' });
 
 interface RefreshTokenPayload {
   jti: string;
@@ -27,29 +23,21 @@ export interface RefreshToken extends RefreshTokenPayload {
   exp: number;
 }
 
-const signRefreshToken = (payload: RefreshTokenPayload) =>
-  JWT.sign(payload, JWT_SECRET, { expiresIn: '30d' });
+const signAccessToken = (userId: string, userRole: number) =>
+  JWT.sign({ sub: userId, scope: userRole }, JWT_SECRET, { expiresIn: '30m' });
 
-export const createTokens = async (auth: AuthPayload) => {
-  const accessToken = signAccessToken(auth);
+const signRefreshToken = (tokenId: string, userId: string) =>
+  JWT.sign({ jti: tokenId, sub: userId }, JWT_SECRET, { expiresIn: '30d' });
 
-  const refreshToken = signRefreshToken({
-    jti: await createRefreshToken(auth.uuid),
-    sub: auth.uuid,
-  });
+export const createTokens = async (userId: string, userRole: number) => ({
+  accessToken: signAccessToken(userId, userRole),
+  refreshToken: signRefreshToken(await createRefreshTokenId(userId), userId),
+});
 
-  return { accessToken, refreshToken };
-};
-
-export const updateTokens = async (auth: AuthPayload, jti: string) => {
-  const accessToken = signAccessToken({ uuid: auth.uuid, role: auth.role });
-
-  await deleteRefreshToken(jti);
-
-  const refreshToken = signRefreshToken({
-    jti: await createRefreshToken(auth.uuid),
-    sub: auth.uuid,
-  });
-
-  return { accessToken, refreshToken };
+export const updateTokens = async (userId: string, userRole: number, tokenId: string) => {
+  await deleteRefreshTokenById(tokenId);
+  return {
+    accessToken: signAccessToken(userId, userRole),
+    refreshToken: signRefreshToken(await createRefreshTokenId(userId), userId),
+  };
 };

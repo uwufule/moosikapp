@@ -1,17 +1,19 @@
 import { Request, Response, RequestHandler } from 'express';
-import JWT from 'jsonwebtoken';
+import JWT, { TokenExpiredError } from 'jsonwebtoken';
 import { BadRequest } from 'http-errors';
 import { getAuthPayloadById } from '../../../../mongodb/users';
 import { isRefreshTokenExists } from '../../../../mongodb/refreshTokens';
 import { updateTokens, RefreshToken } from '../../../../utils/tokens';
 
-const { JWT_SECRET } = process.env;
+const JWT_SECRET = String(process.env.JWT_SECRET);
 
-const getRefreshTokenPayload = (refreshToken: string) => {
+const isInvalidString = (value: any) => typeof value !== 'string';
+
+const decodeRefreshToken = (refreshToken: string) => {
   try {
-    return <RefreshToken>JWT.verify(refreshToken, String(JWT_SECRET));
+    return <RefreshToken>JWT.verify(refreshToken, JWT_SECRET);
   } catch (e) {
-    if (e instanceof JWT.TokenExpiredError) {
+    if (e instanceof TokenExpiredError) {
       throw new BadRequest('Refresh token expired.');
     }
 
@@ -21,21 +23,21 @@ const getRefreshTokenPayload = (refreshToken: string) => {
 
 export default (): RequestHandler => async (req: Request, res: Response) => {
   const { refreshToken } = req.query;
-  if (typeof refreshToken !== 'string') {
+  if (isInvalidString(refreshToken)) {
     throw new BadRequest('Invalid refresh token.');
   }
 
-  const payload = getRefreshTokenPayload(refreshToken);
+  const { jti: tokenId, sub: userId } = decodeRefreshToken(<string>refreshToken);
 
-  if (!(await isRefreshTokenExists(payload.jti))) {
+  if (!(await isRefreshTokenExists(tokenId))) {
     throw new BadRequest('Refresh token expired.');
   }
 
-  const authPayload = await getAuthPayloadById(payload.sub);
-  if (!authPayload) {
+  const auth = await getAuthPayloadById(userId);
+  if (!auth) {
     throw new BadRequest('Trying to get tokens for deactivated user.');
   }
 
-  const tokens = await updateTokens(authPayload, payload.jti);
-  res.status(200).send(tokens);
+  const newTokens = await updateTokens(auth.uuid, auth.role, tokenId);
+  res.status(200).send(newTokens);
 };

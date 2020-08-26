@@ -5,14 +5,23 @@ import { AuthRequest } from '../../../../middlewares/authorization';
 import upload from './upload';
 import update from './update';
 import updateCover from './updateCover';
-import { AccessToken } from '../../../../utils/tokens';
 import * as Songs from '../../../../mongodb/songs';
 import * as Users from '../../../../mongodb/users';
 
 import roles from '../../../../config/roles.json';
 import scopes from '../../../../config/scopes.json';
 
-const { CDN_SERVER = '' } = process.env;
+const CDN_SERVER = String(process.env.CDN_SERVER);
+
+interface QueryParams {
+  skip?: number;
+  limit?: number;
+  scope?: number;
+}
+
+interface QueryParamsWithQS extends QueryParams {
+  query: string;
+}
 
 const queryParamsScheme = Joi.object({
   skip: Joi.number().min(0).error(new Error('Invalid query parameter `skip` provided.')),
@@ -20,49 +29,41 @@ const queryParamsScheme = Joi.object({
   scope: Joi.number().positive().error(new Error('Invalid query parameter `scope` provided.')),
 });
 
-const queryParamsWithQueryString = queryParamsScheme.append({
+const queryParamsSchemeWithQS = queryParamsScheme.append({
   query: Joi.string()
     .required()
     .min(2)
     .error(new Error('Invalid query parameter `query` provided.')),
 });
 
-const isFav = (scope?: number) => (auth: AccessToken, likes: string[]) =>
-  scope && scope & scopes.favorite ? likes.includes(auth.uuid) : undefined;
+const isFav = (scope?: number) => (userId: string, likes: string[]) =>
+  scope && scope & scopes.favorite ? likes.includes(userId) : undefined;
 
-const canEdit = (scope?: number) => (auth: AccessToken, uploadedBy: string) =>
-  scope && scope & scopes.edit
-    ? uploadedBy === auth.uuid || auth.role >= roles.moderator
-    : undefined;
+const canEdit = (scope?: number) => (userId: string, userRole: number, uploadedBy: string) =>
+  scope && scope & scopes.edit ? uploadedBy === userId || userRole >= roles.moderator : undefined;
 
 export const getSongs = (): RequestHandler => async (req: AuthRequest, res: Response) => {
   const { error, value } = queryParamsScheme.validate(req.query);
   if (error) {
     throw new BadRequest(error.message);
   }
-  const { scope, ...queryParams } = <
-    {
-      skip?: number;
-      limit?: number;
-      scope?: number;
-    }
-  >value;
+  const { scope, ...queryParams } = <QueryParams>value;
 
-  const songList = await Songs.getSongs(queryParams);
-  if (!songList.length) {
+  const foundedSongs = await Songs.getSongs(queryParams);
+  if (!foundedSongs.length) {
     throw new NotFound('No songs found.');
   }
 
-  const songs = songList.map(({ likes, uploadedBy, ...songData }) => ({
+  const songs = foundedSongs.map(({ likes, uploadedBy, ...songData }) => ({
     ...songData,
-    favorite: isFav(scope)(req.auth, likes),
-    edit: canEdit(scope)(req.auth, uploadedBy),
+    favorite: isFav(scope)(req.auth.userId, likes),
+    edit: canEdit(scope)(req.auth.userId, req.auth.userRole, uploadedBy),
   }));
 
   res.status(200).send({ message: 'Successfully retrieved songs.', songs });
 };
 
-export const getById = (): RequestHandler => async (req: AuthRequest, res: Response) => {
+export const getSongById = (): RequestHandler => async (req: AuthRequest, res: Response) => {
   const song = await Songs.getSongById(req.params.songId);
   if (!song) {
     throw new NotFound('No song found.');
@@ -70,43 +71,36 @@ export const getById = (): RequestHandler => async (req: AuthRequest, res: Respo
 
   const { path, uploadedBy, likes, ...songData } = song;
 
-  const username = await Users.getUsername(uploadedBy);
+  const username = (await Users.getUsername(uploadedBy)) ?? 'Deleted User';
 
   res.status(200).send({
     message: 'Successfully retrieved song.',
     song: {
       ...songData,
       url: `${CDN_SERVER}${path}`,
-      uploadedBy: username || 'Deactivated User',
-      favorite: isFav(scopes.favorite)(req.auth, likes),
-      edit: canEdit(scopes.edit)(req.auth, uploadedBy),
+      uploadedBy: username,
+      favorite: isFav(scopes.favorite)(req.auth.userId, likes),
+      edit: canEdit(scopes.edit)(req.auth.userId, req.auth.userRole, uploadedBy),
     },
   });
 };
 
 export const findSongs = (): RequestHandler => async (req: AuthRequest, res: Response) => {
-  const { error, value } = queryParamsWithQueryString.validate(req.query);
+  const { error, value } = queryParamsSchemeWithQS.validate(req.query);
   if (error) {
     throw new BadRequest(error.message);
   }
-  const { query, scope, ...queryParams } = <
-    {
-      query: string;
-      skip?: number;
-      limit?: number;
-      scope?: number;
-    }
-  >value;
+  const { query, scope, ...queryParams } = <QueryParamsWithQS>value;
 
-  const songList = await Songs.findSongs(decodeURI(query), queryParams);
-  if (!songList.length) {
+  const foundedSongs = await Songs.findSongs(decodeURI(query), queryParams);
+  if (!foundedSongs.length) {
     throw new NotFound('No songs found.');
   }
 
-  const songs = songList.map(({ likes, uploadedBy, ...songData }) => ({
+  const songs = foundedSongs.map(({ likes, uploadedBy, ...songData }) => ({
     ...songData,
-    favorite: isFav(scope)(req.auth, likes),
-    edit: canEdit(scope)(req.auth, uploadedBy),
+    favorite: isFav(scope)(req.auth.userId, likes),
+    edit: canEdit(scope)(req.auth.userId, req.auth.userRole, uploadedBy),
   }));
 
   res.status(200).send({ message: 'Successfully retrieved songs.', songs });
@@ -124,7 +118,7 @@ export const deleteSong = (): RequestHandler => async (req: AuthRequest, res: Re
     throw new NotFound('No song found.');
   }
 
-  if (song.uploadedBy !== req.auth.uuid && req.auth.role < roles.moderator) {
+  if (song.uploadedBy !== req.auth.userId && req.auth.userRole < roles.moderator) {
     throw new Forbidden('Access denied.');
   }
 

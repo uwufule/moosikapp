@@ -1,18 +1,23 @@
 import RefreshTokenModel from './models/refreshToken.model';
 
-export const createRefreshToken = async (userId: string) => {
-  const { _id: uuid } = await new RefreshTokenModel({ userId }).save();
-  return uuid;
+export const createRefreshTokenId = async (userId: string) => {
+  const { _id: id } = await new RefreshTokenModel({ userId }).save();
+  return id;
 };
 
-export const deleteRefreshToken = async (uuid: string) => {
-  const res = await RefreshTokenModel.deleteOne({ _id: uuid });
+export const deleteRefreshTokenById = async (id: string) => {
+  const res = await RefreshTokenModel.deleteOne({ _id: id });
   return !!res.n;
 };
 
-export const isRefreshTokenExists = (uuid: string) => RefreshTokenModel.exists({ _id: uuid });
+export const isRefreshTokenExists = (id: string) => RefreshTokenModel.exists({ _id: id });
 
-export const revokeRefreshTokens = async (userId: string) => {
+export const revokeRefreshTokenById = async (id: string) => {
+  const res = await RefreshTokenModel.deleteOne({ _id: id });
+  return !!res.n;
+};
+
+export const revokeRefreshTokensForUser = async (userId: string) => {
   const res = await RefreshTokenModel.deleteMany({ userId });
   return !!res.n;
 };

@@ -17,15 +17,15 @@ export default (): RequestHandler => async (req: Request, res: Response) => {
   }
   const { username, password } = <{ username: string; password: string }>value;
 
-  const authPayload = await getAuthPayloadByUsernameOrEmail(username);
-  if (!authPayload) {
+  const auth = await getAuthPayloadByUsernameOrEmail(username);
+  if (!auth) {
     throw new Forbidden('This account has been deactivated.');
   }
 
-  if (!(await Bcrypt.compare(password, authPayload.password))) {
+  if (!(await Bcrypt.compare(password, auth.password))) {
     throw new Unauthorized('Invalid authorization.');
   }
 
-  const tokens = await createTokens(authPayload);
-  res.status(200).send({ message: 'Successfully logged in.', ...tokens });
+  const newTokens = await createTokens(auth.uuid, auth.role);
+  res.status(200).send({ message: 'Successfully logged in.', ...newTokens });
 };

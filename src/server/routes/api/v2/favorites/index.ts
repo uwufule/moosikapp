@@ -3,7 +3,6 @@ import Joi from '@hapi/joi';
 import { BadRequest, NotFound } from 'http-errors';
 import { AuthRequest } from '../../../../middlewares/authorization';
 import * as Songs from '../../../../mongodb/songs';
-import { AccessToken } from '../../../../utils/tokens';
 
 import roles from '../../../../config/roles.json';
 import scopes from '../../../../config/scopes.json';
@@ -14,10 +13,8 @@ const queryParamsScheme = Joi.object({
   scope: Joi.number().positive().error(new Error('Invalid query parameter `scope` provided.')),
 });
 
-const canEdit = (scope?: number) => (auth: AccessToken, uploadedBy: string) =>
-  scope && scope & scopes.edit
-    ? uploadedBy === auth.uuid || auth.role >= roles.moderator
-    : undefined;
+const canEdit = (scope?: number) => (userId: string, userRole: number, uploadedBy: string) =>
+  scope && scope & scopes.edit ? uploadedBy === userId || userRole >= roles.moderator : undefined;
 
 export const getFavoriteSongs = (): RequestHandler => async (req: AuthRequest, res: Response) => {
   const { error, value } = queryParamsScheme.validate(req.query);
@@ -32,14 +29,14 @@ export const getFavoriteSongs = (): RequestHandler => async (req: AuthRequest, r
     }
   >value;
 
-  const songList = await Songs.getFavoriteSongs(req.auth.uuid, queryParams);
+  const songList = await Songs.getFavoriteSongs(req.auth.userId, queryParams);
   if (!songList.length) {
     throw new NotFound('No favorites found.');
   }
 
   const songs = songList.map(({ likes, uploadedBy, ...songData }) => ({
     ...songData,
-    edit: canEdit(scope)(req.auth, uploadedBy),
+    edit: canEdit(scope)(req.auth.userId, req.auth.userRole, uploadedBy),
   }));
 
   res.status(200).send({ message: 'Successfully retrieved favorites.', songs });
@@ -52,7 +49,7 @@ export const addSongToFavorite = (): RequestHandler => async (req: AuthRequest, 
   }
 
   await Songs.updateSong(req.params.songId, {
-    $addToSet: { likes: req.auth.uuid },
+    $addToSet: { likes: req.auth.userId },
   });
 
   res.status(204).send();
@@ -67,12 +64,12 @@ export const removeSongFromFavorite = (): RequestHandler => async (
     throw new NotFound('No song found.');
   }
 
-  if (!song.likes.includes(req.auth.uuid)) {
+  if (!song.likes.includes(req.auth.userId)) {
     throw new NotFound('No favorite found.');
   }
 
   await Songs.updateSong(req.params.songId, {
-    $pull: { likes: req.auth.uuid },
+    $pull: { likes: req.auth.userId },
   });
 
   res.status(204).send();

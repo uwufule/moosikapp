@@ -5,8 +5,13 @@ import { AccessToken } from '../utils/tokens';
 
 const JWT_SECRET = String(process.env.JWT_SECRET);
 
+interface AuthData {
+  userId: string;
+  userRole: number;
+}
+
 export interface AuthRequest extends Request {
-  auth: AccessToken;
+  auth: AuthData;
 }
 
 export default (): RequestHandler => async (
@@ -21,7 +26,11 @@ export default (): RequestHandler => async (
 
   const accessToken = authorization.slice(7);
   try {
-    req.auth = <AccessToken>JWT.verify(accessToken, JWT_SECRET);
+    const { sub, scope } = <AccessToken>JWT.verify(accessToken, JWT_SECRET);
+    req.auth = {
+      userId: sub,
+      userRole: scope,
+    };
   } catch {
     throw new HttpErrors.Forbidden('Invalid authorization.');
   }
