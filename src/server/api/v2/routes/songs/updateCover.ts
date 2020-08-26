@@ -10,7 +10,7 @@ const { CDN_SERVER = '' } = process.env;
 
 export default async (req: AuthRequest, res: Response) => {
   const { 'content-type': contentType } = req.headers;
-  if (!contentType || !/image\/(png|jpe?g|webp)/.test(contentType)) {
+  if (typeof contentType !== 'string') {
     throw new UnsupportedMediaType('Unsupported image format.');
   }
 
