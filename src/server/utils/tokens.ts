@@ -42,7 +42,7 @@ export const createTokens = async (auth: AuthPayload) => {
 };
 
 export const updateTokens = async (auth: AuthPayload, jti: string) => {
-  const accessToken = signAccessToken(auth);
+  const accessToken = signAccessToken({ uuid: auth.uuid, role: auth.role });
 
   await deleteRefreshToken(jti);
 
