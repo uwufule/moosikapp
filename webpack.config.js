@@ -1,7 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const webpackNodeExternals = require('webpack-node-externals');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const {
+  CleanWebpackPlugin
+} = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -18,17 +20,15 @@ module.exports = {
     __dirname: true,
   },
   module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            configFile: 'tsconfig.json',
-          },
+    rules: [{
+      test: /\.ts$/,
+      use: {
+        loader: 'ts-loader',
+        options: {
+          configFile: 'tsconfig.json',
         },
       },
-    ],
+    }, ],
   },
   resolve: {
     extensions: ['.ts', '.js'],
