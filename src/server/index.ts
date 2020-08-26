@@ -1,19 +1,19 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import connectToMongoDB from './mongodb';
-import routes from './routes';
+import MongoDB from './database/mongo';
 import asyncErrorHandler from './middlewares/asyncErrorHandler';
+import api from './api';
 
 const init = async () => {
-  const app = express();
+  await MongoDB.connect();
 
-  await connectToMongoDB();
+  const app = express();
 
   app.use(helmet({ hsts: false }));
   app.use(cors());
 
-  app.use(routes());
+  app.use('api', api());
 
   app.use(asyncErrorHandler);
 
