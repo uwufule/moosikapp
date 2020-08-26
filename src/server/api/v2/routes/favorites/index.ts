@@ -1,6 +1,6 @@
 import { RequestHandler, Response } from 'express';
 import { BadRequest, NotFound } from 'http-errors';
-import { AuthRequest } from '../../../../middlewares/authorization';
+import { AuthRequest } from '../../middlewares/authorization';
 import * as Songs from '../../../../database/mongo/songs';
 import queryParamsScheme, { QueryParams } from '../../utils/validators/queryParamsScheme';
 import canEdit from '../../utils/canEdit';

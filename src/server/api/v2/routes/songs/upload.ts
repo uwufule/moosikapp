@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { BadRequest } from 'http-errors';
-import { AuthRequest } from '../../../../middlewares/authorization';
+import { AuthRequest } from '../../middlewares/authorization';
 import * as Songs from '../../../../database/mongo/songs';
 import upload from '../../../../utils/cdn';
 

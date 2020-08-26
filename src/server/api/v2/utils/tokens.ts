@@ -1,5 +1,8 @@
 import JWT from 'jsonwebtoken';
-import { createRefreshTokenId, deleteRefreshTokenById } from '../database/mongo/refreshTokens';
+import {
+  createRefreshTokenId,
+  deleteRefreshTokenById,
+} from '../../../database/mongo/refreshTokens';
 
 const JWT_SECRET = String(process.env.JWT_SECRET);
 

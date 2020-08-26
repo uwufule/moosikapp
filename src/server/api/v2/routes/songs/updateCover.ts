@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { BadRequest, Forbidden, NotFound, UnsupportedMediaType } from 'http-errors';
-import { AuthRequest } from '../../../../middlewares/authorization';
+import { AuthRequest } from '../../middlewares/authorization';
 import { getSongById, updateSong } from '../../../../database/mongo/songs';
 import upload from '../../../../utils/cdn';
 

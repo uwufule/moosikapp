@@ -3,7 +3,7 @@ import Bcrypt from 'bcryptjs';
 import Joi from '@hapi/joi';
 import { BadRequest, Unauthorized, Forbidden } from 'http-errors';
 import { getAuthPayloadByUsernameOrEmail } from '../../../../database/mongo/users';
-import { createTokens } from '../../../../utils/tokens';
+import { createTokens } from '../../utils/tokens';
 
 const loginScheme = Joi.object({
   username: Joi.string().required().error(new Error('Username required.')),

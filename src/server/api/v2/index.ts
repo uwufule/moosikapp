@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import BodyParser from 'body-parser';
 import HttpErrors from 'http-errors';
-import checkAuth from '../../middlewares/authorization';
-import checkPermissions from '../../middlewares/permissions';
-import { validateAccept, validateContentType } from '../../middlewares/headers';
-import { withAsyncErrorHandler } from '../../middlewares/asyncErrorHandler';
+import checkAuth from './middlewares/authorization';
+import checkPermissions from './middlewares/permissions';
+import { validateAccept, validateContentType } from './middlewares/headers';
+import { withAsyncErrorHandler } from './middlewares/asyncErrorHandler';
 
 import login from './routes/login';
 import refresh from './routes/login/refresh';

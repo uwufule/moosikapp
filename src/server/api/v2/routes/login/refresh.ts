@@ -3,7 +3,7 @@ import JWT, { TokenExpiredError } from 'jsonwebtoken';
 import { BadRequest } from 'http-errors';
 import { getAuthPayloadById } from '../../../../database/mongo/users';
 import { isRefreshTokenExists } from '../../../../database/mongo/refreshTokens';
-import { updateTokens, RefreshToken } from '../../../../utils/tokens';
+import { updateTokens, RefreshToken } from '../../utils/tokens';
 
 const JWT_SECRET = String(process.env.JWT_SECRET);
 

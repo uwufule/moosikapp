@@ -1,6 +1,6 @@
 import { Response, RequestHandler } from 'express';
 import { BadRequest, Forbidden, NotFound } from 'http-errors';
-import { AuthRequest } from '../../../../middlewares/authorization';
+import { AuthRequest } from '../../middlewares/authorization';
 import upload from './upload';
 import update from './update';
 import updateCover from './updateCover';

@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import Joi from '@hapi/joi';
 import { BadRequest, Forbidden, NotFound } from 'http-errors';
-import { AuthRequest } from '../../../../middlewares/authorization';
+import { AuthRequest } from '../../middlewares/authorization';
 import { getSongById, updateSong } from '../../../../database/mongo/songs';
 
 import roles from '../../../../config/roles.json';

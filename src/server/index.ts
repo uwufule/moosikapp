@@ -2,7 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import MongoDB from './database/mongo';
-import asyncErrorHandler from './middlewares/asyncErrorHandler';
+import asyncErrorHandler from './api/v2/middlewares/asyncErrorHandler';
 import api from './api';
 
 const init = async () => {
