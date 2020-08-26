@@ -6,7 +6,7 @@ import uuidv4 from 'uuid/v4';
 import JWT from 'jsonwebtoken';
 
 import createExpressServer from '../src/server';
-import UserModel from '../src/server/mongodb/models/user.model';
+import UserModel from '../src/server/database/mongo/models/user.model';
 
 const { JWT_SECRET } = process.env;
 

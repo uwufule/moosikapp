@@ -6,7 +6,7 @@ import uuidv4 from 'uuid';
 import Bcrypt from 'bcryptjs';
 
 import createExpressServer from '../src/server';
-import UserModel from '../src/server/mongodb/models/user.model';
+import UserModel from '../src/server/database/mongo/models/user.model';
 
 const userId = uuidv4();
 const username = Crypto.randomBytes(12).toString('hex');

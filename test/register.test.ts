@@ -4,7 +4,7 @@ import request from 'supertest';
 import { expect } from 'chai';
 
 import createExpressServer from '../src/server';
-import UserModel from '../src/server/mongodb/models/user.model';
+import UserModel from '../src/server/database/mongo/models/user.model';
 
 const username = Crypto.randomBytes(12).toString('hex');
 

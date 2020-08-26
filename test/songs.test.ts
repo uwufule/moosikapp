@@ -8,8 +8,8 @@ import uuidv4 from 'uuid/v4';
 import JWT from 'jsonwebtoken';
 
 import createExpressServer from '../src/server';
-import UserModel from '../src/server/mongodb/models/user.model';
-import SongModel from '../src/server/mongodb/models/song.model';
+import UserModel from '../src/server/database/mongo/models/user.model';
+import SongModel from '../src/server/database/mongo/models/song.model';
 
 const readFileAsync = promisify(readFile);
 
