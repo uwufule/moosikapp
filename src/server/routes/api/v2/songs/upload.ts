@@ -9,8 +9,8 @@ export default async (req: AuthRequest, res: Response) => {
     throw new BadRequest('Invalid body provided.');
   }
 
-  const path = await upload('audio/mpeg', req.body);
-  const uuid = await Songs.saveSong({ uploadedBy: req.auth.uuid, path });
+  const path = await upload(req.body, 'audio/mpeg');
+  const uuid = await Songs.saveSong({ uploadedBy: req.auth.userId, path });
 
   res.status(201).send({
     message: 'Successfully upload song.',

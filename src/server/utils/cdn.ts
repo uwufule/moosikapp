@@ -13,7 +13,7 @@ const createUploadTargetUri = () => {
   return `${CDN_SERVER}/upload-target/${target}`;
 };
 
-export default async (contentType: string, buffer: Buffer): Promise<string> => {
+export default async (buffer: Buffer, contentType: string): Promise<string> => {
   const fileType = await FileType.fromBuffer(buffer);
   if (fileType?.mime !== contentType) {
     throw new HttpErrors.BadRequest('Header `Content-Type` and file type does not match.');
