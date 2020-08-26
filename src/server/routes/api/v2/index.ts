@@ -55,7 +55,7 @@ export default () => {
   router.get('/songs/search', withAsyncErrorHandler(checkAuth(), Songs.findSongs()));
 
   // get song by id
-  router.get('/songs/:songId', withAsyncErrorHandler(checkAuth(), Songs.getById()));
+  router.get('/songs/:songId', withAsyncErrorHandler(checkAuth(), Songs.getSongById()));
 
   // upload song
   router.post(
