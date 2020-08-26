@@ -1,6 +1,6 @@
 import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import { BadRequest } from 'http-errors';
 import { createUser } from '../../../../database/mongo/users';
 

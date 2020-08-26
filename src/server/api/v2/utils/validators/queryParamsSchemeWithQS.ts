@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import queryParamsScheme, { QueryParams } from './queryParamsScheme';
 
 export interface QueryParamsWithQS extends QueryParams {

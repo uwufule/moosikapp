@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import { BadRequest, Forbidden, NotFound } from 'http-errors';
 import { AuthRequest } from '../../middlewares/authorization';
 import { getSongById, updateSong } from '../../../../database/mongo/songs';

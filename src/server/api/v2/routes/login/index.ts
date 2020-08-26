@@ -1,6 +1,6 @@
 import { Request, Response, RequestHandler } from 'express';
 import Bcrypt from 'bcryptjs';
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import { BadRequest, Unauthorized, Forbidden } from 'http-errors';
 import { getAuthPayloadByUsernameOrEmail } from '../../../../database/mongo/users';
 import { createTokens } from '../../utils/tokens';
