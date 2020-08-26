@@ -1,5 +1,3 @@
-import { string } from '@hapi/joi';
-
 export enum ModalActionTypes {
   SET_ERROR_MESSAGE = 'set_error_message',
 }
