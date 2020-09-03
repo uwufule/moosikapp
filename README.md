@@ -1,1 +1,1 @@
-Source code of [moosik](https://moosikapp.tk) application.
+Source code of [moosik](https://moosikapp.ml) application.
