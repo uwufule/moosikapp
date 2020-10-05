@@ -20,6 +20,8 @@ class AppRouter {
 
     this._router = Router();
 
+    this._router.use(Express.json());
+    this._router.use(cors());
     this._router.use('/v3', this.getV3Router());
 
     this._router.all('*', () => {
@@ -41,9 +43,6 @@ class AppRouter {
     const songsController = new SongsController(this._configProvider, userCollectionManager);
 
     const authMiddleware = new AuthMiddleware(this._configProvider);
-
-    router.use(Express.json());
-    router.use(cors());
 
     router.use(HeadersValidationMiddleware.validateAccept);
 
