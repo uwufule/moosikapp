@@ -26,7 +26,7 @@ const FavButton = ({ songId, isFav, className }: FavButtonProps) => {
         return;
       }
 
-      await authRequest(`/favorites/${songId}`, { method: 'POST' });
+      await authRequest('/favorites', { method: 'POST', data: { songId } });
 
       dispatch(setFav(songId, true));
     });

@@ -1,5 +1,5 @@
 export interface Song {
-  uuid: string;
+  id: string;
   author: string;
   title: string;
   cover: string;

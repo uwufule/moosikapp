@@ -32,13 +32,22 @@ const useTokenManager = () => {
   const refresh = async (initRefreshToken?: string) => {
     const res = await request('/login/refresh', {
       method: 'POST',
-      params: {
+      headers: {
+        'content-type': 'application/json',
+      },
+      data: {
         refreshToken: initRefreshToken || refreshToken,
       },
     });
 
-    dispatch(setTokens(res.data.accessToken, res.data.refreshToken));
-    localStorage.setItem('token', res.data.refreshToken);
+    if (res.data.result) {
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = res.data.result;
+
+      dispatch(setTokens(newAccessToken, newRefreshToken));
+      localStorage.setItem('token', newRefreshToken);
+    }
+
+    // dispatch(error message);
   };
 
   return {

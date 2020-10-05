@@ -52,11 +52,7 @@ const Register = () => {
 
       await request('/register', {
         method: 'POST',
-        data: {
-          username,
-          email,
-          password,
-        },
+        data: { username, email, password },
       });
 
       router.push('/login');

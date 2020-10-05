@@ -43,11 +43,11 @@ const PlayPauseButton = ({ songId, className }: PlayPauseButtonProps) => {
   const playing = useSelector<RootState, boolean>((state) => state.player.playing);
 
   const currentSongId = useSelector<RootState, string | undefined>(
-    (state) => state.player.current.song?.uuid,
+    (state) => state.player.current.song?.id,
   );
 
   const songIndex = useSelector<RootState, number>((state) =>
-    state.player.songList.findIndex((song) => song.uuid === songId),
+    state.player.songList.findIndex((song) => song.id === songId),
   );
 
   const dispatch = useDispatch();

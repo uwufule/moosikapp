@@ -23,10 +23,10 @@ interface SongListProps {
 
 const SongList = ({ songs, searching = false }: SongListProps) => (
   <Wrapper>
-    {songs.map(({ uuid, author, title, cover, favorite, edit }) => (
+    {songs.map(({ id, author, title, cover, favorite, edit }) => (
       <Song
-        key={uuid}
-        uuid={uuid}
+        key={id}
+        id={id}
         author={author}
         title={title}
         cover={cover}

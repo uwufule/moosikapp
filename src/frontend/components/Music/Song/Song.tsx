@@ -107,7 +107,7 @@ const ControlsGroup = styled.div`
 `;
 
 interface SongProps {
-  uuid: string;
+  id: string;
   author: string;
   title: string;
   cover: string;
@@ -115,11 +115,11 @@ interface SongProps {
   edit?: boolean;
 }
 
-const Song = ({ uuid, author, title, cover, favorite = true, edit = false }: SongProps) => (
+const Song = ({ id, author, title, cover, favorite = true, edit = false }: SongProps) => (
   <Wrapper>
     <Cover url={cover}>
       {!cover && <DefaultCover />}
-      <StyledPlayPauseButton songId={uuid} />
+      <StyledPlayPauseButton songId={id} />
     </Cover>
     <TitleAndAuthor>
       <Title>{title}</Title>
@@ -129,7 +129,7 @@ const Song = ({ uuid, author, title, cover, favorite = true, edit = false }: Son
     </TitleAndAuthor>
     <ControlsGroup>
       {edit && <StyledEditButton />}
-      <StyledFavButton songId={uuid} isFav={favorite} />
+      <StyledFavButton songId={id} isFav={favorite} />
     </ControlsGroup>
   </Wrapper>
 );

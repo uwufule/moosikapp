@@ -26,7 +26,11 @@ const MusicLikes = () => {
         method: 'GET',
       });
 
-      dispatch(setSongList(res.data.songs));
+      if (!res.data.result) {
+        throw new Error('No songs.');
+      }
+
+      dispatch(setSongList(res.data.result));
     });
   }, []);
 

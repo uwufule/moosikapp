@@ -80,7 +80,7 @@ const SongEditForm = ({ songId }: SongEditFormProps) => {
   const onSave = useCallback(() => {
     handleError(async () => {
       if (!author || !title) {
-        throw new Error('No tittle or author.');
+        throw new Error('No title or author.');
       }
 
       await authRequest(`/songs/${songId}`, { method: 'PUT', data: { author, title } });

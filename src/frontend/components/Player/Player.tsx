@@ -113,9 +113,9 @@ const Player = () => {
         return;
       }
 
-      const res = await authRequest(`/songs/${newSong.uuid}`);
+      const res = await authRequest(`/songs/${newSong.id}`);
 
-      dispatch(setCurrentSong(res.data.song));
+      dispatch(setCurrentSong(res.data.result));
       dispatch(setPlaying(true));
     };
 

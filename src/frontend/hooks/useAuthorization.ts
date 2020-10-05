@@ -16,8 +16,14 @@ const useAuth = () => {
       },
     });
 
-    dispatch(setTokens(res.data.accessToken, res.data.refreshToken));
-    localStorage.setItem('token', res.data.refreshToken);
+    if (res.data.result) {
+      const { accessToken, refreshToken } = res.data.result;
+
+      dispatch(setTokens(accessToken, refreshToken));
+      localStorage.setItem('token', refreshToken);
+    }
+
+    // dispatch(error message);
   };
 
   const deauthorize = async () => {

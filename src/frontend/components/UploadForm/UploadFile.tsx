@@ -63,7 +63,7 @@ const UploadFile = ({ file }: UploadProgressProps) => {
   };
 
   useEffect(() => {
-    const source = axios.CancelToken.source();
+    const cancelationToken = axios.CancelToken.source();
 
     handleError(async () => {
       const res = await authRequest('/songs', {
@@ -72,16 +72,16 @@ const UploadFile = ({ file }: UploadProgressProps) => {
           'content-type': file.type,
         },
         data: file,
-        cancelToken: source.token,
+        cancelToken: cancelationToken.token,
         onUploadProgress,
       });
 
-      setSongId(res.data.uuid);
+      setSongId(res.data.result.id);
     });
 
     return () => {
       if (!songId) {
-        source.cancel();
+        cancelationToken.cancel();
       }
     };
   }, []);

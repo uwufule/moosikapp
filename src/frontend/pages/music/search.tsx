@@ -47,12 +47,18 @@ const MusicSearch = () => {
 
       const res = await authRequest('/songs/search?scope=1', {
         method: 'GET',
-        params: {
-          query,
-        },
+        params: { query },
       });
 
-      dispatch(setSongList(res.data.songs));
+      if (!res.data.result) {
+        throw new Error('No songs.');
+      }
+
+      if (!res.data.result) {
+        throw new Error('No songs.');
+      }
+
+      dispatch(setSongList(res.data.result));
     });
   }, [query]);
 
