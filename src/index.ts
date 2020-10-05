@@ -1,21 +1,24 @@
-import next from 'next';
-import createExpressServer from './server';
+import App from './server/App';
+import ConfigProvider from './server/core/services/ConfigProvider';
+import NextApp from './server/NextApp';
 
-const { NODE_ENV, PORT } = process.env;
+const main = async () => {
+  const configProvider = new ConfigProvider();
 
-const init = async () => {
-  const app = next({ dir: 'src/frontend', dev: NODE_ENV !== 'production' });
-  await app.prepare();
+  const nextApp = new NextApp(configProvider);
+  await nextApp.init();
+  const nextAppHandler = nextApp.getRequestHandler();
 
-  const handler = app.getRequestHandler();
+  const app = new App(configProvider);
+  await app.init();
 
-  const server = await createExpressServer();
+  const server = app.get();
 
   server.get('*', (req, res) => {
-    handler(req, res);
+    nextAppHandler(req, res);
   });
 
-  server.listen(Number(PORT));
+  server.listen(configProvider.port);
 };
 
-init();
+main();
