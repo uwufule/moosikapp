@@ -19,7 +19,7 @@ const playerReducer = (state = initialState, action: AnyPlayerAction): PlayerSta
       return {
         ...state,
         songList: state.songList.map((song) =>
-          song.uuid === action.payload.songId ? { ...song, favorite: action.payload.value } : song,
+          song.id === action.payload.songId ? { ...song, favorite: action.payload.value } : song,
         ),
       };
     case PlayerActionTypes.SET_CURRENT_SONG: {
