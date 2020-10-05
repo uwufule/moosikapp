@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const webpackNodeExternals = require('webpack-node-externals');
 const {
   CleanWebpackPlugin
@@ -38,9 +37,9 @@ module.exports = {
   ],
   plugins: [
     new CleanWebpackPlugin(),
-    new webpack.optimize.ModuleConcatenationPlugin(),
   ],
   optimization: {
+    concatenateModules: true,
     minimize: true,
     minimizer: [
       new TerserPlugin(),
