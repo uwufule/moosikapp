@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import helmet from 'helmet';
 import AppRouter from './AppRouter';
 import Database from './core/infrastructure/database/Database';
 import ConfigProvider from './core/services/ConfigProvider';
@@ -13,6 +14,8 @@ class App {
 
   constructor(configProvider: ConfigProvider) {
     this._app = express();
+
+    this._app.use(helmet({ hsts: false }));
 
     const appRouter = new AppRouter(configProvider);
     this._app.use('/api', appRouter.get());
