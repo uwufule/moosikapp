@@ -212,12 +212,12 @@ class SongsController {
     }
 
     const updateQuery = {
-      $addToSet: {
+      $push: {
         likes: req.auth.userId,
       },
     };
 
-    await this._songCollectionManager.update(req.params.songId, updateQuery);
+    await this._songCollectionManager.update(value.songId, updateQuery);
 
     res.status(204).send();
   };
