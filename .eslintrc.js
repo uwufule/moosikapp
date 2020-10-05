@@ -25,6 +25,9 @@ module.exports = {
   },
   plugins: ['import', 'prettier', 'react', '@typescript-eslint'],
   rules: {
+    'no-underscore-dangle': ['error', {
+      allowAfterThis: true
+    }],
     'react/require-default-props': 'off',
     'no-bitwise': 'off',
     'react/react-in-jsx-scope': 'off',
