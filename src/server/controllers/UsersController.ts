@@ -122,7 +122,7 @@ class UsersController {
 
     res.status(200).json({
       message: 'Successfully retrieved users.',
-      result,
+      result: result.map(({ _id: id, ...userData }) => ({ ...userData, id })),
     });
   };
 
@@ -132,9 +132,11 @@ class UsersController {
       throw new HttpErrors.NotFound('No user found.');
     }
 
+    const { _id: id, ...userData } = result.toObject();
+
     res.status(200).json({
       message: 'Successfully retrieved user.',
-      result,
+      result: { ...userData, id },
     });
   };
 
