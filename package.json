@@ -4,7 +4,7 @@
   "description": "MoosikApp backend.",
   "author": "unlakki",
   "license": "MIT",
-  "main": "src/server.ts",
+  "main": "src/index.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/unlakki/moosikapp.git"
