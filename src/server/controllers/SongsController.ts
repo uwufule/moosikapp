@@ -61,7 +61,7 @@ class SongsController {
     res.status(200).json({
       message: 'Successfully retrieved songs.',
       result: result.map((song) =>
-        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope),
+        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope, value.scope),
       ),
     });
   };
@@ -111,7 +111,7 @@ class SongsController {
     res.status(200).json({
       message: 'Successfully retrieved songs.',
       result: result.map((song) =>
-        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope),
+        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope, value.scope),
       ),
     });
   };
@@ -201,7 +201,7 @@ class SongsController {
     res.status(200).json({
       message: 'Successfully retrieved favorites.',
       result: result.map((song) =>
-        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope),
+        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope, value.scope),
       ),
     });
   };

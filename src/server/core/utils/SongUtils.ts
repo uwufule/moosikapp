@@ -1,4 +1,5 @@
 import Roles from '../enums/Roles';
+import Scopes from '../enums/Scopes';
 import ISongModel from '../infrastructure/database/interfaces/ISongModel';
 import ConfigProvider from '../services/ConfigProvider';
 
@@ -9,11 +10,12 @@ class SongUtils {
     this._configProvider = configProvider;
   }
 
-  public transformSong = (song: ISongModel, userId: string, userRole: Roles) => {
+  public transformSong = (song: ISongModel, userId: string, userRole: Roles, scope: number) => {
     const { _id: id, uploadedBy, likes, ...songData } = song.toObject();
 
-    const favorite = this.inUserFavorites(userId, likes);
-    const edit = this.canModifiedByUser(userId, userRole, uploadedBy);
+    const favorite = Scopes.FAVORITE & scope ? this.inUserFavorites(userId, likes) : undefined;
+    const edit =
+      Scopes.EDIT & scope ? this.canModifiedByUser(userId, userRole, uploadedBy) : undefined;
 
     return { ...songData, id, favorite, edit };
   };
