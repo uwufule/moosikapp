@@ -9,7 +9,7 @@ import AuthRequest from '../core/interfaces/AuthRequest';
 import CdnServerProvider from '../core/services/CdnServerProvider';
 import ConfigProvider from '../core/services/ConfigProvider';
 import SongDataValidators from '../core/utils/SongDataValidators';
-import SongUtils from '../core/utils/SongUtilts';
+import SongUtils from '../core/utils/SongUtils';
 
 class SongsController {
   private readonly _configProvider: ConfigProvider;
