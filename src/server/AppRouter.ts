@@ -63,6 +63,10 @@ class AppRouter {
         usersController.refresh,
       ),
     );
+    router.post(
+      '/logout',
+      AsyncErrorHandler.useAsyncErrorHandler(authMiddleware.authorize, usersController.logout),
+    );
 
     router.use(authMiddleware.authorize);
 
