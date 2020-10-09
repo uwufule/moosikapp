@@ -111,7 +111,7 @@ class AppRouter {
     router.delete('/songs/:songId', AsyncErrorHandler.useAsyncErrorHandler(songsController.delete));
 
     router.get('/favorites', AsyncErrorHandler.useAsyncErrorHandler(songsController.getFavorites));
-    router.post(
+    router.put(
       '/favorites',
       AsyncErrorHandler.useAsyncErrorHandler(songsController.addToFavorites),
     );
