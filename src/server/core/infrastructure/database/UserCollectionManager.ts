@@ -10,7 +10,7 @@ class UserCollectionManager {
     this._userModel = new UserModel(configProvider).get();
   }
 
-  public add = async (userModelData: IUserModel) => {
+  public add = async (userModelData: IUserData) => {
     const user = new this._userModel(userModelData);
     await user.save();
 
