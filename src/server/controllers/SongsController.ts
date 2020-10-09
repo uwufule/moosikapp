@@ -1,4 +1,4 @@
-import escapeRegex from 'escape-regexp';
+import escapeRegex from 'escape-string-regexp';
 import { Response } from 'express';
 import HttpErrors from 'http-errors';
 import joinUrl from 'url-join';

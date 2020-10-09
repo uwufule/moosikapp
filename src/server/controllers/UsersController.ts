@@ -1,4 +1,4 @@
-import escapeRegex from 'escape-regexp';
+import escapeRegex from 'escape-string-regexp';
 import Bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import HttpErrors from 'http-errors';
