@@ -6,24 +6,21 @@ import ConfigProvider from './core/services/ConfigProvider';
 import AsyncErrorHandler from './middlewares/AsyncErrorHandler';
 
 class App {
-  private readonly _app: Express;
-
-  private readonly _configProvider: ConfigProvider;
-
   private readonly _database: Database;
 
-  constructor(configProvider: ConfigProvider) {
+  private readonly _app: Express;
+
+  constructor(configProvider: ConfigProvider, database: Database) {
+    this._database = database;
+
     this._app = express();
 
     this._app.use(helmet({ hsts: false }));
 
-    const appRouter = new AppRouter(configProvider);
+    const appRouter = new AppRouter(configProvider, this._database);
     this._app.use('/api', appRouter.getRouter());
 
     this._app.use(AsyncErrorHandler.getAsyncErrorHandler());
-
-    this._configProvider = configProvider;
-    this._database = new Database(this._configProvider);
   }
 
   public init = async () => {

@@ -5,8 +5,8 @@ import TokenModel from './models/TokenModel';
 class TokenCollectionManager {
   private readonly _tokenModel: Model<ITokenModel>;
 
-  constructor() {
-    this._tokenModel = new TokenModel().get();
+  constructor(tokenModelProvider: TokenModel) {
+    this._tokenModel = tokenModelProvider.get();
   }
 
   public add = async (userId: string) => {

@@ -1,4 +1,5 @@
 import App from './server/App';
+import Database from './server/core/infrastructure/database/Database';
 import ConfigProvider from './server/core/services/ConfigProvider';
 import NextApp from './server/NextApp';
 
@@ -9,7 +10,9 @@ const main = async () => {
   await nextApp.init();
   const nextAppHandler = nextApp.getRequestHandler();
 
-  const app = new App(configProvider);
+  const database = new Database(configProvider);
+
+  const app = new App(configProvider, database);
   await app.init();
 
   const server = app.getServer();

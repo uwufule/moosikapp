@@ -5,8 +5,8 @@ import SongModel from './models/SongModel';
 class SongCollectionManager {
   private readonly _songModel: Model<ISongModel>;
 
-  constructor() {
-    this._songModel = new SongModel().get();
+  constructor(songModelProvider: SongModel) {
+    this._songModel = songModelProvider.get();
   }
 
   public add = async (uploadedBy: string, songPath: string) => {

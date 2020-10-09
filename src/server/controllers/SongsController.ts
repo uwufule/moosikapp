@@ -2,6 +2,7 @@ import escapeRegex from 'escape-regexp';
 import { Response } from 'express';
 import HttpErrors from 'http-errors';
 import joinUrl from 'url-join';
+import Database from '../core/infrastructure/database/Database';
 import SongCollectionManager from '../core/infrastructure/database/SongCollectionManager';
 import UserCollectionManager from '../core/infrastructure/database/UserCollectionManager';
 import AuthRequest from '../core/interfaces/AuthRequest';
@@ -23,11 +24,11 @@ class SongsController {
 
   private readonly _songUtils: SongUtils;
 
-  constructor(configProvider: ConfigProvider, userCollectionManager: UserCollectionManager) {
+  constructor(configProvider: ConfigProvider, database: Database) {
     this._configProvider = configProvider;
 
-    this._songCollectionManager = new SongCollectionManager();
-    this._userCollectionManager = userCollectionManager;
+    this._songCollectionManager = new SongCollectionManager(database.songModelProvider);
+    this._userCollectionManager = new UserCollectionManager(database.userModelProvider);
 
     this._cdnServerProvider = new CdnServerProvider(configProvider);
 

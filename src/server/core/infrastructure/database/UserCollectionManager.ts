@@ -1,13 +1,13 @@
 import { Model } from 'mongoose';
-import ConfigProvider from '../../services/ConfigProvider';
+import IUserData from './interfaces/IUserData';
 import IUserModel from './interfaces/IUserModel';
 import UserModel from './models/UserModel';
 
 class UserCollectionManager {
   private readonly _userModel: Model<IUserModel>;
 
-  constructor(configProvider: ConfigProvider) {
-    this._userModel = new UserModel(configProvider).get();
+  constructor(userModelProvider: UserModel) {
+    this._userModel = userModelProvider.get();
   }
 
   public add = async (userModelData: IUserData) => {

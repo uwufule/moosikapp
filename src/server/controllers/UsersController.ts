@@ -9,6 +9,7 @@ import ConfigProvider from '../core/services/ConfigProvider';
 import TokenManager from '../core/services/TokenManager';
 import RefreshTokenUtils from '../core/utils/RefreshTokenUtils';
 import UserDataValidators from '../core/utils/UserDataValidators';
+import Database from '../core/infrastructure/database/Database';
 
 class UsersController {
   private readonly _userCollectionManager: UserCollectionManager;
@@ -21,10 +22,10 @@ class UsersController {
 
   private readonly _refreshTokenUtils: RefreshTokenUtils;
 
-  constructor(configProvider: ConfigProvider, userCollectionManager: UserCollectionManager) {
-    this._userCollectionManager = userCollectionManager;
+  constructor(configProvider: ConfigProvider, database: Database) {
+    this._tokenCollectionManager = new TokenCollectionManager(database.tokenModelProvider);
+    this._userCollectionManager = new UserCollectionManager(database.userModelProvider);
 
-    this._tokenCollectionManager = new TokenCollectionManager();
     this._tokenManager = new TokenManager(configProvider, this._tokenCollectionManager);
 
     this._userDataValidators = new UserDataValidators();
@@ -61,7 +62,7 @@ class UsersController {
 
     const user = await this._userCollectionManager.findByUsernameOrEmail(value.username);
     if (!user) {
-      throw new HttpErrors.NotFound('This account has been deactivated.');
+      throw new HttpErrors.Forbidden('This account has been deactivated.');
     }
 
     if (!(await Bcrypt.compare(value.password, user.password))) {

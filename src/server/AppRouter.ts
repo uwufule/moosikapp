@@ -4,7 +4,7 @@ import HttpErrors from 'http-errors';
 import SongsController from './controllers/SongsController';
 import StatusController from './controllers/StatusController';
 import UsersController from './controllers/UsersController';
-import UserCollectionManager from './core/infrastructure/database/UserCollectionManager';
+import Database from './core/infrastructure/database/Database';
 import ConfigProvider from './core/services/ConfigProvider';
 import AsyncErrorHandler from './middlewares/AsyncErrorHandler';
 import AuthMiddleware from './middlewares/AuthMiddleware';
@@ -13,10 +13,13 @@ import HeadersValidationMiddleware from './middlewares/HeadersValidationMiddlewa
 class AppRouter {
   private readonly _configProvider: ConfigProvider;
 
+  private readonly _database: Database;
+
   private readonly _router: Router;
 
-  constructor(configProvider: ConfigProvider) {
+  constructor(configProvider: ConfigProvider, database: Database) {
     this._configProvider = configProvider;
+    this._database = database;
 
     this._router = Router();
 
@@ -36,11 +39,9 @@ class AppRouter {
   private v3 = () => {
     const router = Router();
 
-    const userCollectionManager = new UserCollectionManager(this._configProvider);
-
     const statusController = new StatusController(this._configProvider);
-    const usersController = new UsersController(this._configProvider, userCollectionManager);
-    const songsController = new SongsController(this._configProvider, userCollectionManager);
+    const usersController = new UsersController(this._configProvider, this._database);
+    const songsController = new SongsController(this._configProvider, this._database);
 
     const authMiddleware = new AuthMiddleware(this._configProvider);
 
@@ -48,7 +49,13 @@ class AppRouter {
 
     router.get('/status', AsyncErrorHandler.useAsyncErrorHandler(statusController.get));
 
-    router.post('/signup', AsyncErrorHandler.useAsyncErrorHandler(usersController.signup));
+    router.post(
+      '/signup',
+      AsyncErrorHandler.useAsyncErrorHandler(
+        HeadersValidationMiddleware.validateContentType('application/json'),
+        usersController.signup,
+      ),
+    );
     router.post(
       '/login',
       AsyncErrorHandler.useAsyncErrorHandler(
