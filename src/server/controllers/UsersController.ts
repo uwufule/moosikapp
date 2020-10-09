@@ -1,3 +1,4 @@
+import escapeRegex from 'escape-regexp';
 import Bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import HttpErrors from 'http-errors';
@@ -146,7 +147,7 @@ class UsersController {
       throw new HttpErrors.BadRequest(error.message);
     }
 
-    const result = await this._userCollectionManager.findByUsername(value.username);
+    const result = await this._userCollectionManager.findByUsername(escapeRegex(value.username));
     if (!result) {
       throw new HttpErrors.NotFound('No user found.');
     }

@@ -1,3 +1,4 @@
+import escapeRegex from 'escape-regexp';
 import { Response } from 'express';
 import HttpErrors from 'http-errors';
 import joinUrl from 'url-join';
@@ -97,7 +98,11 @@ class SongsController {
       throw new HttpErrors.BadRequest(error.message);
     }
 
-    const result = await this._songCollectionManager.find(value.query, value.skip, value.limit);
+    const result = await this._songCollectionManager.find(
+      escapeRegex(value.query),
+      value.skip,
+      value.limit,
+    );
     if (result.length === 0) {
       throw new HttpErrors.NotFound('No songs found.');
     }
