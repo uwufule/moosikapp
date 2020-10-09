@@ -1,12 +1,15 @@
 const withPlugins = require('next-compose-plugins');
-const withImages = require('next-images');
 const withFonts = require('next-fonts');
+const withImages = require('next-images');
 
 const nextConfig = {
   poweredByHeader: false,
 };
 
-module.exports = withPlugins([
-  [withFonts, {}],
-  [withImages, {}],
-], nextConfig);
+module.exports = withPlugins(
+  [
+    [withFonts, {}],
+    [withImages, {}],
+  ],
+  nextConfig,
+);
