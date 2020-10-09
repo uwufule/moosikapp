@@ -20,8 +20,7 @@ class App {
     const appRouter = new AppRouter(configProvider);
     this._app.use('/api', appRouter.get());
 
-    const asyncErrorHandler = new AsyncErrorHandler();
-    this._app.use(asyncErrorHandler.getHandler());
+    this._app.use(AsyncErrorHandler.getAsyncErrorHandler());
 
     this._configProvider = configProvider;
     this._database = new Database(this._configProvider);

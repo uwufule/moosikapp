@@ -46,19 +46,19 @@ class AppRouter {
 
     router.use(HeadersValidationMiddleware.validateAccept);
 
-    router.get('/status', AsyncErrorHandler.with(statusController.get));
+    router.get('/status', AsyncErrorHandler.useAsyncErrorHandler(statusController.get));
 
-    router.post('/signup', AsyncErrorHandler.with(usersController.signup));
+    router.post('/signup', AsyncErrorHandler.useAsyncErrorHandler(usersController.signup));
     router.post(
       '/login',
-      AsyncErrorHandler.with(
+      AsyncErrorHandler.useAsyncErrorHandler(
         HeadersValidationMiddleware.validateContentType('application/json'),
         usersController.login,
       ),
     );
     router.post(
       '/login/refresh',
-      AsyncErrorHandler.with(
+      AsyncErrorHandler.useAsyncErrorHandler(
         HeadersValidationMiddleware.validateContentType('application/json'),
         usersController.refresh,
       ),
@@ -66,15 +66,18 @@ class AppRouter {
 
     router.use(authMiddleware.authorize);
 
-    router.get('/users', AsyncErrorHandler.with(usersController.get));
-    router.get('/users/:username', AsyncErrorHandler.with(usersController.getByUsername));
+    router.get('/users', AsyncErrorHandler.useAsyncErrorHandler(usersController.get));
+    router.get(
+      '/users/:username',
+      AsyncErrorHandler.useAsyncErrorHandler(usersController.getByUsername),
+    );
 
-    router.get('/songs', AsyncErrorHandler.with(songsController.get));
-    router.get('/songs/search', AsyncErrorHandler.with(songsController.find));
-    router.get('/songs/:songId', AsyncErrorHandler.with(songsController.getById));
+    router.get('/songs', AsyncErrorHandler.useAsyncErrorHandler(songsController.get));
+    router.get('/songs/search', AsyncErrorHandler.useAsyncErrorHandler(songsController.find));
+    router.get('/songs/:songId', AsyncErrorHandler.useAsyncErrorHandler(songsController.getById));
     router.post(
       '/songs',
-      AsyncErrorHandler.with(
+      AsyncErrorHandler.useAsyncErrorHandler(
         HeadersValidationMiddleware.validateContentType('audio/mpeg'),
         Express.raw({ type: ['audio/mpeg'], limit: '10MB' }),
         songsController.upload,
@@ -82,14 +85,14 @@ class AppRouter {
     );
     router.put(
       '/songs/:songId',
-      AsyncErrorHandler.with(
+      AsyncErrorHandler.useAsyncErrorHandler(
         HeadersValidationMiddleware.validateContentType('application/json'),
         songsController.update,
       ),
     );
     router.put(
       '/songs/:songId/cover',
-      AsyncErrorHandler.with(
+      AsyncErrorHandler.useAsyncErrorHandler(
         HeadersValidationMiddleware.validateContentType(
           'image/png',
           'image/jpg',
@@ -100,13 +103,16 @@ class AppRouter {
         songsController.updateCover,
       ),
     );
-    router.delete('/songs/:songId', AsyncErrorHandler.with(songsController.delete));
+    router.delete('/songs/:songId', AsyncErrorHandler.useAsyncErrorHandler(songsController.delete));
 
-    router.get('/favorites', AsyncErrorHandler.with(songsController.getFavorites));
-    router.post('/favorites', AsyncErrorHandler.with(songsController.addToFavorites));
+    router.get('/favorites', AsyncErrorHandler.useAsyncErrorHandler(songsController.getFavorites));
+    router.post(
+      '/favorites',
+      AsyncErrorHandler.useAsyncErrorHandler(songsController.addToFavorites),
+    );
     router.delete(
       '/favorites/:songId',
-      AsyncErrorHandler.with(songsController.deleteFromFavorites),
+      AsyncErrorHandler.useAsyncErrorHandler(songsController.deleteFromFavorites),
     );
 
     return router;

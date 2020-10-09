@@ -2,7 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { HttpError } from 'http-errors';
 
 class AsyncErrorHandler {
-  public getHandler = () => {
+  public static getAsyncErrorHandler = () => {
     return (error: any, req: Request, res: Response, next: NextFunction) => {
       if (!error) {
         next();
@@ -23,7 +23,7 @@ class AsyncErrorHandler {
     };
   };
 
-  public static with = (...handlers: RequestHandler[]) => {
+  public static useAsyncErrorHandler = (...handlers: RequestHandler[]) => {
     return handlers.map(AsyncErrorHandler.handleAsyncError);
   };
 
