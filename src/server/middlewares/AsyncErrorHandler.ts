@@ -9,8 +9,6 @@ class AsyncErrorHandler {
         return;
       }
 
-      console.error(error);
-
       if (error.name === 'PayloadTooLargeError') {
         res.status(413).send({ message: 'Request entity too large.' });
         return;
