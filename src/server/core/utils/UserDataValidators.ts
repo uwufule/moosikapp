@@ -7,6 +7,8 @@ class UserDataValidators {
 
   private readonly _refreshDataValidator: ObjectSchema;
 
+  private readonly _findUserByUsername: ObjectSchema;
+
   constructor() {
     this._singupDataValidator = Joi.object({
       username: Joi.string()
@@ -35,6 +37,13 @@ class UserDataValidators {
     this._refreshDataValidator = Joi.object({
       refreshToken: Joi.string().required().error(new Error('Refresh token required.')),
     });
+
+    this._findUserByUsername = Joi.object({
+      username: Joi.string()
+        .required()
+        .min(1)
+        .error(new Error('Invalid query parameter `username` privided.')),
+    });
   }
 
   public validateSignupData = (value: any) => {
@@ -47,6 +56,10 @@ class UserDataValidators {
 
   public validateRefreshData = (value: any) => {
     return this._refreshDataValidator.validate(value);
+  };
+
+  public validateFindUserByUsername = (value: any) => {
+    return this._findUserByUsername.validate(value);
   };
 }
 

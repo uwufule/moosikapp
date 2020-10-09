@@ -126,8 +126,27 @@ class UsersController {
     });
   };
 
-  public getByUsername = async (req: Request, res: Response) => {
-    const result = await this._userCollectionManager.findByUsername(req.params.username);
+  public getById = async (req: Request, res: Response) => {
+    const result = await this._userCollectionManager.getById(req.params.userId);
+    if (!result) {
+      throw new HttpErrors.NotFound('No user found.');
+    }
+
+    const { _id: id, ...userData } = result.toObject();
+
+    res.status(200).json({
+      message: 'Successfully retrieved user.',
+      result: { ...userData, id },
+    });
+  };
+
+  public findByUsername = async (req: Request, res: Response) => {
+    const { error, value } = this._userDataValidators.validateFindUserByUsername(req.query);
+    if (error) {
+      throw new HttpErrors.BadRequest(error.message);
+    }
+
+    const result = await this._userCollectionManager.findByUsername(value.username);
     if (!result) {
       throw new HttpErrors.NotFound('No user found.');
     }

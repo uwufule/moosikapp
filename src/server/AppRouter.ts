@@ -72,9 +72,10 @@ class AppRouter {
 
     router.get('/users', AsyncErrorHandler.useAsyncErrorHandler(usersController.get));
     router.get(
-      '/users/:username',
-      AsyncErrorHandler.useAsyncErrorHandler(usersController.getByUsername),
+      '/users/search',
+      AsyncErrorHandler.useAsyncErrorHandler(usersController.findByUsername),
     );
+    router.get('/users/:userId', AsyncErrorHandler.useAsyncErrorHandler(usersController.getById));
 
     router.get('/songs', AsyncErrorHandler.useAsyncErrorHandler(songsController.get));
     router.get('/songs/search', AsyncErrorHandler.useAsyncErrorHandler(songsController.find));
