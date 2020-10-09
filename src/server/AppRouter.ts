@@ -22,18 +22,18 @@ class AppRouter {
 
     this._router.use(Express.json());
     this._router.use(cors());
-    this._router.use('/v3', this.getV3Router());
+    this._router.use('/v3', this.v3());
 
     this._router.all('*', () => {
       throw new HttpErrors.MethodNotAllowed('Method not allowed.');
     });
   }
 
-  public get = () => {
+  public getRouter = () => {
     return this._router;
   };
 
-  private getV3Router = () => {
+  private v3 = () => {
     const router = Router();
 
     const userCollectionManager = new UserCollectionManager(this._configProvider);

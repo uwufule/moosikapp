@@ -18,7 +18,7 @@ class App {
     this._app.use(helmet({ hsts: false }));
 
     const appRouter = new AppRouter(configProvider);
-    this._app.use('/api', appRouter.get());
+    this._app.use('/api', appRouter.getRouter());
 
     this._app.use(AsyncErrorHandler.getAsyncErrorHandler());
 
@@ -30,7 +30,7 @@ class App {
     await this._database.connect();
   };
 
-  public get = () => {
+  public getServer = () => {
     return this._app;
   };
 }
