@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 
-interface IRefreshTokenModel extends Document {
+interface ITokenModel extends Document {
   userId: string;
 }
 
-export default IRefreshTokenModel;
+export default ITokenModel;
