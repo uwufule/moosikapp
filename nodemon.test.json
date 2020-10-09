@@ -1,5 +1,5 @@
 {
   "watch": ["src/index.ts", "src/server", "test"],
   "ext": "ts",
-  "exec": "mocha -r dotenv/config -r ts-node/register test/**/*.test.ts"
+  "exec": "mocha -r dotenv/config -r ts-node/register test/init.test.ts"
 }
