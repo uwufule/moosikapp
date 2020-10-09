@@ -1,21 +1,3 @@
-# build
+# Build
 dist/
 .next/
-
-# config
-webpack.config.js
-
-# type definitions
-**/*.d.ts
-
-# images
-**/*.png
-**/*.jpg
-**/*.webp
-**/*.ico
-
-# text files
-**/*.txt
-
-# font
-**/*.ttf
