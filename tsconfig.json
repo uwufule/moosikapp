@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "moduleResolution": "node",
+    "declaration": false,
+    "removeComments": true,
+    "alwaysStrict": true,
+    "pretty": false,
     "module": "CommonJS",
+    "target": "ES2019",
+    "sourceMap": false,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "outDir": "dist"
   },
