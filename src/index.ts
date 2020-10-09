@@ -12,7 +12,7 @@ const main = async () => {
   const app = new App(configProvider);
   await app.init();
 
-  const server = app.get();
+  const server = app.getServer();
 
   server.get('*', (req, res) => {
     nextAppHandler(req, res);
