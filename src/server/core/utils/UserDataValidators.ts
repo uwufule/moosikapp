@@ -7,7 +7,7 @@ class UserDataValidators {
 
   private readonly _refreshDataValidator: ObjectSchema;
 
-  private readonly _findUserByUsername: ObjectSchema;
+  private readonly _findUserByUsernameDataValidator: ObjectSchema;
 
   constructor() {
     this._singupDataValidator = Joi.object({
@@ -38,7 +38,7 @@ class UserDataValidators {
       refreshToken: Joi.string().required().error(new Error('Refresh token required.')),
     });
 
-    this._findUserByUsername = Joi.object({
+    this._findUserByUsernameDataValidator = Joi.object({
       username: Joi.string()
         .required()
         .min(1)
@@ -59,7 +59,7 @@ class UserDataValidators {
   };
 
   public validateFindUserByUsername = (value: any) => {
-    return this._findUserByUsername.validate(value);
+    return this._findUserByUsernameDataValidator.validate(value);
   };
 }
 
