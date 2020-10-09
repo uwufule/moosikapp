@@ -1,9 +1,9 @@
-import { createStore, combineReducers } from 'redux';
+import { MakeStore } from 'next-redux-wrapper';
+import { combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
-
 import auth from './auth/reducers';
-import player from './player/reducers';
 import modal from './modal/reducers';
+import player from './player/reducers';
 
 const rootReducer = combineReducers({
   auth,
@@ -13,6 +13,6 @@ const rootReducer = combineReducers({
 
 export type RootState = ReturnType<typeof rootReducer>;
 
-const makeStore = () => createStore(rootReducer, composeWithDevTools());
+const makeStore: MakeStore = () => createStore(rootReducer, composeWithDevTools());
 
 export default makeStore;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import createHash from '@utils/hash';
+import HashUtils from '@utils/HashUtils';
 import { Theme } from '@components/ThemeProvider';
 
 const Input = styled.input`
@@ -32,7 +32,7 @@ interface InputProps {
 }
 
 const FormInput = ({ children, className, type, required = false, handler }: InputProps) => {
-  const id = createHash().update(children).digest(36);
+  const id = HashUtils.genHash(children, 36);
 
   return (
     <label htmlFor={id} className={className} aria-label={children}>

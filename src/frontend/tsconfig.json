@@ -1,33 +1,47 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "strict": true,
+    "moduleResolution": "node",
+    "declaration": false,
+    "removeComments": true,
+    "alwaysStrict": true,
+    "pretty": false,
+    "module": "ESNext",
+    "target": "ES5",
+    "skipLibCheck": true,
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule":true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "@components/*": ["components/*"],
-      "@hooks/*": ["hooks/*"],
-      "@redux/*": ["redux/*"],
-      "@theme/*": ["theme/*"],
-      "@utils/*": ["utils/*"]
-    },
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": [
+        "components/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@redux/*": [
+        "redux/*"
+      ],
+      "@theme/*": [
+        "theme/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ]
+    },
   },
   "exclude": [
     "node_modules"

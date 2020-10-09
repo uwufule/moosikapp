@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import createHash from '@utils/hash';
+import HashUtils from '@utils/HashUtils';
 import { Theme } from '@components/ThemeProvider';
 
 const Wrapper = styled.div`
@@ -35,7 +35,7 @@ const Error = ({ title, message }: ErrorProps) => (
     <Title>{title}</Title>
     <Message>
       {message.map((line) => (
-        <p key={createHash().update(line).digest(36)}>{line}</p>
+        <p key={HashUtils.genHash(line, 36)}>{line}</p>
       ))}
     </Message>
   </Wrapper>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import useErrorHandler from '@hooks/useErrorHandler';
-import createHash from '@utils/hash';
+import HashUtils from '@utils/HashUtils';
 import validateFiles from '@utils/validator';
 import { Theme } from '@components/ThemeProvider';
 import FileDropArea from './FileDropArea';
@@ -23,8 +23,12 @@ const UploadForm = () => {
 
   const handleError = useErrorHandler();
 
-  const handlePickFiles = (fileList: FileList) => {
+  const handlePickFiles = (fileList: FileList | null) => {
     handleError(() => {
+      if (!fileList) {
+        throw new Error('No file selected.');
+      }
+
       const result = validateFiles(Array.from(fileList), files);
       if (result.errors.length > 0) {
         throw new Error(
@@ -45,7 +49,7 @@ const UploadForm = () => {
       {files.length > 0 && (
         <UploadsList>
           {files.map((file) => (
-            <UploadFile key={createHash().update(file.name).digest(36)} file={file} />
+            <UploadFile key={HashUtils.genHash(file.name, 36)} file={file} />
           ))}
         </UploadsList>
       )}
