@@ -1,6 +1,6 @@
 import OS from 'os';
 import joinUrl from 'url-join';
-import FetchClient from '../infrastructure/internet/FetchHelper';
+import FetchHelper from '../infrastructure/internet/FetchHelper';
 import ConfigProvider from './ConfigProvider';
 
 class StatusProvider {
@@ -34,7 +34,7 @@ class StatusProvider {
 
   private tryGetCdnStatus = async () => {
     try {
-      const response = await FetchClient.fetch(this.getCdnStatusCheckUri());
+      const response = await FetchHelper.fetch(this.getCdnStatusCheckUri());
       return response.json();
     } catch (e) {
       return null;
