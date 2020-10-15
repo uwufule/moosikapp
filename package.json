@@ -48,7 +48,6 @@
     "@types/react-dom": "^16.9.5",
     "@types/react-redux": "^7.1.7",
     "@types/react-transition-group": "^4.2.4",
-    "@types/request": "^2.48.2",
     "@types/styled-components": "^5.0.1",
     "@types/supertest": "^2.0.8",
     "@types/url-join": "^4.0.0",
@@ -114,7 +113,6 @@
     "react-use": "^13.27.0",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
-    "request": "^2.88.0",
     "styled-components": "^5.0.1",
     "url-join": "^4.0.1",
     "uuid": "^3.3.2"
