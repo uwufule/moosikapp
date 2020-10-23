@@ -161,11 +161,11 @@ class SongCollectionManager {
     return this._songModel
       .aggregate()
       .match(options?.query ?? {})
-      .addFields(addFields)
-      .project({ _id: 0, likes: 0, path: 0, uploadedBy: 0, createdAt: 0, updatedAt: 0 })
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .addFields(addFields)
+      .sort({ createdAt: -1 })
+      .project({ _id: 0, likes: 0, path: 0, uploadedBy: 0, createdAt: 0, updatedAt: 0 });
   };
 }
 
