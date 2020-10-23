@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle, no-param-reassign */
+
 import { Schema } from 'mongoose';
 import uuidv4 from 'uuid/v4';
 import ConfigProvider from '../../../services/ConfigProvider';
@@ -31,6 +33,13 @@ class UserSchema extends Schema {
       },
       { versionKey: false, timestamps: true },
     );
+
+    super.set('toJSON', {
+      virtuals: true,
+      transform: (doc, ret) => {
+        delete ret._id;
+      },
+    });
   }
 }
 

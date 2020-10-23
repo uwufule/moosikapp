@@ -12,6 +12,7 @@ class TokenSchema extends Schema {
         userId: {
           type: String,
           required: true,
+          ref: 'user',
         },
       },
       { versionKey: false },

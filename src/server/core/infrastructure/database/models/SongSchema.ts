@@ -24,13 +24,14 @@ class SongSchema extends Schema {
         uploadedBy: {
           type: String,
           required: true,
+          ref: 'user',
         },
         path: {
           type: String,
           required: true,
         },
         likes: {
-          type: [{ type: String }],
+          type: [{ type: String, ref: 'user' }],
           default: [],
         },
       },
