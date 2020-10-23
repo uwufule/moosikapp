@@ -1,12 +1,22 @@
 import { Model } from 'mongoose';
+import Roles from '../../enums/Roles';
+import Scopes from '../../enums/Scopes';
+import AuthData from '../../models/AuthData';
+import ConfigProvider from '../../services/ConfigProvider';
+import AggregateSongsOptions from './interfaces/AggregateSongsOptions';
+import FindSongsOptions from './interfaces/FindSongsOptions';
+import GetSongsOptions from './interfaces/GetSongsOptions';
 import ISongModel from './interfaces/ISongModel';
 import SongModel from './models/SongModel';
 
 class SongCollectionManager {
   private readonly _songModel: Model<ISongModel>;
 
-  constructor(songModelProvider: SongModel) {
+  private readonly _configProvider: ConfigProvider;
+
+  constructor(songModelProvider: SongModel, configProvider: ConfigProvider) {
     this._songModel = songModelProvider.get();
+    this._configProvider = configProvider;
   }
 
   public add = async (uploadedBy: string, songPath: string) => {
@@ -16,79 +26,98 @@ class SongCollectionManager {
     return song.id;
   };
 
-  public get = async (skip: number = 0, limit: number = 100) => {
-    const projection = {
-      _id: 1,
-      author: 1,
-      title: 1,
-      cover: 1,
-      uploadedBy: 1,
-      likes: 1,
-    };
-
-    return this._songModel.find({}, projection).skip(skip).limit(limit);
+  public get = (auth: AuthData, options?: GetSongsOptions) => {
+    return this.aggregate(auth, options);
   };
 
-  public getById = (id: string) => {
-    const projection = {
-      _id: 1,
-      author: 1,
-      title: 1,
-      cover: 1,
-      uploadedBy: 1,
-      likes: 1,
-      path: 1,
-      createdAt: 1,
+  public getById = async (auth: AuthData, id: string) => {
+    const project = {
+      _id: 0,
+      likes: 0,
+      path: 0,
+      createdAt: 0,
+      updatedAt: 0,
+      _uploadedBy: 0,
     };
 
-    return this._songModel.findById(id, projection);
+    const isFavorite = {
+      $in: [auth.userId, '$likes'],
+    };
+
+    const canEdit = {
+      $or: [
+        {
+          $eq: [auth.userId, '$uploadedBy'],
+        },
+        {
+          $gte: [auth.scope, Roles.ADMIN],
+        },
+      ],
+    };
+
+    const aggregated = await this._songModel
+      .aggregate()
+      .match({ _id: id })
+      .lookup({ from: 'users', localField: 'uploadedBy', foreignField: '_id', as: '_uploadedBy' })
+      .unwind('_uploadedBy')
+      .addFields({
+        id: '$_id',
+        url: { $concat: [this._configProvider.cdnServerUri, '$path'] },
+        favorite: isFavorite,
+        edit: canEdit,
+        uploadedBy: {
+          id: '$_uploadedBy._id',
+          username: '$_uploadedBy.username',
+        },
+        uploadedAt: '$createdAt',
+      })
+      .project(project);
+
+    return aggregated[0];
   };
 
-  public getUserFavorites = (userId: string, skip: number = 0, limit: number = 100) => {
-    const projection = {
-      _id: 1,
-      author: 1,
-      title: 1,
-      cover: 1,
-      uploadedBy: 1,
-      likes: 1,
-    };
+  public getSongOwner = async (songId: string) => {
+    const song = await this._songModel.findById(songId);
+    return song?.uploadedBy;
+  };
 
+  public exists = (songId: string) => {
+    return this._songModel.exists({ _id: songId });
+  };
+
+  public checkSongInFavorites = (songId: string, userId: string) => {
+    return this._songModel.exists({
+      $and: [{ _id: songId }, { likes: userId }],
+    });
+  };
+
+  public getUserFavorites = (auth: AuthData, options?: GetSongsOptions) => {
     const query = {
-      likes: userId,
+      likes: auth.userId,
     };
 
-    return this._songModel.find(query, projection).skip(skip).limit(limit);
+    return this.aggregate(auth, { ...options, query });
   };
 
-  public find = (queryString: string, skip: number = 0, limit: number = 100) => {
-    const projection = {
-      _id: 1,
-      author: 1,
-      title: 1,
-      cover: 1,
-      uploadedBy: 1,
-      likes: 1,
-    };
-
+  public find = (auth: AuthData, options: FindSongsOptions) => {
     const query = {
       $or: [
         {
           author: {
-            $regex: queryString,
+            $regex: options.query,
             $options: 'i',
           },
         },
         {
           title: {
-            $regex: queryString,
+            $regex: options.query,
             $options: 'i',
           },
         },
       ],
     };
 
-    return this._songModel.find(query, projection).skip(skip).limit(limit);
+    return this.aggregate(auth, { ...options, query });
   };
 
   public update = async (id: string, newSongModelData: any) => {
@@ -99,6 +128,44 @@ class SongCollectionManager {
   public delete = async (id: string) => {
     const result = await this._songModel.deleteOne({ _id: id });
     return !!result.n;
+  };
+
+  private aggregate = (auth: AuthData, options?: AggregateSongsOptions) => {
+    const skip = options?.skip ?? 0;
+    const limit = options?.limit ?? 100;
+
+    const favorite = (options?.scope ?? 0) & Scopes.FAVORITE;
+    const edit = (options?.scope ?? 0) & Scopes.EDIT;
+
+    const addFields: any = {
+      id: '$_id',
+    };
+
+    if (favorite) {
+      addFields.favorite = {
+        $in: [auth.userId, '$likes'],
+      };
+    }
+
+    if (edit) {
+      addFields.edit = {
+        $or: [
+          {
+            $eq: [auth.userId, '$uploadedBy'],
+          },
+          auth.scope >= Roles.ADMIN,
+        ],
+      };
+    }
+
+    return this._songModel
+      .aggregate()
+      .match(options?.query ?? {})
+      .addFields(addFields)
+      .project({ _id: 0, likes: 0, path: 0, uploadedBy: 0, createdAt: 0, updatedAt: 0 })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
   };
 }
 

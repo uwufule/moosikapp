@@ -27,14 +27,15 @@ class SongsController {
   constructor(configProvider: ConfigProvider, database: Database) {
     this._configProvider = configProvider;
 
-    this._songCollectionManager = new SongCollectionManager(database.songModelProvider);
+    this._songCollectionManager = new SongCollectionManager(
+      database.songModelProvider,
+      configProvider,
+    );
     this._userCollectionManager = new UserCollectionManager(database.userModelProvider);
 
     this._cdnServerProvider = new CdnServerProvider(configProvider);
 
     this._songDataValidators = new SongDataValidators();
-
-    this._songUtils = new SongUtils(configProvider);
   }
 
   public upload = async (req: AuthRequest, res: Response) => {
@@ -57,39 +58,22 @@ class SongsController {
       throw new HttpErrors.BadRequest(error.message);
     }
 
-    const result = await this._songCollectionManager.get(value.skip, value.limit);
+    const result = await this._songCollectionManager.get(req.auth, value);
     res.status(200).json({
       message: 'Successfully retrieved songs.',
-      result: result.map((song) =>
-        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope, value.scope),
-      ),
+      result,
     });
   };
 
   public getById = async (req: AuthRequest, res: Response) => {
-    const song = await this._songCollectionManager.getById(req.params.songId);
-    if (!song) {
+    const result = await this._songCollectionManager.getById(req.auth, req.params.songId);
+    if (!result) {
       throw new HttpErrors.NotFound('No song found.');
     }
 
-    const { _id: id, path, uploadedBy: uploaderId, likes, ...songData } = song.toObject();
-
-    const url = joinUrl(this._configProvider.cdnServerUri, path);
-    const uploadedBy = await this._userCollectionManager.getUsernameById(uploaderId);
-
-    const favorite = this._songUtils.inUserFavorites(req.auth.userId, likes);
-    const edit = this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, uploaderId);
-
     res.status(200).json({
       message: 'Successfully retrieved song.',
-      result: {
-        ...songData,
-        id,
-        url,
-        uploadedBy: uploadedBy ?? 'Deactivated User',
-        favorite,
-        edit,
-      },
+      result,
     });
   };
 
@@ -99,30 +83,27 @@ class SongsController {
       throw new HttpErrors.BadRequest(error.message);
     }
 
-    const result = await this._songCollectionManager.find(
-      escapeRegex(value.query),
-      value.skip,
-      value.limit,
-    );
+    const result = await this._songCollectionManager.find(req.auth, {
+      ...value,
+      query: escapeRegex(value.query),
+    });
     if (result.length === 0) {
       throw new HttpErrors.NotFound('No songs found.');
     }
 
     res.status(200).json({
       message: 'Successfully retrieved songs.',
-      result: result.map((song) =>
-        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope, value.scope),
-      ),
+      result,
     });
   };
 
   public update = async (req: AuthRequest, res: Response) => {
-    const song = await this._songCollectionManager.getById(req.params.songId);
-    if (!song) {
+    const uploadedBy = await this._songCollectionManager.getSongOwner(req.params.songId);
+    if (!uploadedBy) {
       throw new HttpErrors.NotFound('No song found.');
     }
 
-    if (!this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, song.uploadedBy)) {
+    if (!this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, uploadedBy)) {
       throw new HttpErrors.Forbidden('Access denied.');
     }
 
@@ -140,21 +121,23 @@ class SongsController {
   };
 
   public updateCover = async (req: AuthRequest, res: Response) => {
-    const contentType = req.headers['content-type'];
-    if (typeof contentType !== 'string') {
-      throw new HttpErrors.UnsupportedMediaType('Unsupported image format.');
-    }
-
     if (!Buffer.isBuffer(req.body)) {
       throw new HttpErrors.BadRequest('Invalid body provided.');
     }
 
-    const song = await this._songCollectionManager.getById(req.params.songId);
-    if (!song) {
+    const uploadedBy = await this._songCollectionManager.getSongOwner(req.params.songId);
+    if (!uploadedBy) {
       throw new HttpErrors.NotFound('No song found.');
     }
 
-    const imagePath = await this._cdnServerProvider.uploadToCdn(req.body, contentType);
+    if (!this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, uploadedBy)) {
+      throw new HttpErrors.Forbidden('Access denied.');
+    }
+
+    const imagePath = await this._cdnServerProvider.uploadToCdn(
+      req.body,
+      req.headers['content-type']!,
+    );
     const imageUri = joinUrl(this._configProvider.cdnServerUri, imagePath);
 
     await this._songCollectionManager.update(req.params.songId, { cover: imageUri });
@@ -168,12 +151,12 @@ class SongsController {
   };
 
   public delete = async (req: AuthRequest, res: Response) => {
-    const song = await this._songCollectionManager.getById(req.params.songId);
-    if (!song) {
+    const uploadedBy = await this._songCollectionManager.getSongOwner(req.params.songId);
+    if (!uploadedBy) {
       throw new HttpErrors.NotFound('No song found.');
     }
 
-    if (!this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, song.uploadedBy)) {
+    if (!this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, uploadedBy)) {
       throw new HttpErrors.Forbidden('Access denied.');
     }
 
@@ -188,11 +171,7 @@ class SongsController {
       throw new HttpErrors.BadRequest(error.message);
     }
 
-    const result = await this._songCollectionManager.getUserFavorites(
-      req.auth.userId,
-      value.skip,
-      value.limit,
-    );
+    const result = await this._songCollectionManager.getUserFavorites(req.auth, value);
 
     if (result.length === 0) {
       throw new HttpErrors.NotFound('No favorites found.');
@@ -200,9 +179,7 @@ class SongsController {
 
     res.status(200).json({
       message: 'Successfully retrieved favorites.',
-      result: result.map((song) =>
-        this._songUtils.transformSong(song, req.auth.userId, req.auth.scope, value.scope),
-      ),
+      result,
     });
   };
 
@@ -212,8 +189,8 @@ class SongsController {
       throw new HttpErrors.BadRequest(error.message);
     }
 
-    const song = await this._songCollectionManager.getById(value.songId);
-    if (!song) {
+    const uploadedBy = await this._songCollectionManager.getSongOwner(req.body.songId);
+    if (!uploadedBy) {
       throw new HttpErrors.NotFound('No song found.');
     }
 
@@ -229,13 +206,10 @@ class SongsController {
   };
 
   public deleteFromFavorites = async (req: AuthRequest, res: Response) => {
-    const song = await this._songCollectionManager.getById(req.params.songId);
-    if (!song) {
-      throw new HttpErrors.NotFound('No song found.');
-    }
-
-    if (!song.likes.includes(req.auth.userId)) {
-      throw new HttpErrors.BadRequest('No favorite found.');
+    if (
+      !(await this._songCollectionManager.checkSongInFavorites(req.params.songId, req.auth.userId))
+    ) {
+      throw new HttpErrors.NotFound('No favorite found.');
     }
 
     const updateQuery = {
