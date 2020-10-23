@@ -38,6 +38,8 @@ class UserSchema extends Schema {
       virtuals: true,
       transform: (doc, ret) => {
         delete ret._id;
+        delete ret.password;
+        delete ret.updatedAt;
       },
     });
   }
