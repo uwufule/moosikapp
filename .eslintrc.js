@@ -25,6 +25,7 @@ module.exports = {
   },
   plugins: ['import', 'prettier', 'react', '@typescript-eslint'],
   rules: {
+    '@typescript-eslint/indent': 'off',
     'no-underscore-dangle': [
       'error',
       {
