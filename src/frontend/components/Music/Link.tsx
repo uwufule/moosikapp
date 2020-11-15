@@ -1,11 +1,11 @@
-import styled from 'styled-components';
-import { useRouter } from 'next/router';
-import { Link } from '@components/BaseNav';
+import { Link as BaseLink } from '@components/Nav';
 import { Theme } from '@components/ThemeProvider';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 type StyledLinkProps = Theme<{ active: boolean }>;
 
-const StyledLink = styled(Link)<StyledLinkProps>`
+const StyledLink = styled(BaseLink)<StyledLinkProps>`
   margin-left: 6px;
   padding: 8px 6px;
   border-bottom: 2px solid
@@ -18,12 +18,12 @@ const StyledLink = styled(Link)<StyledLinkProps>`
   }
 `;
 
-interface NavLinkProps {
+interface LinkProps {
   children: string;
   to: string;
 }
 
-const NavLink = ({ to, children }: NavLinkProps) => {
+const Link = ({ to, children }: LinkProps) => {
   const router = useRouter();
 
   return (
@@ -33,4 +33,4 @@ const NavLink = ({ to, children }: NavLinkProps) => {
   );
 };
 
-export default NavLink;
+export default Link;

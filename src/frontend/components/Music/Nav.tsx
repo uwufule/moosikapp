@@ -1,6 +1,6 @@
+import BaseNav from '@components/Nav';
 import styled from 'styled-components';
-import BaseNav from '@components/BaseNav';
-import NavLink from './NavLink';
+import Link from './Link';
 
 const StyledNav = styled(BaseNav)`
   display: flex;
@@ -9,9 +9,9 @@ const StyledNav = styled(BaseNav)`
 
 const Nav = () => (
   <StyledNav>
-    <NavLink to="/music">All</NavLink>
-    <NavLink to="/music/likes">Likes</NavLink>
-    <NavLink to="/music/search">Search</NavLink>
+    <Link to="/music">All</Link>
+    <Link to="/music/likes">Likes</Link>
+    <Link to="/music/search">Search</Link>
   </StyledNav>
 );
 
