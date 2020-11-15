@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import Authorization from './interfaces/Authorization';
 import getAuthString from './utils/getAuthString';
 
-const API_BASE_URL = 'https://moosikapp.ml/api/v3'; // test
+const API_BASE_URL = '/api/v3';
 
 const createAxiosInstance = (authorization?: Authorization) => {
   const axiosInstance = axios.create({
