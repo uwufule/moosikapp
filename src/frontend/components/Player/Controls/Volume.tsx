@@ -1,4 +1,4 @@
-import { Control, Icon } from './Control';
+import { IndentedControl, Icon } from './Control';
 
 const SvgPaths = {
   Volume: () => (
@@ -26,9 +26,9 @@ interface VolumeButtonProps {
 }
 
 const VolumeButton = ({ muted, onClick }: VolumeButtonProps) => (
-  <Control title="Volume" onClick={onClick}>
+  <IndentedControl title="Volume" onClick={onClick}>
     <Icon>{muted ? <SvgPaths.Mute /> : <SvgPaths.Volume />}</Icon>
-  </Control>
+  </IndentedControl>
 );
 
 export default VolumeButton;
