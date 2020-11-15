@@ -1,7 +1,7 @@
-import { MouseEvent } from 'react';
-import NextLink from 'next/link';
-import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
+import NextLink from 'next/link';
+import { MouseEvent } from 'react';
+import styled from 'styled-components';
 
 const StyledLink = styled.a`
   font-size: 18px;
@@ -18,14 +18,14 @@ const StyledLink = styled.a`
   }
 `;
 
-interface NavLinkProps {
+interface LinkProps {
   children: string;
   to: string;
   className?: string;
   handler?: (event: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>) => void;
 }
 
-const NavLink = ({ to, children, className, handler }: NavLinkProps) => (
+const Link = ({ to, children, className, handler }: LinkProps) => (
   <NextLink href={to}>
     <StyledLink className={className} onClick={handler}>
       {children}
@@ -33,4 +33,4 @@ const NavLink = ({ to, children, className, handler }: NavLinkProps) => (
   </NextLink>
 );
 
-export default NavLink;
+export default Link;
