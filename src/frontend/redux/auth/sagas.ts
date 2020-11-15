@@ -37,6 +37,11 @@ function* refresh(action: RefreshAction) {
     yield call([localStorage, 'setItem'], 'token', res.refreshToken);
     yield put(setToken(res.accessToken, res.refreshToken));
   } catch (e) {
+    if (e.message.includes('Invalid refresh token')) {
+      yield call([localStorage, 'removeItem'], 'token');
+      window.location.reload();
+    }
+
     yield put({ type: ModalActionType.SET_ERROR_MESSAGE, payload: e.message });
   }
 }
