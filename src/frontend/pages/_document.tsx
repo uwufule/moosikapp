@@ -1,9 +1,8 @@
-import Document, { Main, NextScript, DocumentContext } from 'next/document';
+import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import Head from '@components/Head';
 
 export default class AppDocument extends Document {
-  static async getInitialProps(ctx: DocumentContext) {
+  static getInitialProps = async (ctx: DocumentContext) => {
     const styleSheet = new ServerStyleSheet();
 
     const originalRenderPage = ctx.renderPage;
@@ -30,17 +29,17 @@ export default class AppDocument extends Document {
     } finally {
       styleSheet.seal();
     }
-  }
+  };
 
   render() {
     return (
-      <html lang="en">
+      <Html lang="en">
         <Head />
         <body>
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }
