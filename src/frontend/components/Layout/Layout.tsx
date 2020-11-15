@@ -52,10 +52,16 @@ const Layout = ({ children }: LayoutProps) => {
     const refreshToken = localStorage.getItem('token');
     if (refreshToken) {
       dispatch(refresh(refreshToken));
+    } else {
+      setReady(true);
     }
-
-    setReady(true);
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setReady(true);
+    }
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const preferredTheme = localStorage.getItem('theme') as ThemeString;
