@@ -1,8 +1,8 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
-import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
-import Input from './Input';
+import React from 'react';
+import styled from 'styled-components';
 import Submit from './Submit';
+import TextField from './TextField';
 
 const Wrapper = styled.div`
   margin-bottom: 24px;
@@ -16,27 +16,27 @@ const Form = styled.form`
   box-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
-interface SearchFormProps {
-  initialQuery?: string;
-  handler: (query: string) => void;
+interface SearchBoxProps {
+  initialValue?: string;
+  onValueChange: (text: string) => void;
 }
 
-const SearchBox = ({ initialQuery = '', handler }: SearchFormProps) => {
-  const [query, setQuery] = useState('');
+const SearchBox = ({ initialValue = '', onValueChange }: SearchBoxProps) => {
+  const [value, setValue] = React.useState(initialValue);
 
-  const onQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handler(query);
+    onValueChange(value);
   };
 
   return (
     <Wrapper>
-      <Form onSubmit={onSubmit}>
-        <Input defaultValue={initialQuery} onChange={onQueryChange} placeholder="Search..." />
+      <Form onSubmit={handleSubmit}>
+        <TextField defaultValue={value} onChange={handleChange} placeholder="Search..." />
         <Submit value="Search" />
       </Form>
     </Wrapper>
