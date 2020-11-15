@@ -10,8 +10,6 @@ import {
 } from 'react-transition-group/Transition';
 import { Theme } from '@components/ThemeProvider';
 
-type Event = MouseEvent<HTMLDivElement, globalThis.MouseEvent>;
-
 const Wrapper = styled.div`
   width: 24px;
   height: 116px;
@@ -118,7 +116,7 @@ interface VolumeSliderProps {
 const VolumeSlider = ({ show = false, value, onVolumeChange }: VolumeSliderProps) => {
   const [dragStart, setDragStart] = useState(false);
 
-  const getVolumePercents = (event: Event) => {
+  const getVolumePercents = (event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     const { top, height } = event.currentTarget.getBoundingClientRect();
     return 1 - (event.clientY - top) / height;
   };

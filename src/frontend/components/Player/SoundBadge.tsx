@@ -1,6 +1,6 @@
+import { Theme } from '@components/ThemeProvider';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Theme } from '@components/ThemeProvider';
 
 const Container = styled.div`
   display: flex;

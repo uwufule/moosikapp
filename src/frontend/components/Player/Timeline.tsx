@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { Theme } from '@components/ThemeProvider';
 
-type Event = MouseEvent<HTMLDivElement, globalThis.MouseEvent>;
-
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
@@ -79,7 +77,7 @@ const Timeline = ({ timePassed = 0, duration = 0, onTimeChanged }: TimelineProps
     }
   }, [timePassed]);
 
-  const getPassedPercents = (event: Event) => {
+  const getPassedPercents = (event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     const { left, width } = event.currentTarget.getBoundingClientRect();
     return (event.clientX - left) / width;
   };
