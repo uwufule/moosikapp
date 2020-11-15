@@ -1,9 +1,9 @@
-import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
+import styled from 'styled-components';
 
 const Button = styled.input.attrs({ type: 'submit' })`
   margin: 0;
-  padding: 6px 12px;
+  padding: 7px 12px;
   font-family: inherit;
   font-size: 16px;
   font-weight: 400;
@@ -22,13 +22,13 @@ const Button = styled.input.attrs({ type: 'submit' })`
   }
 `;
 
-interface FormButtonProps {
+interface SubmitProps {
   children: string;
   className?: string;
 }
 
-const SubmitButton = ({ children, className }: FormButtonProps) => (
+const Submit = ({ children, className }: SubmitProps) => (
   <Button className={className} value={children} />
 );
 
-export default SubmitButton;
+export default Submit;
