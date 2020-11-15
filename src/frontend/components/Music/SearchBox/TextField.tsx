@@ -1,7 +1,7 @@
-import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
+import styled from 'styled-components';
 
-const Input = styled.input.attrs({ type: 'text' })`
+const TextField = styled.input.attrs({ type: 'text' })`
   width: 100%;
   margin: 0;
   padding: 6px 8px;
@@ -22,4 +22,4 @@ const Input = styled.input.attrs({ type: 'text' })`
   }
 `;
 
-export default Input;
+export default TextField;
