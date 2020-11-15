@@ -1,5 +1,4 @@
-export { default as Input } from './Input';
-export { default as SubmitButton } from './SubmitButton';
-export { default as Link } from './Link';
-
 export { default } from './Form';
+export { default as Link } from './Link';
+export { default as Submit } from './Submit';
+export { default as TextField } from './TextField';
