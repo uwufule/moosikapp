@@ -1,14 +1,14 @@
+import errorModal from './errorModal';
 import forms from './forms';
+import player from './player';
 import songList from './songList';
 import uploadForm from './uploadForm';
-import player from './player';
-import errorModal from './errorModal';
 
 const theme = {
   background: '#27292d',
   text: {
     primary: '#dfdfe0',
-    secondary: '#b4b4b6',
+    secondary: '#cacacb',
   },
   nav: {
     logo: '#dfdfe0',
