@@ -53,7 +53,7 @@ const Upload: React.FC = () => {
 
   return (
     <UploadFormWrapper>
-      <FileDropArea onFileListChanged={handlePickFiles} />
+      <FileDropArea onFileListChange={handlePickFiles} />
       {files.length > 0 && (
         <UploadsList>
           {files.map((file) => (
