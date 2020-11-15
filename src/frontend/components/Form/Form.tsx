@@ -1,6 +1,6 @@
-import { FormEvent } from 'react';
-import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
+import React from 'react';
+import styled from 'styled-components';
 
 const FormComponent = styled.form`
   width: 100%;
@@ -19,7 +19,7 @@ const Title = styled.h1`
   text-shadow: ${(props: Theme) => props.theme.shadow.long};
 `;
 
-const FormBody = styled.div`
+const Content = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -27,19 +27,21 @@ const FormBody = styled.div`
 interface FormProps {
   title: string;
   children: JSX.Element | JSX.Element[];
-  handler: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: () => void;
 }
 
-const Form = ({ title, children, handler }: FormProps) => (
-  <FormComponent
-    onSubmit={(event) => {
-      event.preventDefault();
-      handler(event);
-    }}
-  >
-    <Title>{title}</Title>
-    <FormBody>{children}</FormBody>
-  </FormComponent>
-);
+const Form = ({ title, children, onSubmit }: FormProps) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSubmit();
+  };
+
+  return (
+    <FormComponent onSubmit={handleSubmit}>
+      <Title>{title}</Title>
+      <Content>{children}</Content>
+    </FormComponent>
+  );
+};
 
 export default Form;
