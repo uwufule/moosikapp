@@ -1,9 +1,14 @@
-import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
+import styled from 'styled-components';
+
+export const Icon = styled.svg.attrs({ viewBox: '0 0 24 24' })`
+  width: 100%;
+  height: 100%;
+`;
 
 type ControlProps = Theme<{ active?: boolean }>;
 
-export const Control = styled.button.attrs({ type: 'button' })<ControlProps>`
+const Control = styled.button.attrs({ type: 'button' })<ControlProps>`
   width: 20px;
   height: 20px;
   margin: 0 8px 0 0;
@@ -18,7 +23,4 @@ export const Control = styled.button.attrs({ type: 'button' })<ControlProps>`
   cursor: pointer;
 `;
 
-export const Icon = styled.svg.attrs({ viewBox: '0 0 24 24' })`
-  width: 100%;
-  height: 100%;
-`;
+export default Control;

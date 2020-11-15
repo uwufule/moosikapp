@@ -1,27 +1,20 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentSongIndex } from '@redux/player/actions';
-import { RootState } from '@redux/store';
-import { Control, Icon } from './Control';
+import { PlayerActionType } from '@redux/player/types';
+import { useDispatch } from 'react-redux';
+import { IndentedControl, Icon } from './Control';
 
 const NextButton = () => {
-  const currentSongIndex = useSelector<RootState, number>((state) => state.player.current.index);
-
-  const songListLength = useSelector<RootState, number>((state) => state.player.songList.length);
-
   const dispatch = useDispatch();
 
-  const setNextSong = () => {
-    if (currentSongIndex < songListLength - 1) {
-      dispatch(setCurrentSongIndex(currentSongIndex + 1));
-    }
+  const handleClick = () => {
+    dispatch({ type: PlayerActionType.PLAY_NEXT });
   };
 
   return (
-    <Control onClick={setNextSong}>
+    <IndentedControl onClick={handleClick}>
       <Icon>
         <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
       </Icon>
-    </Control>
+    </IndentedControl>
   );
 };
 

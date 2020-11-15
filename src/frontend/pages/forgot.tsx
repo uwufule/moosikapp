@@ -1,12 +1,11 @@
-import styled from 'styled-components';
-import { useState } from 'react';
-import useRestriction from '@hooks/useRestriction';
-import useErrorHandler from '@hooks/useErrorHandler';
-import Form, { Input, SubmitButton } from '@components/Form';
 import FlexCenterAlignment from '@components/FlexCenterAlignment';
+import Form, { Submit, TextField } from '@components/Form';
 import { Theme } from '@components/ThemeProvider';
+import useRestriction from '@hooks/useRestriction';
+import React from 'react';
+import styled from 'styled-components';
 
-const StyledInput = styled(Input)`
+const StyledTextField = styled(TextField)`
   margin-bottom: 10px;
 
   &:last-child {
@@ -34,32 +33,34 @@ const Footer = styled.div`
   justify-content: flex-end;
 `;
 
-const Forgot = () => {
-  const [email, setEmail] = useState('');
-
+const Forgot: React.FC = () => {
   const restriction = useRestriction();
-  restriction.disallowAuthorizedUser();
+  restriction.forbidAuth();
 
-  const handleError = useErrorHandler();
+  const [email, setEmail] = React.useState('');
 
-  const restorePassword = () => {
-    handleError(async () => {
-      throw new Error('Not implemented error.');
-    });
+  const handleSubmit = () => {};
+
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
   };
 
   return (
     <FlexCenterAlignment>
-      <Form title="Forgot" handler={restorePassword}>
+      <Form title="Forgot" onSubmit={handleSubmit}>
         <TextContainer>
           <p>To request a new password please enter your account email in the box below.</p>
           <p>We will send you an email with further instructions</p>
         </TextContainer>
-        <StyledInput type="email" required handler={setEmail}>
-          Email
-        </StyledInput>
+        <StyledTextField
+          required
+          autoFocus
+          placeholder="Email"
+          type="email"
+          onChange={handleChangeEmail}
+        />
         <Footer>
-          <SubmitButton>Request Password Change</SubmitButton>
+          <Submit>Request Password Change</Submit>
         </Footer>
       </Form>
     </FlexCenterAlignment>

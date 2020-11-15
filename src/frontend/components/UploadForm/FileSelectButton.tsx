@@ -1,9 +1,9 @@
+import { Theme } from '@components/ThemeProvider';
+import genHash from '@core/infrastructure/crypto/genHash';
 import { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import HashUtils from '@utils/HashUtils';
-import { Theme } from '@components/ThemeProvider';
 
-const ButtonWrapper = styled.label`
+const Button = styled.label`
   position: relative;
   padding: 8px 16px;
   font-size: 18px;
@@ -34,17 +34,17 @@ interface FileSelectButtonProps {
   children: string;
   accept: string;
   multiple: boolean;
-  handler: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const FileSelectButton = ({ children, accept, multiple, handler }: FileSelectButtonProps) => {
-  const id = HashUtils.genHash(children, 36);
+const FileSelectButton = ({ children, accept, multiple, onChange }: FileSelectButtonProps) => {
+  const id = genHash(children, 36);
 
   return (
-    <ButtonWrapper htmlFor={id}>
+    <Button htmlFor={id}>
       <span>{children}</span>
-      <Input id={id} accept={accept} multiple={multiple} onChange={handler} />
-    </ButtonWrapper>
+      <Input id={id} accept={accept} multiple={multiple} onChange={onChange} />
+    </Button>
   );
 };
 

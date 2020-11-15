@@ -1,8 +1,11 @@
-import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
-import { setCurrentSongIndex, setPlaying } from '@redux/player/actions';
-import { RootState } from '@redux/store';
 import { Theme } from '@components/ThemeProvider';
+import { playSongById, pushSongListToPlaylist, togglePlay } from '@redux/player/actions';
+import { selectIsPlaying, selectNowPlayingSongId, selectPlaylist } from '@redux/player/selectors';
+import { selectSongList } from '@redux/songs/selectors';
+import isEqual from 'lodash/isEqual';
+import sortBy from 'lodash/sortBy';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 
 const Button = styled.button.attrs({ type: 'button' })`
   width: 36px;
@@ -34,39 +37,45 @@ const SvgPaths = {
   ),
 };
 
-interface PlayPauseButtonProps {
+interface PlayPauseProps {
   songId: string;
   className?: string;
 }
 
-const PlayPauseButton = ({ songId, className }: PlayPauseButtonProps) => {
-  const playing = useSelector<RootState, boolean>((state) => state.player.playing);
+const PlayPause = ({ songId, className }: PlayPauseProps) => {
+  const nowPlayingId = useSelector(selectNowPlayingSongId);
+  const isPlaying = useSelector(selectIsPlaying);
 
-  const currentSongId = useSelector<RootState, string | undefined>(
-    (state) => state.player.current.song?.id,
-  );
-
-  const songIndex = useSelector<RootState, number>((state) =>
-    state.player.songList.findIndex((song) => song.id === songId),
-  );
+  const playlist = useSelector(selectPlaylist);
+  const songList = useSelector(selectSongList);
 
   const dispatch = useDispatch();
 
-  const togglePlay = () => {
-    if (songId === currentSongId) {
-      dispatch(setPlaying(!playing));
+  const handleClick = () => {
+    const isSamePlaylist = isEqual(sortBy(songList), sortBy(playlist));
+    if (!isSamePlaylist) {
+      dispatch(pushSongListToPlaylist());
+    }
+
+    if (songId !== nowPlayingId) {
+      dispatch(playSongById(songId));
       return;
     }
-    dispatch(setCurrentSongIndex(songIndex));
+
+    dispatch(togglePlay(!isPlaying));
   };
 
-  const isPlayingThisSong = playing && songId === currentSongId;
+  const isPlayingThisSong = songId === nowPlayingId && isPlaying;
 
   return (
-    <Button className={className} title={isPlayingThisSong ? 'Pause' : 'Play'} onClick={togglePlay}>
+    <Button
+      className={className}
+      title={isPlayingThisSong ? 'Pause' : 'Play'}
+      onClick={handleClick}
+    >
       <svg viewBox="0 0 24 24">{isPlayingThisSong ? <SvgPaths.Play /> : <SvgPaths.Pause />}</svg>
     </Button>
   );
 };
 
-export default PlayPauseButton;
+export default PlayPause;

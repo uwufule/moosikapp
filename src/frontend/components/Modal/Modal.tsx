@@ -1,3 +1,6 @@
+import { selectHasErrorMessage } from '@redux/modal/selectors';
+import { useSelector } from 'react-redux';
+import Transition, { ENTERED, EXITED, TransitionStatus } from 'react-transition-group/Transition';
 import styled from 'styled-components';
 import ErrorMessage from './ErrorMessage';
 
@@ -11,18 +14,36 @@ const Wrapper = styled.div`
   z-index: 10;
 `;
 
+interface AnimatedComponentProps {
+  state: TransitionStatus;
+}
+
+const AnimatedModalWrapper = styled(Wrapper)<AnimatedComponentProps>`
+  transition: opacity 200ms ease;
+  opacity: ${(props: AnimatedComponentProps) =>
+    props.state === EXITED || props.state === ENTERED ? 1 : 0};
+`;
+
 const Container = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
 `;
 
-const Modal = () => (
-  <Wrapper>
-    <Container>
-      <ErrorMessage />
-    </Container>
-  </Wrapper>
-);
+const Modal = () => {
+  const hasErrorMessage = useSelector(selectHasErrorMessage);
+
+  return (
+    <Transition in={hasErrorMessage} mountOnEnter unmountOnExit type="ease" timeout={200}>
+      {(state) => (
+        <AnimatedModalWrapper state={state}>
+          <Container>
+            <ErrorMessage />
+          </Container>
+        </AnimatedModalWrapper>
+      )}
+    </Transition>
+  );
+};
 
 export default Modal;

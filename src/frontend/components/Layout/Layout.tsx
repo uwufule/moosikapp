@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import useTokenManager from '@hooks/useTokenManager';
-import useErrorHandler from '@hooks/useErrorHandler';
-import { RootState } from '@redux/store';
-import ThemeProvider, { ThemeString } from '@components/ThemeProvider';
 import BackgroundImage from '@components/BackgroundImage';
 import Header from '@components/Header';
+import ThemeProvider, { ThemeString } from '@components/ThemeProvider';
+import { refresh } from '@redux/auth/actions';
+import { selectIsLoggedIn } from '@redux/auth/selectors';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 // import Sidebar from '../Sidebar';
 import Modal from '../Modal';
 import Player from '../Player';
@@ -45,25 +44,17 @@ const Layout = ({ children }: LayoutProps) => {
   const [theme, setTheme] = useState<ThemeString>('default');
   const [ready, setReady] = useState(false);
 
-  const isUserAuthorized = useSelector<RootState, boolean>(
-    (state) => state.auth.accessToken !== '',
-  );
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
-  const hasErrorMessage = useSelector<RootState, boolean>(
-    (state) => state.modal.errorMessage !== '',
-  );
-
-  const { refresh } = useTokenManager();
-
-  const handleError = useErrorHandler(undefined, () => setReady(true));
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    handleError(async () => {
-      const refreshToken = localStorage.getItem('token');
-      if (refreshToken) {
-        await refresh(refreshToken);
-      }
-    });
+    const refreshToken = localStorage.getItem('token');
+    if (refreshToken) {
+      dispatch(refresh(refreshToken));
+    }
+
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -81,13 +72,13 @@ const Layout = ({ children }: LayoutProps) => {
       {/* <Sidebar /> */}
       <Main>
         <BackgroundImage />
-        <Content mustAddMarginBottom={isUserAuthorized}>
+        <Content mustAddMarginBottom={isLoggedIn}>
           <Header />
           {ready && children}
         </Content>
-        {isUserAuthorized && <Player />}
+        {isLoggedIn && <Player />}
       </Main>
-      {hasErrorMessage && <Modal />}
+      <Modal />
     </ThemeProvider>
   );
 };

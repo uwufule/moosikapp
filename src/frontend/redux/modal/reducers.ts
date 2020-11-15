@@ -1,14 +1,16 @@
-import { AnyModalAction, ModalActionTypes, ModalState } from './types';
+import { AnyModalAction, ModalActionType, ModalState } from './types';
 
 const initialState: ModalState = {
   errorMessage: '',
 };
 
-export default (state = initialState, action: AnyModalAction) => {
+const modalReducer = (state = initialState, action: AnyModalAction) => {
   switch (action.type) {
-    case ModalActionTypes.SET_ERROR_MESSAGE:
+    case ModalActionType.SET_ERROR_MESSAGE:
       return { ...state, errorMessage: action.payload };
     default:
       return state;
   }
 };
+
+export default modalReducer;

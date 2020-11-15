@@ -1,9 +1,9 @@
+import { Theme } from '@components/ThemeProvider';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Theme } from '@components/ThemeProvider';
-import PlayPauseButton from './Controls/PlayPause';
 import EditButton from './Controls/Edit';
 import FavButton from './Controls/Fav';
+import PlayPauseButton from './Controls/PlayPause';
 import DefaultCover from './DefaultCover';
 
 const StyledPlayPauseButton = styled(PlayPauseButton)`
@@ -123,9 +123,11 @@ const Song = ({ id, author, title, cover, favorite = true, edit = false }: SongP
     </Cover>
     <TitleAndAuthor>
       <Title>{title}</Title>
-      <Link href={`/music/search?query=${author}`}>
-        <Author>{author}</Author>
-      </Link>
+      <span>
+        <Link href={`/music/search?query=${author}`}>
+          <Author>{author}</Author>
+        </Link>
+      </span>
     </TitleAndAuthor>
     <ControlsGroup>
       {edit && <StyledEditButton />}

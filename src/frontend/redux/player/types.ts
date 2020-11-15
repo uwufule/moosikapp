@@ -1,84 +1,70 @@
-export interface Song {
-  id: string;
-  author: string;
-  title: string;
-  cover: string;
-  favorite?: boolean;
-  edit?: boolean;
-}
+import Song from '@core/models/Song';
+import SongDetails from '@core/models/SongDetails';
+import { Action, AnyAction } from 'redux';
 
-export interface SongDetails extends Song {
-  url: string;
-  uploadedBy: string;
-  createdAt: Date;
-}
-
-export type RepeatTypes = 'single' | 'many' | 'off';
+export type RepeatType = 'off' | 'single' | 'many';
 
 export interface PlayerState {
-  songList: Song[];
-  current: {
-    song: SongDetails | null;
-    index: number;
-  };
-  playing: boolean;
-  repeat: RepeatTypes;
+  playlist: Song[];
+  nowPlaying?: SongDetails;
+  isPlaying: boolean;
+  repeat: RepeatType;
   shuffle: boolean;
 }
 
-export enum PlayerActionTypes {
-  SET_SONG_LIST = 'set_song_list',
-  SET_FAV = 'set_fav',
-  SET_CURRENT_SONG = 'set_current_song',
-  SET_CURRENT_SONG_INDEX = 'set_current_song_index',
-  SET_PLAYING = 'set_playing',
-  SET_REPEAT = 'set_repeat',
-  SET_SHUFFLE = 'set_shuffle',
+export enum PlayerActionType {
+  SET_PLAYLIST = 'player/SET_PLAYLIST',
+  PUSH_SONG_LIST_TO_PLAYLIST = 'player/PUSH_SONG_LIST_TO_PLAYLIST',
+  PLAY_SONG_BY_ID = 'player/PLAY_SONG_BY_ID',
+  SET_NOW_PLAYING = 'player/SET_NOW_PLAYING',
+  SET_IS_PLAYING = 'player/SET_IS_PLAYING',
+  SET_REPEAT = 'player/SET_REPEAT',
+  SET_SHUFFLE = 'player/SET_SHUFFLE',
+  PLAY_NEXT = 'player/PLAY_NEXT',
+  PLAY_PREV = 'player/PLAY_PREV',
 }
 
-export interface SetSongListAction {
-  type: PlayerActionTypes.SET_SONG_LIST;
+export interface SetPlaylistAction extends Action<PlayerActionType> {
+  type: PlayerActionType.SET_PLAYLIST;
   payload: Song[];
 }
 
-export interface SetFavAction {
-  type: PlayerActionTypes.SET_FAV;
-  payload: {
-    songId: string;
-    value: boolean;
-  };
-}
-
-export interface SetCurrentSongAction {
-  type: PlayerActionTypes.SET_CURRENT_SONG;
-  payload: SongDetails;
-}
-
-export interface SetCurrentSongIndexAction {
-  type: PlayerActionTypes.SET_CURRENT_SONG_INDEX;
-  payload: number;
-}
-
-export interface SetPlayingAction {
-  type: PlayerActionTypes.SET_PLAYING;
+export interface PushSongListToPlaylistAction extends Action<PlayerActionType> {
+  type: PlayerActionType.PUSH_SONG_LIST_TO_PLAYLIST;
   payload: boolean;
 }
 
-export interface SetRepeatAction {
-  type: PlayerActionTypes.SET_REPEAT;
-  payload: RepeatTypes;
+export interface PlaySongByIdAction extends Action<PlayerActionType> {
+  type: PlayerActionType.PLAY_SONG_BY_ID;
+  payload: string;
 }
 
-export interface SetShuffleAction {
-  type: PlayerActionTypes.SET_SHUFFLE;
+export interface SetNowPlayingAction extends Action<PlayerActionType> {
+  type: PlayerActionType.SET_NOW_PLAYING;
+  payload: SongDetails;
+}
+
+export interface TogglePlayAction extends Action<PlayerActionType> {
+  type: PlayerActionType.SET_IS_PLAYING;
+  payload: boolean;
+}
+
+export interface SetRepeatAction extends Action<PlayerActionType> {
+  type: PlayerActionType.SET_REPEAT;
+  payload: RepeatType;
+}
+
+export interface SetShuffleAction extends Action<PlayerActionType> {
+  type: PlayerActionType.SET_SHUFFLE;
   payload: boolean;
 }
 
 export type AnyPlayerAction =
-  | SetSongListAction
-  | SetFavAction
-  | SetCurrentSongAction
-  | SetCurrentSongIndexAction
-  | SetPlayingAction
+  | SetPlaylistAction
+  | PushSongListToPlaylistAction
+  | PlaySongByIdAction
+  | SetNowPlayingAction
+  | TogglePlayAction
   | SetRepeatAction
-  | SetShuffleAction;
+  | SetShuffleAction
+  | AnyAction;

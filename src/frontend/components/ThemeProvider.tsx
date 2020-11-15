@@ -1,11 +1,11 @@
-import { ThemeProvider, ThemedStyledProps } from 'styled-components';
 import defaultTheme from '@theme/index';
+import { ThemedStyledProps, ThemeProvider } from 'styled-components';
 
 export type ThemeString = 'default';
 
 export type Theme<P = {}> = ThemedStyledProps<P, typeof defaultTheme>;
 
-const getTheme = (theme: string) => {
+const getTheme = (theme: ThemeString) => {
   switch (theme) {
     default:
       return defaultTheme;

@@ -1,51 +1,48 @@
+import Song from '@core/models/Song';
+import SongDetails from '@core/models/SongDetails';
 import {
-  Song,
-  SongDetails,
-  PlayerActionTypes,
-  SetSongListAction,
-  SetCurrentSongAction,
-  SetCurrentSongIndexAction,
-  SetPlayingAction,
-  SetShuffleAction,
-  RepeatTypes,
+  PlayerActionType,
+  PlaySongByIdAction,
+  PushSongListToPlaylistAction,
+  RepeatType,
+  SetNowPlayingAction,
+  SetPlaylistAction,
   SetRepeatAction,
-  SetFavAction,
+  SetShuffleAction,
+  TogglePlayAction,
 } from './types';
 
-export const setSongList = (songs: Song[]): SetSongListAction => ({
-  type: PlayerActionTypes.SET_SONG_LIST,
+export const setPlaylist = (songs: Song[]): SetPlaylistAction => ({
+  type: PlayerActionType.SET_PLAYLIST,
   payload: songs,
 });
 
-export const setCurrentSong = (song: SongDetails): SetCurrentSongAction => ({
-  type: PlayerActionTypes.SET_CURRENT_SONG,
+export const pushSongListToPlaylist = (playFirst = false): PushSongListToPlaylistAction => ({
+  type: PlayerActionType.PUSH_SONG_LIST_TO_PLAYLIST,
+  payload: playFirst,
+});
+
+export const playSongById = (songId: string): PlaySongByIdAction => ({
+  type: PlayerActionType.PLAY_SONG_BY_ID,
+  payload: songId,
+});
+
+export const setNowPlaying = (song: SongDetails): SetNowPlayingAction => ({
+  type: PlayerActionType.SET_NOW_PLAYING,
   payload: song,
 });
 
-export const setCurrentSongIndex = (index: number): SetCurrentSongIndexAction => ({
-  type: PlayerActionTypes.SET_CURRENT_SONG_INDEX,
-  payload: index,
-});
-
-export const setPlaying = (playing: boolean): SetPlayingAction => ({
-  type: PlayerActionTypes.SET_PLAYING,
+export const togglePlay = (playing: boolean): TogglePlayAction => ({
+  type: PlayerActionType.SET_IS_PLAYING,
   payload: playing,
 });
 
-export const setRepeat = (repeat: RepeatTypes): SetRepeatAction => ({
-  type: PlayerActionTypes.SET_REPEAT,
+export const setRepeat = (repeat: RepeatType): SetRepeatAction => ({
+  type: PlayerActionType.SET_REPEAT,
   payload: repeat,
 });
 
 export const setShuffle = (shuffle: boolean): SetShuffleAction => ({
-  type: PlayerActionTypes.SET_SHUFFLE,
+  type: PlayerActionType.SET_SHUFFLE,
   payload: shuffle,
-});
-
-export const setFav = (songId: string, value: boolean): SetFavAction => ({
-  type: PlayerActionTypes.SET_FAV,
-  payload: {
-    songId,
-    value,
-  },
 });

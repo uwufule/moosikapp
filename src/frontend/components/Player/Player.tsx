@@ -1,29 +1,30 @@
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
-import Head from 'next/head';
-import { useAudio } from 'react-use';
-import isMobile from 'is-mobile';
-import _shuffle from 'lodash/shuffle';
-import useRequest from '@hooks/useRequest';
-import {
-  setSongList,
-  setCurrentSong,
-  setPlaying,
-  setCurrentSongIndex,
-} from '@redux/player/actions';
-import { Song, SongDetails, RepeatTypes } from '@redux/player/types';
-import { RootState } from '@redux/store';
 import { Theme } from '@components/ThemeProvider';
-import PrevButton from './Controls/Prev';
-import PlayPauseButton from './Controls/PlayPause';
+import { setPlaylist } from '@redux/player/actions';
+import {
+  selectIsPlaying,
+  selectNowPlaying,
+  selectPlaylist,
+  selectRepeat,
+  selectShuffle,
+} from '@redux/player/selectors';
+import { PlayerActionType } from '@redux/player/types';
+import { selectSongList } from '@redux/songs/selectors';
+import isMobile from 'is-mobile';
+import lodashShuffle from 'lodash/shuffle';
+import Head from 'next/head';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAudio } from 'react-use';
+import styled from 'styled-components';
 import NextButton from './Controls/Next';
+import PlayPauseButton from './Controls/PlayPause';
+import PrevButton from './Controls/Prev';
 import RepeatButton from './Controls/Repeat';
 import ShuffleButton from './Controls/Shuffle';
-import Timeline from './Timeline';
 import VolumeButton from './Controls/Volume';
-import VolumeSlider from './VolumeSlider';
 import SoundBadge from './SoundBadge';
+import Timeline from './Timeline';
+import VolumeSlider from './VolumeSlider';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -70,102 +71,69 @@ const VolumeControlWrapper = styled.div`
   }
 `;
 
-type CurrentSong = { song: SongDetails | null; index: number };
-
 const Player = () => {
-  const [defaultSongList, setDefaultSongList] = useState<Song[]>([]);
-  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [showVolumeSlider, setShowVolumeSlider] = React.useState(false);
 
-  const playing = useSelector<RootState, boolean>((state) => state.player.playing);
+  const songList = useSelector(selectSongList);
+  const playlist = useSelector(selectPlaylist);
 
-  const songList = useSelector<RootState, Song[]>((state) => state.player.songList);
+  const nowPlaying = useSelector(selectNowPlaying);
 
-  const { song, index } = useSelector<RootState, CurrentSong>((state) => state.player.current);
-
-  const repeat = useSelector<RootState, RepeatTypes>((state) => state.player.repeat);
-
-  const shuffle = useSelector<RootState, boolean>((state) => state.player.shuffle);
+  const isPlaying = useSelector(selectIsPlaying);
+  const repeat = useSelector(selectRepeat);
+  const shuffle = useSelector(selectShuffle);
 
   const dispatch = useDispatch();
 
   const [audio, playerState, playerControls, ref] = useAudio({
     crossOrigin: 'anonymous',
     preload: 'auto',
-    src: song?.url || '',
+    src: nowPlaying?.url ?? '',
     autoPlay: false,
   });
 
-  const { authRequest } = useRequest();
+  // toggle play/pause
+  React.useEffect(() => {
+    playerControls[isPlaying ? 'play' : 'pause']();
+  }, [nowPlaying, isPlaying]);
 
-  useEffect(() => {
-    if (playing) {
-      playerControls.play();
-      return;
-    }
-
-    playerControls.pause();
-  }, [song, playing]);
-
-  useEffect(() => {
-    const getSong = async () => {
-      const newSong = songList[index];
-      if (!newSong) {
-        return;
-      }
-
-      const res = await authRequest(`/songs/${newSong.id}`);
-
-      dispatch(setCurrentSong(res.data.result));
-      dispatch(setPlaying(true));
-    };
-
-    getSong();
-  }, [index]);
-
-  useEffect(() => {
+  // toggle repeat single
+  React.useEffect(() => {
     if (ref.current) {
       ref.current.loop = repeat === 'single';
     }
   }, [repeat]);
 
-  useEffect(() => {
+  // shuffle playlist
+  React.useEffect(() => {
+    if (playlist.length === 0) {
+      return;
+    }
+
     if (shuffle) {
-      setDefaultSongList(songList);
-
-      const shuffledSongList = _shuffle(songList);
-      dispatch(setSongList(shuffledSongList));
-      dispatch(setCurrentSongIndex(-1));
-
+      dispatch(setPlaylist(lodashShuffle(playlist)));
       return;
     }
 
-    if (defaultSongList.length === 0) {
-      return;
-    }
-
-    dispatch(setSongList(defaultSongList));
-    setDefaultSongList([]);
+    dispatch(setPlaylist(songList));
   }, [shuffle]);
 
-  useEffect(() => {
-    if (playerState.time === playerState.duration && songList.length && index < songList.length) {
-      dispatch(setCurrentSongIndex(index + 1));
+  // play next song if ended and toggle repeat many
+  React.useEffect(() => {
+    const songEnded = playerState.time === playerState.duration;
+    if (isPlaying && songEnded) {
+      dispatch({ type: PlayerActionType.PLAY_NEXT });
     }
   }, [playerState.time, playerState.duration]);
 
-  const toggleVolume = () => {
-    if (playerState.muted) {
-      playerControls.unmute();
-      return;
-    }
-
-    playerControls.mute();
+  const handleVolumeButtonClick = () => {
+    playerControls[playerState.muted ? 'unmute' : 'mute']();
   };
 
   return (
     <Wrapper>
       <Head>
-        <title>{playing ? `${song?.author} - ${song?.title}` : 'Moosik'}</title>
+        <title>{isPlaying ? `${nowPlaying?.author} - ${nowPlaying?.title}` : 'Moosik'}</title>
       </Head>
       <PlayerContainer>
         <ControlsGroup>
@@ -184,7 +152,7 @@ const Player = () => {
           onMouseEnter={() => setShowVolumeSlider(true)}
           onMouseLeave={() => setShowVolumeSlider(false)}
         >
-          <VolumeButton muted={playerState.muted} onClick={toggleVolume} />
+          <VolumeButton muted={playerState.muted} onClick={handleVolumeButtonClick} />
           {!isMobile() && (
             <VolumeSlider
               show={showVolumeSlider}
@@ -193,7 +161,11 @@ const Player = () => {
             />
           )}
         </VolumeControlWrapper>
-        <SoundBadge author={song?.author} title={song?.title} cover={song?.cover} />
+        <SoundBadge
+          author={nowPlaying?.author}
+          title={nowPlaying?.title}
+          cover={nowPlaying?.cover}
+        />
         {audio}
       </PlayerContainer>
     </Wrapper>

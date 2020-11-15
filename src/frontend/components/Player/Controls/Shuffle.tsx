@@ -1,19 +1,19 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { setShuffle } from '@redux/player/actions';
-import { RootState } from '@redux/store';
-import { Control, Icon } from './Control';
+import { selectShuffle } from '@redux/player/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { IndentedControl, Icon } from './Control';
 
 const ShuffleButton = () => {
-  const shuffle = useSelector<RootState, boolean>((state) => state.player.shuffle);
+  const shuffle = useSelector(selectShuffle);
 
   const dispatch = useDispatch();
 
-  const toggleShuffle = () => {
+  const handleClick = () => {
     dispatch(setShuffle(!shuffle));
   };
 
   return (
-    <Control active={shuffle} onClick={toggleShuffle}>
+    <IndentedControl active={shuffle} onClick={handleClick}>
       <Icon>
         <path
           d="M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,16.54L14.83,
@@ -21,7 +21,7 @@ const ShuffleButton = () => {
             4L4,5.41L9.17,10.58L10.59,9.17Z"
         />
       </Icon>
-    </Control>
+    </IndentedControl>
   );
 };
 

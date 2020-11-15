@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
+import styled from 'styled-components';
 
 const Svg = styled.svg.attrs({ viewBox: '0 0 24 24' })`
   width: 32px;

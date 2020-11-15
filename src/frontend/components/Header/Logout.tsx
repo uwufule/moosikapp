@@ -1,17 +1,14 @@
-import { MouseEvent } from 'react';
-import useAuth from '@hooks/useAuthorization';
-import useErrorHandler from '@hooks/useErrorHandler';
-import { Link } from '@components/BaseNav';
+import { Link } from '@components/Nav';
+import { logout } from '@redux/auth/actions';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 
 const Logout = () => {
-  const { deauthorize } = useAuth();
+  const dispatch = useDispatch();
 
-  const handleError = useErrorHandler();
-
-  const handleClick = (event: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>) => {
+  const handleClick = async (event: React.MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>) => {
     event.preventDefault();
-
-    handleError(deauthorize);
+    dispatch(logout());
   };
 
   return (

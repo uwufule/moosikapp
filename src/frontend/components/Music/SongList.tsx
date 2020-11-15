@@ -1,9 +1,10 @@
-import styled from 'styled-components';
-import { Song as SongType } from '@redux/player/types';
 import { Theme } from '@components/ThemeProvider';
+import { selectSongList } from '@redux/songs/selectors';
+import { useSelector } from 'react-redux';
+import styled from 'styled-components';
 import Song from './Song';
 
-const Wrapper = styled.div`
+const Container = styled.div`
   padding: 8px;
   background: ${(props: Theme) => props.theme.songList.background};
   box-shadow: ${(props: Theme) => props.theme.shadow.long};
@@ -17,29 +18,32 @@ const Message = styled.span`
 `;
 
 interface SongListProps {
-  songs: SongType[];
   searching?: boolean;
 }
 
-const SongList = ({ songs, searching = false }: SongListProps) => (
-  <Wrapper>
-    {songs.map(({ id, author, title, cover, favorite, edit }) => (
-      <Song
-        key={id}
-        id={id}
-        author={author}
-        title={title}
-        cover={cover}
-        favorite={favorite}
-        edit={edit}
-      />
-    ))}
-    {songs.length === 0 && (
-      <Message>
-        {searching ? 'Enter your request in the input field ...' : 'Nothing to show :('}
-      </Message>
-    )}
-  </Wrapper>
-);
+const SongList = ({ searching = false }: SongListProps) => {
+  const songs = useSelector(selectSongList);
+
+  return (
+    <Container>
+      {songs.map(({ id, author, title, cover, favorite, edit }) => (
+        <Song
+          key={id}
+          id={id}
+          author={author}
+          title={title}
+          cover={cover}
+          favorite={favorite}
+          edit={edit}
+        />
+      ))}
+      {songs.length === 0 && (
+        <Message>
+          {searching ? 'Enter your request in the input field ...' : 'Nothing to show :('}
+        </Message>
+      )}
+    </Container>
+  );
+};
 
 export default SongList;

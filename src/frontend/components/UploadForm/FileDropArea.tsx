@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 import FileSelectButton from './FileSelectButton';
-// import DifferentUploadMethodsLink from './DifferentUploadMethodsLink';
 
 type DropAreaProps = Theme<{ isDrop: boolean }>;
 
@@ -41,10 +40,10 @@ const Note = styled.div`
 `;
 
 interface FileDropAreaProps {
-  handler: (files: FileList | null) => void;
+  onFileListChange: (files: FileList | null) => void;
 }
 
-const FileDropArea = ({ handler }: FileDropAreaProps) => {
+const FileDropArea = ({ onFileListChange }: FileDropAreaProps) => {
   const [isDrop, setDrop] = useState(false);
 
   return (
@@ -52,7 +51,7 @@ const FileDropArea = ({ handler }: FileDropAreaProps) => {
       isDrop={isDrop}
       onDrop={(event) => {
         event.preventDefault();
-        handler(event.dataTransfer.files);
+        onFileListChange(event.dataTransfer.files);
         setDrop(false);
       }}
       onDragOver={(event) => {
@@ -68,8 +67,8 @@ const FileDropArea = ({ handler }: FileDropAreaProps) => {
       <FileSelectButton
         accept="audio/mpeg"
         multiple
-        handler={(event) => {
-          handler(event.target.files);
+        onChange={(event) => {
+          onFileListChange(event.target.files);
         }}
       >
         or choose files to upload

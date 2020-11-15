@@ -1,9 +1,18 @@
 import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 
-type StyledButtonProps = Theme<{ active?: boolean }>;
+export const Icon = styled.svg`
+  width: 24px;
+  height: 24px;
+`;
 
-const StyledButton = styled.button.attrs({ type: 'button' })<StyledButtonProps>`
+type ControlProps = Theme<{ active?: boolean }>;
+
+const Control = styled.button.attrs({ type: 'button' })<ControlProps>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 24px;
   height: 48px;
   margin: 0;
@@ -11,13 +20,13 @@ const StyledButton = styled.button.attrs({ type: 'button' })<StyledButtonProps>`
   background: transparent;
   border: 0;
   outline: 0;
-  fill: ${(props: StyledButtonProps) =>
+  fill: ${(props: ControlProps) =>
     props.active ? props.theme.player.controls.active : props.theme.player.controls.inactive};
   cursor: pointer;
-  transition: ${(props: StyledButtonProps) => props.theme.transition};
+  transition: ${(props: ControlProps) => props.theme.transition};
 `;
 
-export const Control = styled(StyledButton)`
+export const IndentedControl = styled(Control)`
   margin-left: 10px;
 
   &:first-child {
@@ -25,7 +34,4 @@ export const Control = styled(StyledButton)`
   }
 `;
 
-export const Icon = styled.svg`
-  width: 24px;
-  height: 24px;
-`;
+export default Control;

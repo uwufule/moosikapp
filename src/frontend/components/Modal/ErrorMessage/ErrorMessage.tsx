@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
-import debounce from 'lodash/debounce';
-import { hideErrorMessage } from '@redux/modal/actions';
-import { RootState } from '@redux/store';
 import { Theme } from '@components/ThemeProvider';
+import { hideErrorMessage } from '@redux/modal/actions';
+import { selectErrorMessage } from '@redux/modal/selectors';
+import debounce from 'lodash/debounce';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Transition, { ENTERED, EXITED, TransitionStatus } from 'react-transition-group/Transition';
+import styled from 'styled-components';
 import ErrorIcon from './ErrorIcon';
 
 const Container = styled.div`
@@ -39,37 +40,61 @@ const Text = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: normal;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   flex: 1;
 `;
 
+interface AnimatedComponentProps {
+  state: TransitionStatus;
+}
+
+export const AnimatedContainer = styled(Container)<AnimatedComponentProps>`
+  transition: 200ms;
+  transform: translateX(
+    ${(props: AnimatedComponentProps) =>
+      props.state === EXITED || props.state === ENTERED ? 0 : 400}px
+  );
+`;
+
 const ErrorMessage = () => {
-  const message = useSelector<RootState, string>((state) => state.modal.errorMessage);
+  const [animationStart, setAnimationStart] = useState(false);
+
+  const errorMessage = useSelector(selectErrorMessage);
 
   const dispatch = useDispatch();
 
-  const debouncedHideErrorMessage = debounce(() => {
-    dispatch(hideErrorMessage());
-  }, 5000);
+  const debouncedHideErrorMessage = useCallback(
+    debounce(() => {
+      setAnimationStart(false);
+      dispatch(hideErrorMessage());
+    }, 5000),
+    [],
+  );
 
   useEffect(() => {
+    setAnimationStart(true);
     debouncedHideErrorMessage();
   }, []);
 
+  const cancelHideErrorMessage = () => {
+    debouncedHideErrorMessage.cancel();
+  };
+
   return (
-    <Container
-      onMouseEnter={() => {
-        debouncedHideErrorMessage.cancel();
-      }}
-      onMouseLeave={() => {
-        debouncedHideErrorMessage();
-      }}
-    >
-      <ErrorIcon />
-      <Text>
-        <span>{message}</span>
-      </Text>
-    </Container>
+    <Transition in={animationStart} type="ease" timeout={200}>
+      {(state) => (
+        <AnimatedContainer
+          state={state}
+          onMouseEnter={cancelHideErrorMessage}
+          onMouseLeave={debouncedHideErrorMessage}
+        >
+          <ErrorIcon />
+          <Text>
+            <span>{errorMessage}</span>
+          </Text>
+        </AnimatedContainer>
+      )}
+    </Transition>
   );
 };
 

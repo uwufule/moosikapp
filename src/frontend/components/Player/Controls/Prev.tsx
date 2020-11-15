@@ -1,26 +1,21 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentSongIndex } from '@redux/player/actions';
-import { RootState } from '@redux/store';
-import { Control, Icon } from './Control';
+import { PlayerActionType } from '@redux/player/types';
+import { useDispatch } from 'react-redux';
+import { IndentedControl, Icon } from './Control';
 
-const NextButton = () => {
-  const currentSongIndex = useSelector<RootState, number>((state) => state.player.current.index);
-
+const PrevButton = () => {
   const dispatch = useDispatch();
 
-  const setPrevSong = () => {
-    if (currentSongIndex > 0) {
-      dispatch(setCurrentSongIndex(currentSongIndex - 1));
-    }
+  const handleClick = () => {
+    dispatch({ type: PlayerActionType.PLAY_PREV });
   };
 
   return (
-    <Control onClick={setPrevSong}>
+    <IndentedControl onClick={handleClick}>
       <Icon>
         <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
       </Icon>
-    </Control>
+    </IndentedControl>
   );
 };
 
-export default NextButton;
+export default PrevButton;

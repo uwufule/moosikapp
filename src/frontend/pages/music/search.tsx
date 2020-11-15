@@ -1,75 +1,46 @@
-import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import useRequest from '@hooks/useRequest';
+import { Nav, SearchBox, SongList } from '@components/Music';
 import useRestriction from '@hooks/useRestriction';
-import useErrorHandler from '@hooks/useErrorHandler';
-import { setSongList } from '@redux/player/actions';
-import { Song } from '@redux/player/types';
-import { RootState } from '@redux/store';
-import { Nav, SongList, SearchBox } from '@components/Music';
+import { showErrorMessage } from '@redux/modal/actions';
+import { searchSongs, setSongList } from '@redux/songs/actions';
+import { selectSongsRetrieveStatus } from '@redux/songs/selectors';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const MusicSearch = () => {
+const MusicSearch: React.FC = () => {
+  const restriction = useRestriction();
+  restriction.requireAuth();
+
   const router = useRouter();
 
-  const [query, setQuery] = useState<string>(
+  const [query, setQuery] = React.useState<string>(
     typeof router.query.query === 'string' ? router.query.query : '',
   );
-  const [searching, setSearching] = useState(false);
 
-  const restriction = useRestriction();
-  restriction.allowOnlyAuthorizedUser();
-
-  const { authRequest } = useRequest();
-
-  const songs = useSelector<RootState, Song[]>((state) => state.player.songList);
+  const success = useSelector(selectSongsRetrieveStatus);
 
   const dispatch = useDispatch();
 
-  const handleError = useErrorHandler(
-    () => dispatch(setSongList([])),
-    () => setSearching(false),
-  );
-
-  useEffect(() => {
+  React.useEffect(() => {
     dispatch(setSongList([]));
 
     if (query.length === 0) {
       return;
     }
 
-    handleError(async () => {
-      if (query.length < 2) {
-        throw new Error('Minimum query length is 2.');
-      }
+    if (query.length < 2) {
+      dispatch(showErrorMessage('Minimum query length is 2.'));
+      return;
+    }
 
-      setSearching(true);
-
-      const res = await authRequest('/songs/search?scope=1', {
-        method: 'GET',
-        params: { query },
-      });
-
-      if (!res.data.result) {
-        throw new Error('No songs.');
-      }
-
-      if (!res.data.result) {
-        throw new Error('No songs.');
-      }
-
-      dispatch(setSongList(res.data.result));
-    });
+    dispatch(searchSongs({ scope: 1, query }));
   }, [query]);
 
   return (
     <section>
       <Nav />
-      <SearchBox
-        initialQuery={typeof router.query.query === 'string' ? router.query.query : ''}
-        handler={setQuery}
-      />
-      <SongList songs={songs} searching={query.length < 2 || searching} />
+      <SearchBox initialValue={query} onValueChange={setQuery} />
+      <SongList searching={query.length < 2 || success} />
     </section>
   );
 };

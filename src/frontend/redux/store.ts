@@ -1,18 +1,16 @@
 import { MakeStore } from 'next-redux-wrapper';
-import { combineReducers, createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
-import auth from './auth/reducers';
-import modal from './modal/reducers';
-import player from './player/reducers';
+import createSagaMiddleware from 'redux-saga';
+import rootReducer from './rootReducer';
+import rootSaga from './rootSaga';
 
-const rootReducer = combineReducers({
-  auth,
-  player,
-  modal,
-});
+const makeStore: MakeStore = () => {
+  const sagaMiddleware = createSagaMiddleware();
+  const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+  sagaMiddleware.run(rootSaga);
 
-export type RootState = ReturnType<typeof rootReducer>;
-
-const makeStore: MakeStore = () => createStore(rootReducer, composeWithDevTools());
+  return store;
+};
 
 export default makeStore;

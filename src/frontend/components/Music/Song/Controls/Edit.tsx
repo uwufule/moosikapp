@@ -1,10 +1,10 @@
-import { Control, Icon } from './Control';
+import Control, { Icon } from './Control';
 
 interface EditProps {
   className?: string;
 }
 
-const EditButton = ({ className }: EditProps) => (
+const Edit = ({ className }: EditProps) => (
   <Control className={className} title="Edit song">
     <Icon>
       <path
@@ -15,4 +15,4 @@ const EditButton = ({ className }: EditProps) => (
   </Control>
 );
 
-export default EditButton;
+export default Edit;

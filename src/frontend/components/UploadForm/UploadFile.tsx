@@ -1,11 +1,9 @@
-import { useState, useEffect, memo } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import useRequest from '@hooks/useRequest';
-import useErrorHandler from '@hooks/useErrorHandler';
-import { UploadProgressEvent } from '@utils/request';
+import SongEditForm from '@components/SongEditForm';
 import { Theme } from '@components/ThemeProvider';
-import SongEditForm from './SongEditForm';
+import UploadProgressEvent from '@core/services/api/interfaces/UploadProgressEvent';
+import axios from 'axios';
+import React, { memo, useState } from 'react';
+import styled from 'styled-components';
 
 const UploadFileWrapper = styled.div`
   margin-bottom: 16px;
@@ -16,7 +14,7 @@ const UploadFileWrapper = styled.div`
   }
 `;
 
-type ProgressBarProps = Theme<{ percent: number }>;
+type ProgressBarProps = Theme<{ percents: number }>;
 
 const ProgressBar = styled.div`
   height: 24px;
@@ -26,8 +24,8 @@ const ProgressBar = styled.div`
   overflow: hidden;
 `;
 
-const setWidth = (props: ProgressBarProps) => ({ style: { width: `${props.percent}%` } });
-const ProgressBarActive = styled.div.attrs(setWidth)`
+const setProgress = (props: ProgressBarProps) => ({ style: { width: `${props.percents}%` } });
+const ProgressBarActive = styled.div.attrs(setProgress)`
   min-width: 0px;
   max-width: 100%;
   height: 100%;
@@ -52,36 +50,22 @@ interface UploadProgressProps {
 
 const UploadFile = ({ file }: UploadProgressProps) => {
   const [songId, setSongId] = useState<string>('');
-  const [percent, setPercent] = useState<number>(0);
-
-  const { authRequest } = useRequest();
-
-  const handleError = useErrorHandler();
+  const [percents, setPercents] = useState<number>(0);
 
   const onUploadProgress = (progress: UploadProgressEvent) => {
-    setPercent((progress.loaded / progress.total) * 100);
+    setPercents((progress.loaded / progress.total) * 100);
   };
 
-  useEffect(() => {
-    const cancelationToken = axios.CancelToken.source();
+  React.useEffect(() => {
+    const cancelToken = axios.CancelToken.source();
 
-    handleError(async () => {
-      const res = await authRequest('/songs', {
-        method: 'POST',
-        headers: {
-          'content-type': file.type,
-        },
-        data: file,
-        cancelToken: cancelationToken.token,
-        onUploadProgress,
-      });
+    const uploadAsync = async () => {};
 
-      setSongId(res.data.result.id);
-    });
+    uploadAsync();
 
     return () => {
       if (!songId) {
-        cancelationToken.cancel();
+        cancelToken.cancel();
       }
     };
   }, []);
@@ -89,7 +73,7 @@ const UploadFile = ({ file }: UploadProgressProps) => {
   return (
     <UploadFileWrapper>
       <ProgressBar>
-        <ProgressBarActive percent={percent} />
+        <ProgressBarActive percents={percents} />
         <FileName>{file.name}</FileName>
       </ProgressBar>
       {songId && <SongEditForm songId={songId} />}
@@ -99,6 +83,5 @@ const UploadFile = ({ file }: UploadProgressProps) => {
 
 export default memo(
   UploadFile,
-  (prevProps, nextProps) =>
-    prevProps.file.name === nextProps.file.name && prevProps.file.size === nextProps.file.size,
+  (prevProps, nextProps) => prevProps.file.name === nextProps.file.name,
 );
