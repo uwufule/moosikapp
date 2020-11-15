@@ -1,6 +1,7 @@
-import styled from 'styled-components';
-import HashUtils from '@utils/HashUtils';
 import { Theme } from '@components/ThemeProvider';
+import genHash from '@core/infrastructure/crypto/genHash';
+import React from 'react';
+import styled from 'styled-components';
 
 const Input = styled.input`
   width: 100%;
@@ -23,30 +24,41 @@ const Input = styled.input`
   }
 `;
 
-interface InputProps {
-  children: string;
+interface TextFieldProps {
   className?: string;
-  type: 'text' | 'email' | 'tel' | 'password';
+  type: 'text' | 'email' | 'password';
+  placeholder: string;
+  autoFocus?: boolean;
   required?: boolean;
-  handler: (value: string) => void;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-const FormInput = ({ children, className, type, required = false, handler }: InputProps) => {
-  const id = HashUtils.genHash(children, 36);
+const TextField = ({
+  className,
+  type,
+  autoFocus = false,
+  required = false,
+  placeholder,
+  onChange,
+}: TextFieldProps) => {
+  const id = genHash(placeholder);
 
   return (
-    <label htmlFor={id} className={className} aria-label={children}>
+    <label htmlFor={id} className={className} aria-label={placeholder}>
       <Input
         id={id}
-        placeholder={children}
+        inputMode="text"
         type={type}
+        autoFocus={autoFocus}
         required={required}
+        placeholder={placeholder}
+        aria-describedby={placeholder}
         autoComplete="off"
         autoCapitalize="off"
-        onChange={(event) => handler(event.target.value)}
+        onChange={onChange}
       />
     </label>
   );
 };
 
-export default FormInput;
+export default TextField;
