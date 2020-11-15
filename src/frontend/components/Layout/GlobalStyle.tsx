@@ -1,6 +1,5 @@
-import { createGlobalStyle } from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
-
+import { createGlobalStyle } from 'styled-components';
 import Nunito from './fonts/NunitoRegular.ttf';
 
 const GlobalStyle = createGlobalStyle`
@@ -16,16 +15,15 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    position: absolute;
     width: 100%;
     height: 100%;
+    position: absolute;
     margin: 0;
     background: ${(props: Theme) => props.theme.background};
   }
 
   #__next {
     height: 100%;
-    position: relative;
   }
 
   * {
