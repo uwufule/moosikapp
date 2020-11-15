@@ -1,10 +1,10 @@
-import styled from 'styled-components';
+import { Link } from '@components/Nav';
+import { selectIsLoggedIn } from '@redux/auth/selectors';
 import { useSelector } from 'react-redux';
-import { RootState } from '@redux/store';
-import { Link } from '@components/BaseNav';
+import styled from 'styled-components';
 import Logo from './Logo';
-import Nav from './Nav';
 import Logout from './Logout';
+import Nav from './Nav';
 
 const StyledHeader = styled.header`
   display: flex;
@@ -19,7 +19,7 @@ const Group = styled.div`
 `;
 
 const Header = () => {
-  const isLoggedIn = useSelector<RootState, boolean>((state) => state.auth.accessToken !== '');
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
   return (
     <StyledHeader>

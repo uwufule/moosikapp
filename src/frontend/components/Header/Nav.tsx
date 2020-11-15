@@ -1,5 +1,5 @@
+import BaseNav, { Link } from '@components/Nav';
 import styled from 'styled-components';
-import BaseNav, { Link } from '@components/BaseNav';
 
 const StyledNav = styled(BaseNav)`
   margin-left: 12px;
