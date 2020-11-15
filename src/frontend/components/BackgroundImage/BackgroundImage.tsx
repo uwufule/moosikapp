@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-
 import jpg from './images/bg.jpg';
 import webp from './images/bg.webp';
 
-const Wrapper = styled.div`
+const Container = styled.div`
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -23,12 +22,12 @@ const Image = styled.img`
 `;
 
 const BackgroundImage = () => (
-  <Wrapper>
+  <Container>
     <picture>
       <source srcSet={webp} type="image/webp" />
       <Image src={jpg} alt="background" />
     </picture>
-  </Wrapper>
+  </Container>
 );
 
 export default BackgroundImage;
