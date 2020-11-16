@@ -3,6 +3,7 @@ import useRestriction from '@hooks/useRestriction';
 import { showErrorMessage } from '@redux/modal/actions';
 import { searchSongs, setSongList } from '@redux/songs/actions';
 import { selectSongsRetrieveStatus } from '@redux/songs/selectors';
+import debounce from 'lodash/debounce';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,12 +18,16 @@ const MusicSearch: React.FC = () => {
     typeof router.query.query === 'string' ? router.query.query : '',
   );
 
+  const queryRef = React.useRef<string>(query);
+
   const success = useSelector(selectSongsRetrieveStatus);
 
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     dispatch(setSongList([]));
+
+    queryRef.current = query;
 
     if (query.length === 0) {
       return;
@@ -33,8 +38,28 @@ const MusicSearch: React.FC = () => {
       return;
     }
 
-    dispatch(searchSongs({ scope: 1, query }));
+    dispatch(searchSongs({ skip: 0, scope: 1, query }));
   }, [query]);
+
+  const handleScroll = React.useCallback(
+    debounce(() => {
+      if (
+        window.innerHeight + window.scrollY >= document.body.offsetHeight &&
+        queryRef.current.length >= 2
+      ) {
+        dispatch(searchSongs({ scope: 1, query: queryRef.current }));
+      }
+    }, 100),
+    [],
+  );
+
+  React.useEffect(() => {
+    document.addEventListener('scroll', handleScroll);
+
+    return () => {
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <section>

@@ -6,6 +6,8 @@ import { AuthActionType } from '@redux/auth/types';
 import { showErrorMessage } from '@redux/modal/actions';
 import { PlayerActionType } from '@redux/player/types';
 import { all, call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import { LIMIT } from './helpers/constants';
+import updateNext from './helpers/updateNext';
 import {
   FetchFavoritesAction,
   FetchSongByIdAction,
@@ -16,13 +18,27 @@ import {
 } from './types';
 
 function* fetchSongs(action: FetchSongsAction) {
+  const skip: number = yield updateNext(action.payload.skip);
+  if (skip === -1) {
+    return;
+  }
+
   yield put({ type: AuthActionType.REFRESH_IF_NEEDED });
   yield take(AuthActionType.REFRESH_IF_NEEDED_COMPLETE);
 
   const accessToken: string = yield select(selectAccessToken);
   try {
-    const songs: Song[] = yield call(songsApi.getSongs, accessToken, action.payload);
-    yield put({ type: SongsActionType.SET_SONG_LIST, payload: songs });
+    const songs: Song[] = yield call(songsApi.getSongs, accessToken, {
+      skip,
+      limit: LIMIT,
+      ...action.payload,
+    });
+
+    if (skip > 0) {
+      yield put({ type: SongsActionType.APPEND_SONG_LIST, payload: songs });
+    } else {
+      yield put({ type: SongsActionType.SET_SONG_LIST, payload: songs });
+    }
   } catch (e) {
     yield put({ type: SongsActionType.SET_SONG_LIST, payload: [] });
     yield put(showErrorMessage(e.message));
@@ -30,13 +46,27 @@ function* fetchSongs(action: FetchSongsAction) {
 }
 
 function* fetchFavorites(action: FetchFavoritesAction) {
+  const skip: number = yield updateNext(action.payload.skip);
+  if (skip === -1) {
+    return;
+  }
+
   yield put({ type: AuthActionType.REFRESH_IF_NEEDED });
   yield take(AuthActionType.REFRESH_IF_NEEDED_COMPLETE);
 
   const accessToken: string = yield select(selectAccessToken);
   try {
-    const songs: Song[] = yield call(songsApi.getFavoriteSongs, accessToken, action.payload);
-    yield put({ type: SongsActionType.SET_SONG_LIST, payload: songs });
+    const songs: Song[] = yield call(songsApi.getFavoriteSongs, accessToken, {
+      skip,
+      limit: LIMIT,
+      ...action.payload,
+    });
+
+    if (skip > 0) {
+      yield put({ type: SongsActionType.APPEND_SONG_LIST, payload: songs });
+    } else {
+      yield put({ type: SongsActionType.SET_SONG_LIST, payload: songs });
+    }
   } catch (e) {
     yield put({ type: SongsActionType.SET_SONG_LIST, payload: [] });
     yield put(showErrorMessage(e.message));
@@ -44,13 +74,27 @@ function* fetchFavorites(action: FetchFavoritesAction) {
 }
 
 function* searchSongs(action: SearchSongsAction) {
+  const skip: number = yield updateNext(action.payload.skip);
+  if (skip === -1) {
+    return;
+  }
+
   yield put({ type: AuthActionType.REFRESH_IF_NEEDED });
   yield take(AuthActionType.REFRESH_IF_NEEDED_COMPLETE);
 
   const accessToken: string = yield select(selectAccessToken);
   try {
-    const songs: Song[] = yield call(songsApi.searchSongs, accessToken, action.payload);
-    yield put({ type: SongsActionType.SET_SONG_LIST, payload: songs });
+    const songs: Song[] = yield call(songsApi.searchSongs, accessToken, {
+      skip,
+      limit: LIMIT,
+      ...action.payload,
+    });
+
+    if (skip > 0) {
+      yield put({ type: SongsActionType.APPEND_SONG_LIST, payload: songs });
+    } else {
+      yield put({ type: SongsActionType.SET_SONG_LIST, payload: songs });
+    }
   } catch (e) {
     yield put({ type: SongsActionType.SET_SONG_LIST, payload: [] });
     yield put(showErrorMessage(e.message));

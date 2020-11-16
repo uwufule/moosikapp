@@ -5,6 +5,7 @@ import { Action, AnyAction } from 'redux';
 
 export interface SongsState {
   songList: Song[];
+  next: number;
   success: boolean;
 }
 
@@ -14,6 +15,8 @@ export enum SongsActionType {
   SEARCH_SONGS = 'songs/SEARCH_SONGS',
   FETCH_SONG_BY_ID = 'songs/FETCH_SONG_BY_ID',
   SET_SONG_LIST = 'songs/SET_SONG_LIST',
+  APPEND_SONG_LIST = 'songs/APPEND_SONG_LIST',
+  SET_NEXT = 'songs/SET_NEXT',
   TOGGLE_FAVORITE_STATE_FOR_SONG = 'songs/TOGGLE_FAVORITE_STATE_FOR_SONG',
 }
 
