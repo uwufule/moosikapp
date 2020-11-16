@@ -13,7 +13,7 @@ import GlobalStyle from './GlobalStyle';
 
 const Main = styled.main`
   display: flex;
-  min-height: 100%;
+  min-height: 100vh;
   position: relative;
 `;
 
