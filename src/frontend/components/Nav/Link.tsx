@@ -26,7 +26,7 @@ interface LinkProps {
 }
 
 const Link = ({ to, children, className, handler }: LinkProps) => (
-  <NextLink href={to}>
+  <NextLink href={to} passHref>
     <StyledLink className={className} onClick={handler}>
       {children}
     </StyledLink>
