@@ -6,7 +6,7 @@ import { Theme } from '@components/ThemeProvider';
 const Label = styled.label`
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
@@ -17,8 +17,11 @@ const Label = styled.label`
   }
 `;
 
-const StyledInput = styled.input.attrs({ type: 'text' })`
-  width: 100%;
+const Text = styled.span`
+  margin-bottom: 6px;
+`;
+
+const Input = styled.input.attrs({ type: 'text' })`
   margin: 0;
   padding: 6px 8px;
   font-family: inherit;
@@ -47,8 +50,8 @@ const TextField = ({ title, onChange }: TextFieldProps) => {
 
   return (
     <Label htmlFor={uuid}>
-      <span>{title}</span>
-      <StyledInput id={uuid} type="text" onChange={onChange} />
+      <Text>{title}</Text>
+      <Input id={uuid} type="text" onChange={onChange} />
     </Label>
   );
 };

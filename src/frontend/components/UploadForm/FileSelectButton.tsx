@@ -6,18 +6,14 @@ import styled from 'styled-components';
 const Button = styled.label`
   position: relative;
   padding: 8px 16px;
+  color: ${(props: Theme) => props.theme.uploadForm.fileSelect.text};
   font-size: 18px;
   font-weight: 400;
-
+  line-height: 32px;
   text-align: center;
-  color: ${(props: Theme) => props.theme.uploadForm.fileSelect.text};
   background: ${(props: Theme) => props.theme.uploadForm.fileSelect.background.inactive};
   cursor: pointer;
   transition: background-color ${(props: Theme) => props.theme.transition};
-
-  & > span {
-    line-height: 32px;
-  }
 
   &:hover {
     background: ${(props: Theme) => props.theme.uploadForm.fileSelect.background.active};
@@ -38,7 +34,7 @@ interface FileSelectButtonProps {
 }
 
 const FileSelectButton = ({ children, accept, multiple, onChange }: FileSelectButtonProps) => {
-  const id = genHash(children, 36);
+  const id = genHash(children);
 
   return (
     <Button htmlFor={id}>

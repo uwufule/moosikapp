@@ -11,7 +11,7 @@ const Container = styled.div`
   left: 0;
 `;
 
-const StyledLoader = styled.div`
+const StyledThrobber = styled.div`
   @keyframes spinner {
     0% {
       opacity: 1;
@@ -105,9 +105,9 @@ const StyledLoader = styled.div`
   }
 `;
 
-const Loader = () => (
+const Throbber = () => (
   <Container>
-    <StyledLoader>
+    <StyledThrobber>
       <div />
       <div />
       <div />
@@ -120,8 +120,8 @@ const Loader = () => (
       <div />
       <div />
       <div />
-    </StyledLoader>
+    </StyledThrobber>
   </Container>
 );
 
-export default Loader;
+export default Throbber;

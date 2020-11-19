@@ -28,15 +28,11 @@ const Title = styled.h1`
 
 const Note = styled.div`
   margin-top: 24px;
-  text-align: center;
   color: ${(props: Theme) => props.theme.uploadForm.text};
-
-  & > p {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5;
-  }
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
 `;
 
 interface FileDropAreaProps {
@@ -73,7 +69,6 @@ const FileDropArea = ({ onFileListChange }: FileDropAreaProps) => {
       >
         or choose files to upload
       </FileSelectButton>
-      {/* <DifferentUploadMethodsLink /> */}
       <Note>
         <p>Note: Your audio file may not exceed 10 MB and has to be in MP3 format.</p>
       </Note>

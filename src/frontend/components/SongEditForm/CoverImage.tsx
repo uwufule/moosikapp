@@ -1,8 +1,11 @@
 import { Theme } from '@components/ThemeProvider';
+import useUpdateSong from '@hooks/useUpdateSong';
+import { showErrorMessage } from '@redux/modal/actions';
 import React, { ChangeEvent } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import Loader from './Loader';
-import PickImageButton from './PickImageButton';
+import ImageSelectButton from './ImageSelectButton';
+import Throbber from './Throbber';
 
 const ImageContainer = styled.div`
   display: flex;
@@ -44,27 +47,51 @@ interface CoverImageProps {
 }
 
 const CoverImage = ({ songId }: CoverImageProps) => {
-  const [cover, setCover] = React.useState<File | null>(null);
-  const [isCoverUploaded, setIsCoverUploaded] = React.useState<boolean>(false);
+  const [coverFile, setCoverFile] = React.useState<File>();
+  const [uploadInProgress, setUploadInProgress] = React.useState<boolean>(false);
+
+  const dispatch = useDispatch();
+
+  const methods = useUpdateSong();
 
   const onCoverUpdate = (event: ChangeEvent<HTMLInputElement>) => {
-    const image = event.target.files?.item(0);
-    if (!image) {
-      return;
+    const selectedFile = event.target.files?.item(0);
+    if (selectedFile) {
+      setCoverFile(selectedFile);
     }
-
-    const updateCoverAsync = async () => {};
-
-    updateCoverAsync();
   };
+
+  React.useEffect(() => {
+    const updateCover = async () => {
+      if (!coverFile) {
+        return;
+      }
+
+      setUploadInProgress(true);
+
+      try {
+        await methods.updateCover(songId, coverFile);
+      } catch (e) {
+        dispatch(showErrorMessage(e.message));
+      } finally {
+        setUploadInProgress(false);
+      }
+    };
+
+    updateCover();
+  }, [coverFile]);
+
+  const blobUri = React.useMemo(() => {
+    return coverFile && URL.createObjectURL(coverFile);
+  }, [coverFile]);
 
   return (
     <ImageContainer>
-      {cover && <Image url={URL.createObjectURL(cover)} blurred={isCoverUploaded} />}
-      <PickImageButton onChange={onCoverUpdate} />
-      {isCoverUploaded && <Loader />}
+      {blobUri && <Image url={blobUri} blurred={uploadInProgress} />}
+      <ImageSelectButton onChange={onCoverUpdate} />
+      {uploadInProgress && <Throbber />}
     </ImageContainer>
   );
 };
 
-export default CoverImage;
+export default React.memo(CoverImage, (prev, next) => prev.songId === next.songId);

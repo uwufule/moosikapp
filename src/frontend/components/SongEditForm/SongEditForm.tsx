@@ -1,5 +1,8 @@
 import { Theme } from '@components/ThemeProvider';
+import useUpdateSong from '@hooks/useUpdateSong';
+import { showErrorMessage } from '@redux/modal/actions';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import CoverImage from './CoverImage';
 import TextField from './TextField';
@@ -7,7 +10,7 @@ import TextField from './TextField';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: 8px;
+  margin: 8px 16px 0 16px;
 
   @media (max-width: 640px) {
     & {
@@ -19,7 +22,8 @@ const Wrapper = styled.div`
 const EditTab = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 16px;
+  justify-content: space-between;
+  margin-left: 16px;
   flex: 1;
 
   @media (max-width: 640px) {
@@ -29,12 +33,11 @@ const EditTab = styled.div`
   }
 `;
 
-const FormButtons = styled.div`
+const FormFooter = styled.div`
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  padding: 20px 0;
-  flex: 1;
+  padding: 16px 0;
 
   @media (max-width: 640px) {
     & {
@@ -68,20 +71,40 @@ interface SongEditFormProps {
 }
 
 const SongEditForm = ({ songId }: SongEditFormProps) => {
-  const [author, setAuthor] = React.useState('');
-  const [title, setTitle] = React.useState('');
+  const [author, setAuthor] = React.useState<string>('');
+  const [title, setTitle] = React.useState<string>('');
 
-  const onSave = React.useCallback(() => {}, [author, title]);
+  const dispatch = useDispatch();
+
+  const methods = useUpdateSong();
+
+  const onAuthorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthor(event.target.value);
+  };
+
+  const onTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+
+  const onSave = React.useCallback(async () => {
+    try {
+      await methods.update(songId, { author, title });
+    } catch (e) {
+      dispatch(showErrorMessage(e.message));
+    }
+  }, [author, title]);
 
   return (
     <Wrapper>
       <CoverImage songId={songId} />
       <EditTab>
-        <TextField title="Author:" onChange={(event) => setAuthor(event.target.value)} />
-        <TextField title="Title:" onChange={(event) => setTitle(event.target.value)} />
-        <FormButtons>
+        <div>
+          <TextField title="Author:" onChange={onAuthorChange} />
+          <TextField title="Title:" onChange={onTitleChange} />
+        </div>
+        <FormFooter>
           <SaveButton onClick={onSave}>Save</SaveButton>
-        </FormButtons>
+        </FormFooter>
       </EditTab>
     </Wrapper>
   );

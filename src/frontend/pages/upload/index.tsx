@@ -1,6 +1,5 @@
 import { Theme } from '@components/ThemeProvider';
-import FileDropArea from '@components/UploadForm/FileDropArea';
-import UploadFile from '@components/UploadForm/UploadFile';
+import { FileDropArea, FileUploader } from '@components/UploadForm';
 import genHash from '@core/infrastructure/crypto/genHash';
 import validateAudioFiles from '@core/services/validators/validateAudioFiles';
 import useRestriction from '@hooks/useRestriction';
@@ -9,7 +8,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-const UploadFormWrapper = styled.div`
+const FileUploadFormWrapper = styled.div`
   margin-top: 24px;
   background: ${(props: Theme) => props.theme.uploadForm.background};
   box-shadow: ${(props: Theme) => props.theme.shadow.long};
@@ -52,16 +51,16 @@ const Upload: React.FC = () => {
   };
 
   return (
-    <UploadFormWrapper>
+    <FileUploadFormWrapper>
       <FileDropArea onFileListChange={handlePickFiles} />
       {files.length > 0 && (
         <UploadsList>
           {files.map((file) => (
-            <UploadFile key={genHash(file.name)} file={file} />
+            <FileUploader key={genHash(file.name)} file={file} />
           ))}
         </UploadsList>
       )}
-    </UploadFormWrapper>
+    </FileUploadFormWrapper>
   );
 };
 

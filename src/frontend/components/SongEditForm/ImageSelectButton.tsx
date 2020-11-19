@@ -2,7 +2,7 @@ import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { Theme } from '@components/ThemeProvider';
 
-const StyledButton = styled.label`
+const Button = styled.label`
   position: relative;
   margin-bottom: 16px;
   padding: 4px 8px;
@@ -13,7 +13,7 @@ const StyledButton = styled.label`
   background: ${(props: Theme) => props.theme.uploadForm.editForm.cover.button.background.inactive};
   cursor: pointer;
   transition: background-color ${(props: Theme) => props.theme.transition};
-  box-shadow: ${(props: Theme) => props.theme.shadow.short};
+  box-shadow: ${(props: Theme) => props.theme.shadow.long};
 
   &:hover {
     background: ${(props: Theme) => props.theme.uploadForm.editForm.cover.button.background.active};
@@ -29,15 +29,15 @@ const Input = styled.input.attrs({
   position: absolute;
 `;
 
-interface PickImageButtonProps {
+interface ImageSelectButtonProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const PickImageButton = ({ onChange }: PickImageButtonProps) => (
-  <StyledButton>
+const ImageSelectButton = ({ onChange }: ImageSelectButtonProps) => (
+  <Button>
     <span>Upload image</span>
     <Input onChange={onChange} />
-  </StyledButton>
+  </Button>
 );
 
-export default PickImageButton;
+export default ImageSelectButton;
