@@ -14,7 +14,7 @@ import {
 function* pushSongListToPlaylist(action: PushSongListToPlaylistAction) {
   const status: boolean = yield select(selectSongsRetrieveStatus);
   if (!status) {
-    yield put({ type: SongsActionType.FETCH_FAVORITES, payload: {} });
+    yield put({ type: SongsActionType.FETCH_FAVORITES, payload: { skip: 0 } });
     yield take(SongsActionType.SET_SONG_LIST);
   }
 
