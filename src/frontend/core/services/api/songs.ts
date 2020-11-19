@@ -1,6 +1,7 @@
 import createAxiosInstance from '@core/infrastructure/transport/createAxiosInstance';
 import Song from '@core/models/Song';
 import SongDetails from '@core/models/SongDetails';
+import { CancelToken } from 'axios';
 import ApiResponse from './interfaces/ApiResponse';
 import GetSongsRequestOptions from './interfaces/GetSongsRequestOptions';
 import OnUploadProgress from './interfaces/OnUploadProgress';
@@ -63,15 +64,16 @@ export const uploadSong = async (
   accessToken: string,
   file: File,
   onUploadProgress?: OnUploadProgress,
+  cancelToken?: CancelToken,
 ): Promise<string> => {
   const res = await createAxiosInstance({ Bearer: accessToken }).post<
     ApiResponse<UploadSongResult>
-  >('/songs', {
+  >('/songs', file, {
     headers: {
       'content-type': file.type,
     },
-    data: file,
     onUploadProgress,
+    cancelToken,
   });
 
   return res.data.result.id;
