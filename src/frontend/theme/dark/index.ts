@@ -1,5 +1,5 @@
-import errorModal from './errorModal';
 import forms from './forms';
+import modal from './modal';
 import player from './player';
 import songList from './songList';
 import uploadForm from './uploadForm';
@@ -21,7 +21,7 @@ const theme = {
   songList,
   uploadForm,
   player,
-  errorModal,
+  modal,
   shadow: {
     long: '0 0 4px #010101',
     short: '0 0 2px #010101',

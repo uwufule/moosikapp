@@ -2,9 +2,9 @@ import { Theme } from '@components/ThemeProvider';
 import styled from 'styled-components';
 
 const Svg = styled.svg`
-  width: 35px;
-  height: 35px;
-  fill: ${(props: Theme) => props.theme.errorModal.icon};
+  width: 36px;
+  height: 36px;
+  fill: ${(props: Theme) => props.theme.modal.icons.error};
 `;
 
 const ErrorIcon = () => (

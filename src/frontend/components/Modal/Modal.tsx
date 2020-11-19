@@ -1,8 +1,9 @@
-import { selectHasErrorMessage } from '@redux/modal/selectors';
-import { useSelector } from 'react-redux';
+import { hideErrorMessage } from '@redux/modal/actions';
+import { selectErrorMessage } from '@redux/modal/selectors';
+import { useDispatch, useSelector } from 'react-redux';
 import Transition, { ENTERED, EXITED, TransitionStatus } from 'react-transition-group/Transition';
 import styled from 'styled-components';
-import ErrorMessage from './ErrorMessage';
+import MessageBox from './MessageBox';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -31,14 +32,20 @@ const Container = styled.div`
 `;
 
 const Modal = () => {
-  const hasErrorMessage = useSelector(selectHasErrorMessage);
+  const errorMessage = useSelector(selectErrorMessage);
+
+  const dispatch = useDispatch();
+
+  const onHide = () => {
+    dispatch(hideErrorMessage());
+  };
 
   return (
-    <Transition in={hasErrorMessage} mountOnEnter unmountOnExit type="ease" timeout={200}>
+    <Transition in={errorMessage !== ''} mountOnEnter unmountOnExit type="ease" timeout={200}>
       {(state) => (
         <AnimatedModalWrapper state={state}>
           <Container>
-            <ErrorMessage />
+            <MessageBox text={errorMessage} type="error" onHide={onHide} />
           </Container>
         </AnimatedModalWrapper>
       )}
