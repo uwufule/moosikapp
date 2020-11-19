@@ -36,6 +36,8 @@ class SongsController {
     this._cdnServerProvider = new CdnServerProvider(configProvider);
 
     this._songDataValidators = new SongDataValidators();
+
+    this._songUtils = new SongUtils(this._configProvider);
   }
 
   public upload = async (req: AuthRequest, res: Response) => {
@@ -103,7 +105,8 @@ class SongsController {
       throw new HttpErrors.NotFound('No song found.');
     }
 
-    if (!this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, uploadedBy)) {
+    const a = this._songUtils.canModifiedByUser(req.auth.userId, req.auth.scope, uploadedBy!);
+    if (!a) {
       throw new HttpErrors.Forbidden('Access denied.');
     }
 
