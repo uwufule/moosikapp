@@ -15,7 +15,12 @@ class App {
 
     this._app = express();
 
-    this._app.use(helmet({ hsts: false }));
+    this._app.use(
+      helmet({
+        hsts: false,
+        contentSecurityPolicy: { directives: { 'default-src': ['self', '*moosikapp.ml'] } },
+      }),
+    );
 
     const appRouter = new AppRouter(configProvider, this._database);
     this._app.use('/api', appRouter.getRouter());
