@@ -21,7 +21,7 @@ class App {
         contentSecurityPolicy: {
           directives: {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            'default-src': ['self', '*.moosikapp.ml'],
+            'default-src': ["'self'", '*.moosikapp.ml'],
           },
         },
       }),
