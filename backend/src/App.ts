@@ -18,7 +18,7 @@ class App {
     this._app.use(
       helmet({
         hsts: false,
-        contentSecurityPolicy: { directives: { 'default-src': ['self', '*moosikapp.ml'] } },
+        contentSecurityPolicy: { directives: { 'default-src': ['self', '*.moosikapp.ml'] } },
       }),
     );
 
