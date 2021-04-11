@@ -23,6 +23,7 @@ class App {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
             'default-src': ["'self'", '*.moosikapp.ml'],
             'img-src': ["'self'", '*.moosikapp.ml', 'data:'],
+            'object-src': ["'self'", 'blob:'],
           },
         },
       }),
