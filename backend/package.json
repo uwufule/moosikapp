@@ -1,0 +1,50 @@
+{
+  "name": "moosikapp-backend",
+  "version": "5.16.236",
+  "author": {
+    "name": "Xanede"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "build": "tsc",
+    "dev": "nodemon",
+    "test": "echo 0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.10",
+    "@types/express": "^4.17.11",
+    "@types/http-errors": "^1.8.0",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/node-fetch": "^2.5.8",
+    "@types/react-dom": "^17.0.1",
+    "@types/url-join": "^4.0.0",
+    "@types/uuid": "^8.3.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.7",
+    "ts-loader": "^8.0.17",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.2"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "escape-string-regexp": "^4.0.0",
+    "express": "^4.17.1",
+    "file-type": "^16.2.0",
+    "helmet": "^4.4.1",
+    "http-errors": "^1.8.0",
+    "joi": "^17.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.18",
+    "moosikapp-frontend": "*",
+    "node-fetch": "^2.6.1",
+    "url-join": "^4.0.1",
+    "uuid": "^8.3.2"
+  }
+}

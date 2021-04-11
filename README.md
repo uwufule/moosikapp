@@ -1,1 +1,1 @@
-Source code of [moosik](https://moosikapp.ml) application.
+при релизе в продакшн не забыть включить helmet для бэкенда

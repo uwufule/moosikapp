@@ -1,6 +1,5 @@
 # Packages
 node_modules/
-yarn.lock
 
 # Log files
 *.log
@@ -8,6 +7,8 @@ yarn.lock
 # Build
 dist/
 .next/
+frontend/index.js
+frontend/index.d.ts
 
 # Environment
 .env
